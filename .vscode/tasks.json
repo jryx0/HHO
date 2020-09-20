@@ -1,0 +1,31 @@
+{
+  // See https://go.microsoft.com/fwlink/?LinkId=733558
+  // for the documentation about the tasks.json format
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "HHO Test Make build",
+      "type": "shell",
+      "command": "mingw32-make",
+      "args": [
+        "build"
+      ]
+    },
+    {
+      "label": "HHO Test Make clean",
+      "type": "shell",
+      "command": "mingw32-make",
+      "args": [
+        "clean"
+      ]
+    },
+    {
+      "label": "HHO Test Make show",
+      "type": "shell",
+      "command": "mingw32-make",
+      "args": [
+        "show"
+      ]
+    }
+  ]
+}

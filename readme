@@ -1,0 +1,31 @@
+/**
+initUser();
+
+if(!Authentic(userinfo))
+  printf("username or password error!");
+ 
+close login
+switch(userinfo.type)
+   = user
+   = doctor
+   ...
+*/
+
+////////////////////Logic module function//////////////////
+/**
+ * initUser();
+ * Authentic(userinfo)
+ * 
+ * AddUser(userinfo) // check if user exist
+ * UpdateUser(userinfo)
+ * DelUser()
+ */
+
+////////////////////data module function//////////////////
+/**
+ * ReadUser(filename)
+ * Saveuser(filename)
+ * 
+ * FindUserinFile(userinfo)
+ * 
+ */
