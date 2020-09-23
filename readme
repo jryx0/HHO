@@ -29,3 +29,9 @@ switch(userinfo.type)
  * FindUserinFile(userinfo)
  * 
  */
+
+
+lanuch.json
+  "preLaunchTask" = tasks.label
+  "program" = build/hho_test.exe
+

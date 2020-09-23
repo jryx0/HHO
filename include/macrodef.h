@@ -10,4 +10,7 @@
 #define USERINFOFILE DATAPATH"userinfo.txt"
 #define DOCTORINFOFILE DATAPATH"doctorinfo.txt"
 
+#define FILE_PYINDEX DATAPATH"index.txt"
+#define FILE_HANZI DATAPATH"hanzi.txt"
+
 #endif

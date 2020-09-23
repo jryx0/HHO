@@ -1,0 +1,8 @@
+增加目录makefile修改：
+1.主makefile增加定义
+export SHAREPINYINSRC = $(CURDIR)/Share/Pinyin
+2.SRC 添加查找目录
+3.增加编译
+#share/pinyin
+$(OBJDIR)/%.o: $(SHAREPINYINSRC)/%$(EXT)
+	$(CC) $(CXXFLAGS)  -I $(INCDIR) -o $@ -c $<

@@ -65,12 +65,15 @@
 /* TODO: Generate readable error messages for assert_equals or assert_str_equals
  */
 #define ASSERT_EQUALS(expected, actual)                                        \
-  ASSERT((#actual), (expected) == (actual))
+  ASSERT(("ASSERT_EQUALS(" #expected "," #actual ")"), (expected) == (actual))
+
 #define ASSERT_STRING_EQUALS(expected, actual)                                 \
-  ASSERT((#actual), strcmp((expected), (actual)) == 0)
+  ASSERT(("ASSERT_STRING_EQUALS(" #expected "," #actual ")"),                  \
+         strcmp((expected), (actual)) == 0)
 
 /* Run a test() function */
 #define RUN(test_function)                                                     \
+  assert_num = 1;                                                              \
   printf("Test%d:" #test_function "\r\n", ++test_num);                         \
   tt_execute((#test_function), (test_function));
 
@@ -89,6 +92,7 @@ const char *tt_current_expression = NULL;
 const char *tt_current_file = NULL;
 int tt_current_line = 0;
 int test_num = 0;
+int assert_num = 1;
 
 ////////////////console printf with Color////////////////////////////
 void TextColor(int color);
@@ -122,10 +126,7 @@ int getTextColor() {
   GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE), &csbiInfo);
   return csbiInfo.wAttributes;
 }
-void clrscr()
-{
-  system("cls");
-}
+void clrscr() { system("cls"); }
 #else
 void TextColor(int color) {
   switch (color) {
@@ -185,6 +186,7 @@ void TextColor(int color) {
 
 void tt_execute(const char *name, void (*test_function)()) {
   tt_current_test_failed = 0;
+  assert_num++;
 
   test_function();
   if (tt_current_test_failed) {
@@ -192,10 +194,10 @@ void tt_execute(const char *name, void (*test_function)()) {
     // tt_current_file,
     //        tt_current_line, name, tt_current_msg, tt_current_expression);
     TextColor(RED);
-    printf("\r\nfailure:");
-    TextColor(LIGHTGRAY);
-    printf("Position:( %s : %d ),  \r\n%s: %s (%s)\r\n", tt_current_file,
-           tt_current_line, name, tt_current_msg, tt_current_expression);
+    printf("\r\nFailure in: %s( %s )\r\n", name, tt_current_file);
+    TextColor(LIGHTRED);
+    printf("\tAssert%d(Line : %d): %s\r\n", assert_num,
+           tt_current_line, tt_current_msg);
     tt_fails++;
   } else {
     TextColor(GREEN);

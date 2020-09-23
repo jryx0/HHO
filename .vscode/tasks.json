@@ -7,8 +7,8 @@
       "label": "HHO Test Make build",
       "type": "shell",
       "command": "mingw32-make",
-      "args": [
-        "build"
+      "args": [        
+        "test" 
       ]
     },
     {
@@ -16,7 +16,7 @@
       "type": "shell",
       "command": "mingw32-make",
       "args": [
-        "clean"
+        "cleanw"
       ]
     },
     {
