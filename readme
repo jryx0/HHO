@@ -30,8 +30,6 @@ switch(userinfo.type)
  * 
  */
 
-hbasewin.c
-
 
 lanuch.json
   "preLaunchTask" = tasks.label
