@@ -51,7 +51,7 @@ $(SHOW):
 	$(MAKE) $(SHOW) -C $(TEST)  
 
 $(TEST):
-	@echo --------------$(TEST) Makefile-----------------------
+	@echo --------------$(TEST)Build  Makefile-----------------------
 	$(MAKE) $(BUILD) -C $(TEST)
 
 #cmd,powershell
