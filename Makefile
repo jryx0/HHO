@@ -53,7 +53,7 @@ $(SHOW):
 $(TEST):
 	@echo --------------$(TEST) Makefile-----------------------
 	$(MAKE) $(BUILD) -C $(TEST)
-	
+
 #cmd,powershell
 $(CLEANW):
 	$(MAKE) $(CLEANW) -C $(TEST)

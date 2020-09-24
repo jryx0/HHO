@@ -1,9 +1,8 @@
 #ifndef __HBASEWIN_H__
 #define __HBASEWIN_H__
-#include "SVGAUTIL.H"
+//#include "SVGAUTIL.H"
 #include "list.h"
-
-#include <memory.h>
+//#include <memory.h>
 
 typedef enum winStatus { HHOSHOW, HHOHIDE, HHODELETE };
 
@@ -30,9 +29,9 @@ typedef struct {
 
   //屏幕最大显示颜色 256 32k 64k颜色
   int maxcolors;
-} winColors;
+} win_colors;
 
-typedef struct winstruct {
+typedef struct win_attr {
   //窗口类型：按钮、文本输入框、多选框
   int hhowintype;
   //窗口唯一ID
@@ -48,6 +47,9 @@ typedef struct winstruct {
 
   //窗口状态
   int status; // winStatus
+
+  //窗口颜色
+  // win_colors *colors;
 
   //显示标题
   char *title;
@@ -73,19 +75,23 @@ typedef struct winstruct {
   //子窗口列表
   list_t *children;
   //父窗口
-  struct winstruct *parent;
-  struct winstruct *desktop;
+  struct win_attr *parent;
+  struct win_attr *desktop;
 } hbasewinAttr;
 
 hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
-                            int nHeight, int winID, const char *title);
+                              int nHeight, int winID, const char *title);
+void DestoryWindows(hbasewinAttr *win);
+
 hbasewinAttr *addChild(hbasewinAttr *parent, hbasewinAttr *child);
+hbasewinAttr *removeChild(hbasewinAttr *parent, hbasewinAttr *child);
+hbasewinAttr *removeChildByID(hbasewinAttr *parent, int childid);
+
+win_colors *getWinStandrandColors();
+void OnPaint(hbasewinAttr *win, void *val);
+void repaintChildren(hbasewinAttr *win);
 int getAbsoluteX(hbasewinAttr *win);
 int getAbsoluteY(hbasewinAttr *win);
-int getAbsoluteHeight(hbasewinAttr *win);
-int getAbsoluteWidth(hbasewinAttr *win);
-void OnPaint(hbasewinAttr *win, void *val);
 
-void repaintChildren(hbasewinAttr *win);
 int checkmouseInside(hbasewinAttr *win, int x, int y);
 #endif
