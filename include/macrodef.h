@@ -3,6 +3,7 @@
 
 #ifndef __BORLANDC__
 #define DATAPATH "data\\"
+#define huge
 #else
 #define DATAPATH "E:\\HHO\\data\\"
 #endif
