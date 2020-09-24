@@ -1,6 +1,5 @@
 *.pptx
 *.docx
-build/
 *.d
 *.o
 *.obj
