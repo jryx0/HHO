@@ -6,7 +6,7 @@
 /*						*/
 /************************************************/
 
-#include "HHOWin.h"
+#include "HBaseWin.h"
 #include "svgautil.h"
 
 #include <dos.h>
