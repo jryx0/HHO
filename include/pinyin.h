@@ -4,12 +4,14 @@
 
 #define MAXNUMPY 403
 
-typedef struct {
+typedef struct
+{
   char pinying[7];
   int postion;
 } hanziIndex;
 
-typedef struct {
+typedef struct
+{
   FILE *fpHanzi;
   hanziIndex index[MAXNUMPY];
 } pyInput;

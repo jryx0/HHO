@@ -4,9 +4,15 @@
 #include "list.h"
 //#include <memory.h>
 
-typedef enum winStatus { HHOSHOW, HHOHIDE, HHODELETE };
+typedef enum winStatus
+{
+  HHOSHOW,
+  HHOHIDE,
+  HHODELETE
+};
 
-typedef enum winType {
+typedef enum winType
+{
   WIN,
   BUTTON,
   TEXTBOX,
@@ -20,7 +26,8 @@ typedef enum winType {
 typedef void (*hhoevent)(struct winstruct *win, void *value);
 typedef void (*hhoeventhandler)(struct winstruct *win, int type, void *value);
 
-typedef struct {
+typedef struct
+{
   int standardShade[4];
   int capColour;
   int fontColour;
@@ -31,7 +38,8 @@ typedef struct {
   int maxcolors;
 } win_colors;
 
-typedef struct win_attr {
+typedef struct winstruct
+{
   //窗口类型：按钮、文本输入框、多选框
   int hhowintype;
   //窗口唯一ID
@@ -75,8 +83,8 @@ typedef struct win_attr {
   //子窗口列表
   list_t *children;
   //父窗口
-  struct win_attr *parent;
-  struct win_attr *desktop;
+  struct winstruct *parent;
+  struct winstruct *desktop;
 } hbasewinAttr;
 
 hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
@@ -93,5 +101,5 @@ void repaintChildren(hbasewinAttr *win);
 int getAbsoluteX(hbasewinAttr *win);
 int getAbsoluteY(hbasewinAttr *win);
 
-int checkmouseInside(hbasewinAttr *win, int x, int y);
+int checkpointInside(hbasewinAttr *win, int x, int y);
 #endif
