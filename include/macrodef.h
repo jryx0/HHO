@@ -1,6 +1,8 @@
 #ifndef __MACRODEF_H__
 #define __MACRODEF_H__
 
+//#define SVGA32K
+
 #ifndef __BORLANDC__
 #define DATAPATH "data\\"
 #define huge

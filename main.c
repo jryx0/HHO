@@ -42,13 +42,16 @@ int main(int argc, char *argv[]) {
 
   while (1) {
     updateMouseStatus(&mouse);
+
     currentwin = checkmousewin(desktop, &mouse);
     if (currentwin)
       desktop->EventHandler(currentwin, EVENT_MOUSE, &mouse);
-    if (oldwin != currentwin && oldwin)
-      oldwin->onPaint(oldwin, NULL);
 
-    oldwin = currentwin;
+    /*
+      if (oldwin != currentwin && oldwin)
+        oldwin->onPaint(oldwin, NULL);
+
+      oldwin = currentwin;*/
 
     if (kbhit()) {      //如果有按键按下，则kbhit()函数返回真
       kbchar = getch(); //使用getch()函数获取按下的键值

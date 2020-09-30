@@ -1,8 +1,8 @@
 #ifndef __RESOUCE_H__
 #define __RESOUCE_H__
-
+#include "macrodef.h"
 ///////////////////////Graphics define/////////////////////////////////////
-//#define SVGA32K
+
 #if defined(SVGA64K)
 #define CapColor 0x0015
 #define Shade0 0xFFFF
@@ -10,7 +10,7 @@
 #define Shade2 0x52AA
 #define Shade3 0
 #define FontColor 0
-#define desktopColor 0x87FF
+#define desktopColor 0x0555
 #define capFontColor 0xFFFF
 #elif defined(SVGA32K)
 #define CapColor 0x0015
@@ -19,10 +19,10 @@
 #define Shade2 0x294A
 #define Shade3 0
 #define FontColor 0
-#define desktopColor 0x03FF
+#define desktopColor 0x56B5
 #define capFontColor 0x7FFF
 #else
-#define capColor BLUE
+#define CapColor BLUE
 #define Shade0 WHITE
 #define Shade1 LIGHTGRAY
 #define Shade2 DARKGRAY

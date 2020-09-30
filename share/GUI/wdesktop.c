@@ -5,40 +5,68 @@
 #include <graphics.h>
 
 void OnPaint_Desktop(hbasewinAttr *win, void *value) {
+  int maxx = getmaxx() - 1;
+  int maxy = getmaxy() - 1;
   if (win == NULL)
     return;
 
   setfillstyle(SOLID_FILL, RealFillColor(desktopColor));
-  bar(win->x, win->y, win->nWidth, win->nHeight - 40);
+  bar(win->x, win->y, win->nWidth, win->nHeight);
+
+  ///////color test///////////
+  setfillstyle(SOLID_FILL, RealFillColor(desktopColor));
+  bar(maxx - 20, maxy - 100, maxx - 5, maxy);
+  rectangle(maxx - 20, maxy - 100, maxx - 5, maxy);
+
+  setfillstyle(SOLID_FILL, RealFillColor(CapColor));
+  bar(maxx - 20 - 20, maxy - 100, maxx - 5 - 20, maxy);
+
+  setfillstyle(SOLID_FILL, RealFillColor(Shade0));
+  bar(maxx - 20 - 40, maxy - 100, maxx - 5 - 40, maxy);
+
+  setfillstyle(SOLID_FILL, RealFillColor(Shade1));
+  bar(maxx - 20 - 60, maxy - 100, maxx - 5 - 60, maxy);
+
+  setfillstyle(SOLID_FILL, RealFillColor(Shade2));
+  bar(maxx - 20 - 80, maxy - 100, maxx - 5 - 80, maxy);
+
+  setfillstyle(SOLID_FILL, RealFillColor(Shade3));
+  bar(maxx - 20 - 100, maxy - 100, maxx - 5 - 100, maxy);
+  ////////////////////////////
 
   repaintChildren(win);
 }
 
 hbasewinAttr *CreateDesktop(int screenmode) {
   hbasewinAttr *desktop;
+  int maxx = getmaxx() - 1;
+  int maxy = getmaxy() - 1;
 
-  switch (screenmode) {
-  // 1024*768 256
-  case 1:
-    desktop = CreateWindowsEx(NULL, 0, 0, 1023, 767, 0, NULL);
-    SetMouseArea(0, 0, 1023, 767);
-    break;
-  // 800*600 32k
-  case 2:
-    desktop = CreateWindowsEx(NULL, 0, 0, 799, 599, 0, NULL);
-    SetMouseArea(0, 0, 799, 599);
-    break;
-  // 800*600 64k
-  case 3:
-    desktop = CreateWindowsEx(NULL, 0, 0, 799, 599, 0, NULL);
-    SetMouseArea(0, 0, 799, 599);
-    break;
-  // 1024*768 256
-  default:
-    desktop = CreateWindowsEx(NULL, 0, 0, 1023, 767, 0, NULL);
-    SetMouseArea(0, 0, 1023, 767);
-    break;
-  }
+  desktop = CreateWindowsEx(NULL, 0, 0, maxx, maxy, 0, NULL);
+  SetMouseArea(0, 0, maxx, maxy);
+  setviewport(0, 0, maxx, maxy, 1);
+  // switch (screenmode) {
+  // // 1024*768 256
+  // case 1:
+  //   desktop = CreateWindowsEx(NULL, 0, 0, 1023, 767, 0, NULL);
+  //   SetMouseArea(0, 0, 1023, 767);
+  //   break;
+  // // 800*600 32k
+  // case 2:
+  //   desktop = CreateWindowsEx(NULL, 0, 0, 799, 599, 0, NULL);
+  //   SetMouseArea(0, 0, 799, 599);
+  //   break;
+  // // 800*600 64k
+  // case 3:
+  //   desktop = CreateWindowsEx(NULL, 0, 0, 799, 599, 0, NULL);
+  //   SetMouseArea(0, 0, 799, 599);
+  //   break;
+  // // 1024*768 256
+  // default:
+  //   desktop = CreateWindowsEx(NULL, 0, 0, 1023, 767, 0, NULL);
+  //   SetMouseArea(0, 0, 1023, 767);
+  //   break;
+  // }
 
   desktop->onPaint = OnPaint_Desktop;
   desktop->EventHandler = eventhandlerdesktop;
