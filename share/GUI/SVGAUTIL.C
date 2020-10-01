@@ -22,7 +22,6 @@
 /* modes, as the BGI kernel can only handle 8-bit color values.		*/
 /*									*/
 /************************************************************************/
-
 /********************************************************/
 /* long RGB(char rVal, char gVal, char bVal);   	*/
 /*					   		*/
@@ -38,10 +37,12 @@
 /* 	long - Color value for this mode.		*/
 /*							*/
 /********************************************************/
-long RGB(char rVal, char gVal, char bVal) {
+long RGB(char rVal, char gVal, char bVal)
+{
   __rColor xColor;
 
-  switch (getmaxcolor()) {
+  switch (getmaxcolor())
+  {
   case 32767:
     xColor.c15.rVal = (rVal >> 3) & 0x1F;
     xColor.c15.gVal = (gVal >> 3) & 0x1F;
@@ -74,12 +75,14 @@ long RGB(char rVal, char gVal, char bVal) {
 /*	long - Color value					*/
 /*								*/
 /****************************************************************/
-long RealDrawColor(long color) {
+long RealDrawColor(long color)
+{
   __rColor xColor;
 
   xColor.cval = color;
   /* Do color set hacks for hicolor/truecolor modes */
-  switch (getmaxcolor()) {
+  switch (getmaxcolor())
+  {
   case 32767:
     setrgbpalette(1024, xColor.c15.rVal, xColor.c15.gVal, xColor.c15.bVal);
     break;
@@ -106,12 +109,14 @@ long RealDrawColor(long color) {
 /*	long - Color value					*/
 /*								*/
 /****************************************************************/
-long RealFillColor(long color) {
+long RealFillColor(long color)
+{
   __rColor xColor;
 
   xColor.cval = color;
   /* Do color set hacks for hicolor/truecolor modes */
-  switch (getmaxcolor()) {
+  switch (getmaxcolor())
+  {
   case 32767:
     setrgbpalette(1025, xColor.c15.rVal, xColor.c15.gVal, xColor.c15.bVal);
     break;
@@ -138,12 +143,14 @@ long RealFillColor(long color) {
 /*	long - Color value					*/
 /*								*/
 /****************************************************************/
-long RealColor(long color) {
+long RealColor(long color)
+{
   __rColor xColor;
 
   xColor.cval = color;
   /* Do color set hacks for hicolor/truecolor modes */
-  switch (getmaxcolor()) {
+  switch (getmaxcolor())
+  {
   case 32767:
     setrgbpalette(1026, xColor.c15.rVal, xColor.c15.gVal, xColor.c15.bVal);
     break;
@@ -164,7 +171,8 @@ long RealColor(long color) {
 /*  DacPalette256 dac256;			      */
 /*						      */
 /* getvgapalette256(&dac256);			      */
-void getvgapalette256(DacPalette256 *PalBuf) {
+void getvgapalette256(DacPalette256 *PalBuf)
+{
   struct REGPACK reg;
 
   reg.r_ax = 0x1017;
@@ -182,7 +190,8 @@ void getvgapalette256(DacPalette256 *PalBuf) {
 /*  DacPalette256 dac256;			      */
 /*						      */
 /* setvgapalette256(&dac256);			      */
-void setvgapalette256(DacPalette256 *PalBuf) {
+void setvgapalette256(DacPalette256 *PalBuf)
+{
   struct REGPACK reg;
 
   reg.r_ax = 0x1012;
@@ -194,8 +203,10 @@ void setvgapalette256(DacPalette256 *PalBuf) {
 }
 
 /* Returns the color for white */
-long WhitePixel(void) {
-  switch (getmaxcolor()) {
+long WhitePixel(void)
+{
+  switch (getmaxcolor())
+  {
   case 32768:
     return 0x7fffL;
   case 65535:
@@ -205,7 +216,8 @@ long WhitePixel(void) {
   };
 }
 
-int huge DetectVGA256() {
+int huge DetectVGA256()
+{
   int Vid = 4;
 
   // printf("Which video mode would you like to use? \n");
@@ -217,7 +229,8 @@ int huge DetectVGA256() {
   return Vid;
 }
 
-int huge DetectVGA64k() {
+int huge DetectVGA64k()
+{
   int Vid = 4;
   // printf("Which video mode would you like to use? \n");
   // printf("  3) 640x480x65536\n");
@@ -228,7 +241,8 @@ int huge DetectVGA64k() {
   return Vid;
 }
 
-int huge DetectVGA64k1024() {
+int huge DetectVGA64k1024()
+{
   int Vid = 5;
   // printf("Which video mode would you like to use? \n");
   // printf("  3) 640x480x65536\n");
@@ -239,7 +253,8 @@ int huge DetectVGA64k1024() {
   return Vid;
 }
 
-int huge DetectVGA32k() {
+int huge DetectVGA32k()
+{
   int Vid = 4;
 
   // printf("Which video mode would you like to use? \n");
@@ -252,7 +267,8 @@ int huge DetectVGA32k() {
   return Vid;
 }
 
-int huge DetectVGA32k1024() {
+int huge DetectVGA32k1024()
+{
   int Vid = 5;
 
   // printf("Which video mode would you like to use? \n");
@@ -265,7 +281,8 @@ int huge DetectVGA32k1024() {
   return Vid;
 }
 
-unsigned int RGB888ToRGB565(long aPixel) {
+unsigned int RGB888ToRGB565(long aPixel)
+{
   int red = (aPixel >> 16) & 0xFF;
   int green = (aPixel >> 8) & 0xFF;
   int blue = aPixel & 0xFF;
@@ -282,11 +299,30 @@ unsigned int RGB888ToRGB565(long aPixel) {
           = 2 SVGA32k
           = 3 SVGA64k
 */
-int initSvga(int mode) {
+int initSvga(int mode)
+{
   int Gd = DETECT, Gm;
-  char GrErr;  
+  char GrErr;
 
-  switch (mode) {
+  if (mode == -1)
+  {
+#if defined(SVGA64K)
+#if defined(SVGA800x600)
+    mode = 3;
+#elif defined(SVGA1024x768)
+    mode = 5;
+#endif
+#elif defined(SVGA32K)
+#if defined(SVGA800x600)
+    mode = 2;
+#elif defined(SVGA1024x768)
+    mode = 4;
+#endif
+#endif
+  }
+
+  switch (mode)
+  {
   case 1: // 1024*786 256
     installuserdriver("Svga256", DetectVGA256);
     break;
@@ -311,7 +347,8 @@ int initSvga(int mode) {
 
   /* Test if mode was initialized successfully */
   GrErr = graphresult();
-  if (GrErr != grOk) {
+  if (GrErr != grOk)
+  {
     printf("%s-%dGraphics error: %s\n", __FILE__, __LINE__,
            grapherrormsg(GrErr));
     exit(1);
@@ -319,4 +356,3 @@ int initSvga(int mode) {
 
   return mode;
 }
-
