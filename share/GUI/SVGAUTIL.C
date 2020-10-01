@@ -356,3 +356,156 @@ int initSvga(int mode)
 
   return mode;
 }
+void SelectPage(register char page)
+{
+  union REGS r;
+  static unsigned char old_page = 0; // 上一次的页面号，用于减少切换次数
+  static int is_first_select = 1;    //	用于判断是否是第一次换页
+
+  /* 窗口页面控制功能号 */
+  r.x.ax = 0x4f05;
+  r.x.bx = 0;
+
+  /* 如果是第一次换页 */
+  if (is_first_select == 1)
+  {
+    old_page = page;
+    r.x.dx = page;
+    int86(0x10, &r, &r);
+    is_first_select = 0;
+  }
+  /* 如果和上次页面号不同，则进行换页 */
+  else if (page != old_page)
+  {
+    old_page = page;
+    r.x.dx = page;
+    int86(0x10, &r, &r);
+  }
+}
+
+unsigned int GetPixel(int x, int y)
+{
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
+  unsigned char new_page;                                                 // 要切换的页面号
+  unsigned long int page;                                                 // 对应显存地址偏移量
+
+  /* 判断点是否在屏幕范围内，不在就退出 */
+  if (x < 0 || x > (getmaxx() - 1) || y < 0 || y > (getmaxy() - 1))
+  {
+    return;
+  }
+
+  /* 计算显存地址偏移量和对应的页面号，做换页操作 */
+  page = ((unsigned long int)y << 10) + x;
+  new_page = page >> 15; /* 32k个点一换页，除以32k的替代算法 */
+  SelectPage(new_page);
+
+  /* 返回颜色 */
+  return video_buffer[page];
+}
+
+void PutPixel(int x, int y, unsigned int color)
+{
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
+  unsigned char new_page;                                                 // 要切换的页面号
+  unsigned long int page;                                                 // 对应显存地址偏移量
+
+  /* 判断点是否在屏幕范围内，不在就退出 */
+  if (x < 0 || x > (getmaxx() - 1) || y < 0 || y > (getmaxy() - 1))
+  {
+    return;
+  }
+
+  /* 计算显存地址偏移量和对应的页面号，做换页操作 */
+  page = ((unsigned long int)y << 10) + x;
+  new_page = page >> 15; /* 32k个点一换页，除以32k的替代算法 */
+  SelectPage(new_page);
+
+  /* 向显存写入颜色，对应点画出 */
+  video_buffer[page] = color;
+}
+
+void clearScreen(int color)
+{
+  long i, j = 16;
+  unsigned int pages = 0, pagesize = 0;
+
+  /*显存指针常量，指向显存首地址，指针本身不允许修改*/
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L;
+
+#if defined(SVGA64K) || defined(SVGA32K)
+#ifdef SVGA1024x768
+  pages = 24;
+#elif defined(SVGA800x600)
+  pages = 14;
+#endif
+  pagesize = 1024 * 32;
+  for (i = 0; i <= pages; i++)
+  {
+    SelectPage(i);
+    memset(video_buffer + (j * (i * 2) << 10), color, 1024 * 32);
+    memset(video_buffer + (j * (i * 2 + 1) << 10), color, 1024 * 32);
+  }
+#else
+  setfillstyle(SOLID_FILL, RealFillColor(color));
+  bar(0, 0, getmaxx(), getmaxy());
+#endif
+
+  /* 
+  SelectPage(1);
+  memset(video_buffer + (j * 2 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 3 << 10), color, 1024 * 32);
+
+  SelectPage(2);
+  memset(video_buffer + (j * 4 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 5 << 10), color, 1024 * 32);
+
+  SelectPage(3);
+  memset(video_buffer + (j * 6 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 7 << 10), color, 1024 * 32);
+
+  SelectPage(4);
+  memset(video_buffer + (j * 8 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 9 << 10), color, 1024 * 32);
+
+  SelectPage(5);
+  memset(video_buffer + (j * 10 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 11 << 10), color, 1024 * 32);
+
+  SelectPage(6);
+  memset(video_buffer + (j * 12 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 13 << 10), color, 1024 * 32);
+
+  SelectPage(7);
+  memset(video_buffer + (j * 14 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 15 << 10), color, 1024 * 32);
+
+  SelectPage(8);
+  memset(video_buffer + (j * 16 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 17 << 10), color, 1024 * 32);
+
+  SelectPage(9);
+  memset(video_buffer + (j * 18 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 19 << 10), color, 1024 * 32);
+
+  SelectPage(10);
+  memset(video_buffer + (j * 20 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 21 << 10), color, 1024 * 32);
+
+  SelectPage(11);
+  memset(video_buffer + (j * 22 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 23 << 10), color, 1024 * 32);
+
+  SelectPage(12);
+  memset(video_buffer + (j * 24 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 25 << 10), color, 1024 * 32);
+
+  SelectPage(13);
+  memset(video_buffer + (j * 26 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 27 << 10), color, 1024 * 32);
+
+  SelectPage(14);
+  memset(video_buffer + (j * 28 << 10), color, 1024 * 32);
+  memset(video_buffer + (j * 29 << 10), color, 1024 * 32); 
+*/
+}

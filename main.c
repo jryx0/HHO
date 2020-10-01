@@ -30,7 +30,9 @@ int main(int argc, char *argv[])
   btn1 = CreateButton(desktop, 10, 10, 80, 25, ID_WIN_LOG_PANEL, "aaa");
   btn2 = CreateButton(desktop, 100, 10, 80, 25, ID_WIN_LOGIN, "aa");
 
-  desktop->onPaint(desktop, NULL);
+  //desktop->onPaint(desktop, NULL);
+
+  clearScreen(RealColor(0xA815));
 
   ShowMouse();
 
