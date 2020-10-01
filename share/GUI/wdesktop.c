@@ -4,9 +4,11 @@
 #include "wResource.h"
 #include <graphics.h>
 
-void OnPaint_Desktop(hbasewinAttr *win, void *value) {
+void OnPaint_Desktop(hbasewinAttr *win, void *value)
+{
   int maxx = getmaxx() - 1;
   int maxy = getmaxy() - 1;
+  char text[20];
   if (win == NULL)
     return;
 
@@ -34,10 +36,15 @@ void OnPaint_Desktop(hbasewinAttr *win, void *value) {
   bar(maxx - 20 - 100, maxy - 100, maxx - 5 - 100, maxy);
   ////////////////////////////
 
+  setcolor(RealDrawColor(0xFFFF82));
+  sprintf(text, "%u, %dx%d", getmaxcolor()  , getmaxx() + 1, getmaxy() + 1);
+  outtextxy(10, maxy - 200, text);
+
   repaintChildren(win);
 }
 
-hbasewinAttr *CreateDesktop(int screenmode) {
+hbasewinAttr *CreateDesktop(int screenmode)
+{
   hbasewinAttr *desktop;
   int maxx = getmaxx() - 1;
   int maxy = getmaxy() - 1;
@@ -73,25 +80,32 @@ hbasewinAttr *CreateDesktop(int screenmode) {
   return desktop;
 }
 
-void eventhandlerdesktop(hbasewinAttr *win, int type, void *value) {
+void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
+{
   mousestatus *mouse;
   if (win == NULL)
     return;
 
-  switch (type) {
+  switch (type)
+  {
   case EVENT_MOUSE:
     mouse = (mousestatus *)value;
 
-    if (mouse->leftClickState == MOUSE_BUTTON_DOWN && win->onLeftDown) {
+    if (mouse->leftClickState == MOUSE_BUTTON_DOWN && win->onLeftDown)
+    {
       win->onLeftDown(win, NULL);
-      if (win->onPaint) {
+      if (win->onPaint)
+      {
         HideMouse();
         win->onPaint(win, NULL);
         ShowMouse();
       }
-    } else if (mouse->leftClickState == MOUSE_BUTTON_UP && win->onLeftUp) {
+    }
+    else if (mouse->leftClickState == MOUSE_BUTTON_UP && win->onLeftUp)
+    {
       win->onLeftUp(win, NULL);
-      if (win->onPaint) {
+      if (win->onPaint)
+      {
         HideMouse();
         win->onPaint(win, NULL);
         ShowMouse();
@@ -104,7 +118,8 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value) {
     break;
   }
 }
-hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse) {
+hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse)
+{
   list_iterator_t *it;
   list_node_t *node;
   hbasewinAttr *temp;
@@ -112,11 +127,13 @@ hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse) {
   if (win == NULL || mouse == NULL)
     return win;
   it = list_iterator_new(win->children, LIST_HEAD);
-  while (node = list_iterator_next(it)) {
+  while (node = list_iterator_next(it))
+  {
     if (node->val == NULL)
       continue;
     temp = (hbasewinAttr *)(node->val);
-    if (checkpointInside(temp, mouse->x, mouse->y)) {
+    if (checkpointInside(temp, mouse->x, mouse->y))
+    {
       list_iterator_destroy(it);
       return temp;
     }

@@ -5,7 +5,7 @@
 /*	    Jordan Hargraphix Software		*/
 /*						*/
 /************************************************/
-
+#include "macrodef.h"
 #include "HBaseWin.h"
 #include "svgautil.h"
 
