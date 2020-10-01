@@ -18,17 +18,9 @@ int main(int argc, char *argv[])
   hbasewinAttr *btn1, *btn2, *btn3;
   hbasewinAttr *desktop;
   hbasewinAttr *currentwin = NULL, *oldwin = NULL;
+
   if (argc > 1)
     screenMode = atoi(argv[1]);
-  //   else {
-  // #if defined(SVGA32K)
-  //     screenMode = 2;
-  // #elif defined(SVGA64K)
-  //     screenMode = 3;
-  // #else
-  //     screenMode = 1;
-  // #endif
-  //   }
 
   initSvga(screenMode);
   InitMouse();
