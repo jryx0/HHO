@@ -1,7 +1,9 @@
 #include "macrodef.h"
-#include"mouse.h"
+#include "mouse.h"
 
 #include <dos.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 /******************函数清单***************************
 1.	int MouseInit(void)
@@ -16,41 +18,40 @@
 #define MOUSEWIDTH 20
 #define MOUSEHIGHT 30
 int const mouse_shape[MOUSEHIGHT][MOUSEWIDTH] =
-{
-	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{1,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0},
-	{1,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0},
-	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0},
-	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0},
-	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0},
-	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0},
-	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0},
-	{1,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1},
-	{1,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0},
-	{1,2,2,2,2,1,2,2,2,2,2,1,0,0,0,0,0,0,0,0},
-	{1,2,2,2,1,0,1,2,2,2,2,2,1,0,0,0,0,0,0,0},
-	{1,2,2,1,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,0},
-	{1,2,1,0,0,0,0,1,2,2,2,2,2,1,0,0,0,0,0,0},
-	{1,1,0,0,0,0,0,0,1,2,2,2,2,2,1,0,0,0,0,0},
-	{1,0,0,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,1,2,2,1,1,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0}
-};
+		{
+				{1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 2, 1, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 2, 1, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
+				{1, 2, 1, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0},
+				{1, 1, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
+				{1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0},
+				{0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}};
 int mouse_bk[MOUSEHIGHT][MOUSEWIDTH];
 
-int MouseInit(void)//1
+int MouseInit(void) //1
 {
 	union REGS mouse;
 
@@ -60,15 +61,15 @@ int MouseInit(void)//1
 	return mouse.x.ax;
 }
 
-void MouseRange(Area mouse_area)//2
+void MouseRange(Area mouse_area) //2
 {
 	/*REGS联合体见上*/
 	union REGS mouse;
 
 	/*设置横坐标范围*/
 	mouse.x.ax = 7;
-	mouse.x.cx = mouse_area.lt.x ;
-	mouse.x.dx = mouse_area.rb.x ;
+	mouse.x.cx = mouse_area.lt.x;
+	mouse.x.dx = mouse_area.rb.x;
 	int86(0x33, &mouse, &mouse);
 
 	/*设置纵坐标范围*/
@@ -78,7 +79,7 @@ void MouseRange(Area mouse_area)//2
 	int86(0x33, &mouse, &mouse);
 }
 
-int MouseXYB(MOUSE * mouse)//3
+int MouseXYB(MOUSE *mouse) //3
 {
 	/*REGS联合体见上*/
 	union REGS r;
@@ -90,7 +91,7 @@ int MouseXYB(MOUSE * mouse)//3
 	return mouse->but;
 }
 
-int MouseBarLeft(Area mouse_area )//4
+int MouseBarLeft(Area mouse_area) //4
 {
 	/*存放鼠标状态的结构体*/
 	MOUSE mouse = {0, 0, 0};
@@ -99,11 +100,7 @@ int MouseBarLeft(Area mouse_area )//4
 	MouseXYB(&mouse);
 
 	/*判断鼠标左键是否在指定区域内按下*/
-	if ((mouse.position.x >= mouse_area.lt.x  )
-		&& (mouse.position.x <= mouse_area.rb.x  )
-		&& (mouse.position.y >= mouse_area.lt.y  )
-		&& (mouse.position.y <= mouse_area.rb.y )
-		&& ((mouse.but & 1) == 1))
+	if ((mouse.position.x >= mouse_area.lt.x) && (mouse.position.x <= mouse_area.rb.x) && (mouse.position.y >= mouse_area.lt.y) && (mouse.position.y <= mouse_area.rb.y) && ((mouse.but & 1) == 1))
 	{
 		return 1;
 	}
@@ -113,7 +110,7 @@ int MouseBarLeft(Area mouse_area )//4
 	}
 }
 
-void MouseStoreBk( Coordinate position)//5
+void MouseStoreBk(Coordinate position) //5
 {
 	int i, j;
 	Coordinate temp;
@@ -126,7 +123,7 @@ void MouseStoreBk( Coordinate position)//5
 				continue;
 			}
 
-			temp.x =position.x +j;
+			temp.x = position.x + j;
 			temp.y = position.y + i;
 
 			mouse_bk[i][j] = getpixel64k(temp);
@@ -134,7 +131,7 @@ void MouseStoreBk( Coordinate position)//5
 	}
 }
 
-void MousePutBk(Coordinate position )//6
+void MousePutBk(Coordinate position) //6
 {
 	int i, j;
 	for (i = 0; i < MOUSEHIGHT; i++)
@@ -151,9 +148,9 @@ void MousePutBk(Coordinate position )//6
 	}
 }
 
-void MouseReset(void)//7
+void MouseReset(void) //7
 {
-	Area mouse_area = {{ 0, 0 },{SCR_WIDTH - 1, SCR_HEIGHT -1 }};
+	Area mouse_area = {{0, 0}, {SCR_WIDTH - 1, SCR_HEIGHT - 1}};
 	if (MouseInit() == 0)
 	{
 		printf("ERROR In MouseInit\n");
@@ -164,7 +161,7 @@ void MouseReset(void)//7
 	MouseStoreBk(mouse_area.lt);
 }
 
-void MouseDraw(MOUSE mouse)//8
+void MouseDraw(MOUSE mouse) //8
 {
 	int i, j;
 	for (i = 0; i < MOUSEHIGHT; i++)
@@ -186,4 +183,3 @@ void MouseDraw(MOUSE mouse)//8
 		}
 	}
 }
-

@@ -1,13 +1,22 @@
 #include "list.h"
 #include "macrodef.h"
-#include "memory.h"
 #include "pinyin.h"
 #include "tinytest.h"
 #include "userinfo.h"
+#include "test.h"
+
+#ifdef GUI
+#include "hhogui.h"
+#include "mouse.h"
+#include "SVGA.h"
+#endif
+
 #include <conio.h>
 #include <string.h>
+#include <memory.h>
 
-void test_userinfo_save() {
+void test_userinfo_save()
+{
   UserInfo *user = (UserInfo *)malloc(sizeof(UserInfo));
   list_t *userinfo;
   int counter = 0;
@@ -35,7 +44,8 @@ void test_userinfo_save() {
   ASSERT_EQUALS(counter, 1);
 }
 
-void test_userinfo_read() {
+void test_userinfo_read()
+{
   // UserInfo *user = (UserInfo *)malloc(sizeof(UserInfo));
   list_t *userinfolist;
   list_node_t *ptest;
@@ -43,14 +53,17 @@ void test_userinfo_read() {
   userinfolist = list_new();
 
   userinfolist = ReadFileToList(USERINFOFILE, userinfolist, sizeof(UserInfo));
-  if (userinfolist) {
+  if (userinfolist)
+  {
     ptest = list_at(userinfolist, 0);
     ASSERT_EQUALS(12, ((UserInfo *)ptest->val)->id);
-  } else
+  }
+  else
     ASSERT_EQUALS(1, 0);
 }
 
-void test_pinyin() {
+void test_pinyin()
+{
   char *candidateHanzi;
   pyInput *idx = initPYHZIndex();
 
@@ -78,7 +91,8 @@ void test_pinyin() {
 }
 
 // test in console both in vscode and borlandc
-void console_test() {
+void console_test()
+{
   clrscr();
   TextColor(WHITE);
   printf("\r\nStart test....\r\n\r\n");
@@ -92,10 +106,18 @@ void console_test() {
 }
 
 // borland GUI test
-void borland_c_GUI_test() {}
+void borland_c_GUI_test()
+{
+
+#ifdef GUI
+  
+
+#endif
+}
 
 /* test runner */
-int main() {
+int main()
+{
 #ifdef GUI
   borland_c_GUI_test();
 #else

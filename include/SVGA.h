@@ -6,4 +6,5 @@ unsigned int getSVGA(void);
 void selectpage(register char page);
 void putpixel64k(int x, int y, unsigned int color);
 unsigned int getpixel64k(int x, int y);
+
 #endif
