@@ -1,196 +1,189 @@
-#include "SVGAUTIL.H"
-#include "mouse.h"
+#include "macrodef.h"
+#include"mouse.h"
+
 #include <dos.h>
-#include <graphics.h>
-#include <stdio.h>
 
-// long mouseback[16][16];
+/******************函数清单***************************
+1.	int MouseInit(void)
+2.	void MouseRange(Area mouse_area)
+3.	int MouseXYB(MOUSE * mouse)
+4.	int MouseBarLeft(Area mouse_area )
+5.	void MouseStoreBk( Coordinate position)
+6.	void MousePutBk(Coordinate position )
+7.	void MouseReset(void)
+8.	void MouseDraw(MOUSE mouse)
+***************************************************/
+#define MOUSEWIDTH 20
+#define MOUSEHIGHT 30
+int const mouse_shape[MOUSEHIGHT][MOUSEWIDTH] =
+{
+	{1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{1,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{1,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{1,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0},
+	{1,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0},
+	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0},
+	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0},
+	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0,0},
+	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,0},
+	{1,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0},
+	{1,2,2,2,2,2,2,2,2,2,1,1,1,1,1,1,1,1,1,1},
+	{1,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,2,2,2,2,2,2,1,0,0,0,0,0,0,0,0},
+	{1,2,2,2,2,1,2,2,2,2,2,1,0,0,0,0,0,0,0,0},
+	{1,2,2,2,1,0,1,2,2,2,2,2,1,0,0,0,0,0,0,0},
+	{1,2,2,1,0,0,0,1,2,2,2,2,1,0,0,0,0,0,0,0},
+	{1,2,1,0,0,0,0,1,2,2,2,2,2,1,0,0,0,0,0,0},
+	{1,1,0,0,0,0,0,0,1,2,2,2,2,2,1,0,0,0,0,0},
+	{1,0,0,0,0,0,0,0,0,1,2,2,2,2,1,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,1,2,2,1,1,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,1,1,0,0,0,0,0,0,0,0}
+};
+int mouse_bk[MOUSEHIGHT][MOUSEWIDTH];
 
-int InitMouse(void)
+int MouseInit(void)//1
 {
-  union REGS Inr, Outr;
-  Inr.x.ax = 0;
-  int86(0x33, &Inr, &Outr);
-  return Outr.x.ax;
-}
-void ShowMouse(void)
-{
-  union REGS Inr, Outr;
-  Inr.x.ax = 1;
-  int86(0x33, &Inr, &Outr);
-}
-void HideMouse(void)
-{
-  union REGS Inr, Outr;
-  Inr.x.ax = 2;
-  int86(0x33, &Inr, &Outr);
-}
+	union REGS mouse;
 
-void ReadMouse(int *f, int *x, int *y)
-{
-  union REGS Inr, Outr;
-  Inr.x.ax = 3;
-  int86(0x33, &Inr, &Outr);
-  *f = Outr.x.bx;
-  *x = Outr.x.cx;
-  *y = Outr.x.dx;
-}
-void SetMouseCoord(int x, int y)
-{
-  union REGS Inr, Outr;
-  Inr.x.cx = x;
-  Inr.x.dx = y;
-  Inr.x.ax = 4;
-  int86(0x33, &Inr, &Outr);
-}
-
-void SetMouseArea(int Xmin, int Ymin, int Xmax, int Ymax)
-{
-  union REGS Inr, Outr;
-  Inr.x.cx = Xmin;
-  Inr.x.dx = Xmax;
-  Inr.x.ax = 7;
-  int86(0x33, &Inr, &Outr);
-  Inr.x.cx = Ymin;
-  Inr.x.dx = Ymax;
-  Inr.x.ax = 8;
-  int86(0x33, &Inr, &Outr);
-}
-void MouseHideArea(int x1, int y1, int x2, int y2)
-{
-  union REGS Inr, Outr;
-  Inr.x.cx = x1;
-  Inr.x.dx = y1;
-  Inr.x.si = x2;
-  Inr.x.di = y2;
-  Inr.x.ax = 0x10;
-  int86(0x33, &Inr, &Outr);
-}
-int IsMouseInBox(int x1, int y1, int x2, int y2)
-{
-  int button, x, y;
-  ReadMouse(&button, &x, &y);
-  return ((x >= x1 && x <= x2 && y >= y1 && y <= y2) ? 1 : 0);
+	/*设置鼠标的功能号*/
+	mouse.x.ax = 0;
+	int86(0x33, &mouse, &mouse);
+	return mouse.x.ax;
 }
 
-void updateMouseStatus(mousestatus *status)
+void MouseRange(Area mouse_area)//2
 {
-  unsigned int xPos, yPos, bState;
-  if (status == NULL)
-    return;
+	/*REGS联合体见上*/
+	union REGS mouse;
 
-  ReadMouse(&bState, &xPos, &yPos);
-  // asm {
-  //       mov ax,0x0003
-  //       int 0x33
-  //       mov bState,bx
-  //       mov xPos,cx
-  //       mov yPos,dx
-  // }
-  switch (bState)
-  {
-  case 0:
-    status->oldLeftDown = status->leftDown;
-    status->leftDown = 0;
-    status->oldRightDown = status->rightDown;
-    status->rightDown = 0;
-    break;
-  case 1:
-    status->oldLeftDown = status->leftDown;
-    status->leftDown = 1;
-    break;
-  case 2:
-    status->oldRightDown = status->rightDown;
-    status->rightDown = 1;
-    break;
-  case 3:
-    status->oldLeftDown = status->leftDown;
-    status->leftDown = 1;
-    status->oldRightDown = status->rightDown;
-    status->rightDown = 1;
-    break;
-  default:
-    break;
-  }
+	/*设置横坐标范围*/
+	mouse.x.ax = 7;
+	mouse.x.cx = mouse_area.lt.x ;
+	mouse.x.dx = mouse_area.rb.x ;
+	int86(0x33, &mouse, &mouse);
 
-  //检测鼠标状态
-  if ((status->leftDown == 1) && (status->oldLeftDown == 0))
-    status->leftClickState = MOUSE_BUTTON_DOWN;
-  if ((status->leftDown == 0) && (status->oldLeftDown == 1))
-    status->leftClickState = MOUSE_BUTTON_UP;
-  if ((status->leftDown == 1) && (status->oldLeftDown == 1))
-    status->leftClickState = MOUSE_BUTTON_STILL_DOWN;
-  if ((status->leftDown == 0) && (status->oldLeftDown == 0))
-    status->leftClickState = MOUSE_BUTTON_STILL_UP;
-  if ((status->rightDown == 1) && (status->oldRightDown == 0))
-    status->leftClickState = MOUSE_BUTTON_DOWN;
-  if ((status->rightDown == 0) && (status->oldRightDown == 1))
-    status->leftClickState = MOUSE_BUTTON_UP;
-  if ((status->rightDown == 1) && (status->oldRightDown == 1))
-    status->rightClickState = MOUSE_BUTTON_STILL_DOWN;
-  if ((status->rightDown == 0) && (status->oldRightDown == 0))
-    status->rightClickState = MOUSE_BUTTON_STILL_UP;
-
-  status->x = xPos;
-  status->y = yPos;
+	/*设置纵坐标范围*/
+	mouse.x.ax = 8;
+	mouse.x.cx = mouse_area.lt.y;
+	mouse.x.dx = mouse_area.rb.y;
+	int86(0x33, &mouse, &mouse);
 }
 
-// void MouseSavebk(int x, int y)
-// {
-//   int i, j;
-//   for (i = 0; i <= 15; i++)
-//     for (j = 0; j <= 15; j++)
-//       mouseback[i][j] = getpixel(x + i, y + j);
-//   // GetColor64k(x + i, y + j, &mouseback[i][j]);
-// }
+int MouseXYB(MOUSE * mouse)//3
+{
+	/*REGS联合体见上*/
+	union REGS r;
+	r.x.ax = 3;
+	int86(0x33, &r, &r);
+	mouse->position.x = r.x.cx;
+	mouse->position.y = r.x.dx;
+	mouse->but = r.x.bx;
+	return mouse->but;
+}
 
-// void MousePutbk(int x, int y)
-// {
-//   int i, j;
-//   for (i = 0; i <= 15; i++)
-//     for (j = 0; j <= 15; j++)
-//       putpixel(x + i, y + j, mouseback[i][j]);
-//   // PaintPoint(x + i, y + j, mouseback[i][j]);
-// }
+int MouseBarLeft(Area mouse_area )//4
+{
+	/*存放鼠标状态的结构体*/
+	MOUSE mouse = {0, 0, 0};
 
-// void DrawMouse(int x, int y)
-// {
-//   setcolor(RealDrawColor(0xFFFFFF));
-//   line(x, y, x, y + 15);
-//   line(x + 1, y + 1, x + 1, y + 13);
-//   line(x + 2, y + 3, x + 2, y + 11);
-//   line(x + 3, y + 4, x + 3, y + 9);
-//   line(x + 4, y + 5, x + 4, y + 9);
-//   line(x + 5, y + 7, x + 5, y + 10);
-//   line(x + 6, y + 8, x + 6, y + 10);
-//   line(x + 7, y + 9, x + 7, y + 11);
-//   putpixel(x + 8, y + 11, RealDrawColor(0xFFFFFF));
-//   putpixel(x + 9, y + 12, RealDrawColor(0xFFFFFF));
-// }
+	/*读取鼠标状态*/
+	MouseXYB(&mouse);
 
-// void Mouse()
-// {
-//   int Button, Oldx, Oldy;
-//   int x, y, First = TRUE;
-//   Button = Oldx = Oldy = 0;
-//   if (!InitMouse())
-//     return;
-//   SetMouseArea(0, 0, 790, 599);
-//   HideMouse();
-//   while (Button != LEFT)
-//   {
-//     ReadMouse(&Button, &x, &y);
-//     if (Oldx != x || Oldy != y)
-//     {
-//       if (!First)
-//         MousePutbk(Oldx, Oldy);
-//       MouseSavebk(x, y);
-//       DrawMouse(x, y);
-//       Oldx = x;
-//       Oldy = y;
-//       First = FALSE;
-//     }
-//     delay(30);
-//   }
-//   MousePutbk(x, y);
-// }
+	/*判断鼠标左键是否在指定区域内按下*/
+	if ((mouse.position.x >= mouse_area.lt.x  )
+		&& (mouse.position.x <= mouse_area.rb.x  )
+		&& (mouse.position.y >= mouse_area.lt.y  )
+		&& (mouse.position.y <= mouse_area.rb.y )
+		&& ((mouse.but & 1) == 1))
+	{
+		return 1;
+	}
+	else
+	{
+		return 0;
+	}
+}
+
+void MouseStoreBk( Coordinate position)//5
+{
+	int i, j;
+	Coordinate temp;
+	for (i = 0; i < MOUSEHIGHT; i++)
+	{
+		for (j = 0; j < MOUSEWIDTH; j++)
+		{
+			if (mouse_shape[i][j] == 0)
+			{
+				continue;
+			}
+
+			temp.x =position.x +j;
+			temp.y = position.y + i;
+
+			mouse_bk[i][j] = getpixel64k(temp);
+		}
+	}
+}
+
+void MousePutBk(Coordinate position )//6
+{
+	int i, j;
+	for (i = 0; i < MOUSEHIGHT; i++)
+	{
+		for (j = 0; j < MOUSEWIDTH; j++)
+		{
+			if (mouse_shape[i][j] == 0)
+			{
+				continue;
+			}
+
+			putpixel64k(j + position.x, i + position.y, mouse_bk[i][j]);
+		}
+	}
+}
+
+void MouseReset(void)//7
+{
+	Area mouse_area = {{ 0, 0 },{SCR_WIDTH - 1, SCR_HEIGHT -1 }};
+	if (MouseInit() == 0)
+	{
+		printf("ERROR In MouseInit\n");
+		getch();
+		exit(1);
+	};
+	MouseRange(mouse_area);
+	MouseStoreBk(mouse_area.lt);
+}
+
+void MouseDraw(MOUSE mouse)//8
+{
+	int i, j;
+	for (i = 0; i < MOUSEHIGHT; i++)
+	{
+		for (j = 0; j < MOUSEWIDTH; j++)
+		{
+			if (mouse_shape[i][j] == 0)
+			{
+				continue;
+			}
+			else if (mouse_shape[i][j] == 1)
+			{
+				putpixel64k(j + mouse.position.x, i + mouse.position.y, 0);
+			}
+			else if (mouse_shape[i][j] == 2)
+			{
+				putpixel64k(j + mouse.position.x, i + mouse.position.y, 0xffff);
+			}
+		}
+	}
+}
+
