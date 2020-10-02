@@ -18,6 +18,7 @@ int main(int argc, char *argv[])
   hbasewinAttr *btn1, *btn2, *btn3;
   hbasewinAttr *desktop;
   hbasewinAttr *currentwin = NULL, *oldwin = NULL;
+  unsigned int far *bkRegion;
 
   if (argc > 1)
     screenMode = atoi(argv[1]);
@@ -30,14 +31,26 @@ int main(int argc, char *argv[])
   btn1 = CreateButton(desktop, 10, 10, 80, 25, ID_WIN_LOG_PANEL, "aaa");
   btn2 = CreateButton(desktop, 100, 10, 80, 25, ID_WIN_LOGIN, "aa");
 
-  //desktop->onPaint(desktop, NULL);
+  desktop->onPaint(desktop, NULL);
 
-  clearScreen(RealColor(0xA815));
+    //clearScreen(0xFF);
+
+  // fillRegionEx(100, 500, 200, 100, 0xa815);
+  // rectangle(50, 450, 150, 550);
+
+  // getRegionColor(bkRegion, 50, 450, 100, 100);
+
+  // putRegionColor(bkRegion, 50, 330, 100, 100);
+
+  // free(bkRegion);
+  // bkRegion = NULL;
 
   ShowMouse();
 
   while (1)
   {
+
+    //_fillRegion(random(1024), random(768), random(1024), random(768), random(65535));
     updateMouseStatus(&mouse);
 
     currentwin = checkmousewin(desktop, &mouse);

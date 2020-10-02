@@ -383,7 +383,7 @@ void SelectPage(register char page)
   }
 }
 
-unsigned int GetPixel(int x, int y)
+unsigned int _GetPixel(int x, int y)
 {
   unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
   unsigned char new_page;                                                 // 要切换的页面号
@@ -401,6 +401,7 @@ unsigned int GetPixel(int x, int y)
   SelectPage(new_page);
 
   /* 返回颜色 */
+
   return video_buffer[page];
 }
 
@@ -427,7 +428,7 @@ void PutPixel(int x, int y, unsigned int color)
 
 void clearScreen(int color)
 {
-  long i, j = 16;
+  int i, j = 16;
   unsigned int pages = 0, pagesize = 0;
 
   /*显存指针常量，指向显存首地址，指针本身不允许修改*/
@@ -439,23 +440,35 @@ void clearScreen(int color)
 #elif defined(SVGA800x600)
   pages = 14;
 #endif
-  pagesize = 1024 * 32;
+  pagesize = 1024 * 32 * 2;
   for (i = 0; i <= pages; i++)
   {
     SelectPage(i);
-    memset(video_buffer + (j * (i * 2) << 10), color, 1024 * 32);
-    memset(video_buffer + (j * (i * 2 + 1) << 10), color, 1024 * 32);
+    memset(video_buffer, color, pagesize - 1);
+    //memset(video_buffer + 0x4000, color, pagesize); // 16 << 10
   }
 #else
   setfillstyle(SOLID_FILL, RealFillColor(color));
   bar(0, 0, getmaxx(), getmaxy());
 #endif
 
-  /* 
-  SelectPage(1);
-  memset(video_buffer + (j * 2 << 10), color, 1024 * 32);
-  memset(video_buffer + (j * 3 << 10), color, 1024 * 32);
+  // SelectPage(1);
+  // memset(video_buffer, color, 1024 * 64 - 1);
 
+  /*
+  j = 16
+  for (i = 0; i <= pages; i++)
+  {
+    SelectPage(i);
+    // memset(video_buffer + (j * (i * 2) << 10), color, 1024 * 32);
+    // memset(video_buffer + (j * (i * 2 + 1) << 10), color, 1024 * 32);
+  }
+
+
+  SelectPage(1);
+  memset(video_buffer, color, 1024 * 32);
+  memset(video_buffer + (j << 10), color, 1024 * 32);
+ 
   SelectPage(2);
   memset(video_buffer + (j * 4 << 10), color, 1024 * 32);
   memset(video_buffer + (j * 5 << 10), color, 1024 * 32);
@@ -508,4 +521,162 @@ void clearScreen(int color)
   memset(video_buffer + (j * 28 << 10), color, 1024 * 32);
   memset(video_buffer + (j * 29 << 10), color, 1024 * 32); 
 */
+}
+
+void swap(int *a, int *b)
+{
+  int tmp;
+  tmp = *a;
+  *a = *b;
+  *b = tmp;
+}
+
+/**
+ * 设置一个矩形区域，使x1 < x2, y1 < y2
+ * 并且使x1,x2,y1,y2在屏幕区域内 
+ * 
+ */
+void setStandardRegion(int *x1, int *y1, int *x2, int *y2)
+{
+  if (x1 < 0)
+    x1 = 0;
+
+  if (x1 > MAXX)
+    x1 = MAXX;
+
+  if (x2 < 0)
+    x2 = 0;
+
+  if (x2 > MAXX)
+    x2 = MAXX;
+
+  if (y1 < 0)
+    y1 = 0;
+
+  if (y1 > MAXY)
+    y1 = MAXY;
+
+  if (y2 < 0)
+    y2 = 0;
+
+  if (y2 > MAXY)
+    y2 = MAXY;
+
+  if (x1 > x2)
+    swap(x1, x2);
+
+  if (y1 > y2)
+    swap(y1, y2);
+}
+
+/**
+ * width * height * 2 <  65536
+ */
+unsigned int getRegionColor(unsigned int far *buffer, int x, int y, int width, int height)
+{
+  int i, j;
+  unsigned char page;                                                     // 要切换的页面号
+  unsigned long int offest;                                               // 对应显存地址偏移量
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
+  unsigned int color;
+
+  buffer = (unsigned int far *)malloc(width * height * sizeof(unsigned int));
+  if (buffer == NULL)
+    return 0;
+
+  for (j = 0; j < height; j++)
+    for (i = 0; i < width; i++)
+    {
+      color = _GetPixel(x + i, y + j);
+      buffer[i + j * width] = color;
+    }
+
+  return width * height * sizeof(unsigned int);
+}
+
+void putRegionColor(unsigned int far *buffer, int x, int y, int width, int height)
+{
+  int i, j;
+
+  if (buffer == NULL)
+    return;
+
+  for (j = 0; j < height; j++)
+    for (i = 0; i < width; i++)
+    {
+
+      PutPixel(x + i, y + j, buffer[i + j * width]);
+    }
+
+  return;
+}
+
+/**
+ * 快速填充区域算法
+ * 
+ */
+void fillRegion(int x1, int y1, int x2, int y2, int color)
+{
+  int i, j, width, height;
+
+  unsigned char page;                                                     // 要切换的页面号
+  unsigned long int offest;                                               // 对应显存地址偏移量
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
+
+  setStandardRegion(&x1, &y1, &x2, &y2);
+  width = x2 - x1;
+  height = y2 - y1;
+
+  for (j = 0; j < height; j++)
+  {
+    /* 计算显存地址偏移量和对应的页面号，做换页操作 */
+    offest = ((unsigned long int)(y1 + j) << 10) + x1;
+    page = offest >> 15; /* 32k个点一换页，除以32k的替代算法 */
+    SelectPage(page);
+    for (i = 0; i < width; i++)
+    {
+      video_buffer[offest + i] = color;
+    }
+  }
+}
+
+void fillRegionEx(int x, int y, int width, int height, int color)
+{
+  int i, j;
+
+  unsigned char page;                                                     // 要切换的页面号
+  unsigned long int offest;                                               // 对应显存地址偏移量
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
+
+  for (j = 0; j < height; j++)
+  {
+    /* 计算显存地址偏移量和对应的页面号，做换页操作 */
+    offest = ((unsigned long int)(y + j) << 10) + x;
+    page = offest >> 15; /* 32k个点一换页，除以32k的替代算法 */
+    SelectPage(page);
+    for (i = 0; i < width; i++)
+    {
+      video_buffer[offest + i] = color;
+    }
+  }
+}
+
+/**
+ * 填充区域
+ * 
+ */
+void _fillRegion(int x1, int y1, int x2, int y2, int color)
+{
+  int i, j;
+  int width = 0, height = 0;
+
+  setStandardRegion(&x1, &y1, &x2, &y2);
+  width = x2 - x1;
+  height = y2 - y1;
+
+  for (i = 0; i < width; i++)
+    for (j = 0; j < height; j++)
+    {
+      PutPixel(x1 + i, y1 + j, color);
+    }
 }

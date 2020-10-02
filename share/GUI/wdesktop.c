@@ -8,6 +8,7 @@ void OnPaint_Desktop(hbasewinAttr *win, void *value)
 {
   int maxx = getmaxx() - 1;
   int maxy = getmaxy() - 1;
+
   char text[20];
   if (win == NULL)
     return;
@@ -37,8 +38,9 @@ void OnPaint_Desktop(hbasewinAttr *win, void *value)
   ////////////////////////////
 
   setcolor(RealDrawColor(0xFFFF82));
-  sprintf(text, "%u, %dx%d", getmaxcolor()  , getmaxx() + 1, getmaxy() + 1);
-  outtextxy(10, maxy - 200, text);
+
+  sprintf(text, "%u, %dx%d ", getmaxcolor(), getmaxx() + 1, getmaxy() + 1);
+  outtextxy(10, maxy - 500, text);
 
   repaintChildren(win);
 }
