@@ -1,10 +1,8 @@
 #include "macrodef.h"
 #include "hhogui.h"
-//#include "SVGAUTIL.H"
 #include "mouse.h"
 
 #include <dos.h>
-#include <graphics.h>
 #include <stdio.h>
 #include <mem.h>
 
@@ -84,13 +82,7 @@ void updateMouseStatus(mousestatus *status)
     return;
 
   ReadMouse(&bState, &xPos, &yPos);
-  // asm {
-  //       mov ax,0x0003
-  //       int 0x33
-  //       mov bState,bx
-  //       mov xPos,cx
-  //       mov yPos,dx
-  // }
+
   switch (bState)
   {
   case 0:
@@ -174,10 +166,10 @@ void DrawCursor(unsigned char *cur, int x, int y)
     {
       if (cur[j * 16 + i] == '0')
         continue;
-      else if (cur[j * 16 + i] == '1') //黑色
-        putpixel(x + i, y + j, RealColor(0x003F));
+      else if (cur[j * 16 + i] == '2') //黑色
+        putpixel64k(x + i, y + j,  0x0);
       else //白色
-        putpixel(x + i, y + j, WhitePixel());
+        putpixel64k(x + i, y + j, WhitePixel());
     }
 }
 

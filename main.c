@@ -79,7 +79,7 @@ int main(int argc, char *argv[])
     updateMouseStatus(&mouse);
     MouseSavebk(buffer, mouse.x, mouse.y);
     DrawCursor(cur, mouse.x, mouse.y);
-    delay(30);
+    delay(10);
     // currentwin = checkmousewin(desktop, &mouse);
     // if (currentwin)
     //   desktop->EventHandler(currentwin, EVENT_MOUSE, &mouse);

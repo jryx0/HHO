@@ -173,3 +173,55 @@ void restorebackgroundEx(unsigned int *buffer, int x, int y, int width, int heig
     memcpy(&video_buffer[offest], buffer + j * width, width * 2); //width * 2, int 两位
   }
 }
+
+void putpixel64k(int x, int y, unsigned int color)  
+{
+  /*显存指针常量，指向显存首地址，指针本身不允许修改*/
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L;
+
+  /*要切换的页面号*/
+  unsigned char new_page;
+
+  /*对应显存地址偏移量*/
+  unsigned long int page;   
+
+  /*判断点是否在屏幕范围内，不在就退出*/
+  if (x < 0 || x > (getmaxx()) || y < 0 || y > (getmaxy()))
+  {
+    return;
+  }
+
+  /*计算显存地址偏移量和对应的页面号，做换页操作*/
+  page = ((unsigned long int)y << 10) + x;
+  new_page = page >> 15; /*32k个点一换页，除以32k的替代算法*/
+  selectpage(new_page);
+
+  /*向显存写入颜色，对应点画出*/
+  video_buffer[page] = color;
+}
+
+unsigned int getpixel64k(int x, int y)
+{
+  /*显存指针常量，指向显存首地址，指针本身不允许修改*/
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L;
+
+  /*要切换的页面号*/
+  unsigned char new_page;
+
+  /*对应显存地址偏移量*/
+  unsigned long int page;
+
+  /*判断点是否在屏幕范围内，不在就退出*/
+  if (x < 0 || x > (getmaxx() - 1) || y < 0 || y > getmaxy())
+  {
+    return 0;
+  }
+
+  /*计算显存地址偏移量和对应的页面号，做换页操作*/
+  page = ((unsigned long int)y << 10) + x;
+  new_page = page >> 15; /*32k个点一换页，除以32k的替代算法*/
+  selectpage(new_page);
+
+  /*返回颜色*/
+  return video_buffer[page];
+}
