@@ -9,7 +9,7 @@
 
 int main(void)
 {
-  // MOUSE mouse_new, mouse_old = {{0, 0}, 0}; //鼠标新旧结构体
+  MOUSE mouse_new, mouse_old = {{0, 0}, 0}; //鼠标新旧结构体
   char kbchar = 0;
   int width = 64, height = 64;
   unsigned int far *buffer;
@@ -33,17 +33,16 @@ int main(void)
 
   rectangleEx(10, 10, 10000, 20000, 0x5555, 1, 1);
 
-  // MouseInit();
-  // MouseReset();
+  MouseInit();
+  MouseReset();
   while (1)
   {
-
-    // MouseXYB(&mouse_new);
-    // MousePutBk(mouse_old.position);
-    // MouseStoreBk(mouse_new.position);
-    // MouseDraw(mouse_new);
-    //delay(30);
-    //mouse_old = mouse_new;
+    MouseXYB(&mouse_new);
+    MousePutBk(mouse_old.position);
+    MouseStoreBk(mouse_new.position);
+    MouseDraw(mouse_new);
+    delay(30);
+    mouse_old = mouse_new;
 
     if (kbhit())
     {                   //如果有按键按下，则kbhit()函数返回真
