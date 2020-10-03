@@ -1,8 +1,12 @@
-#include "SVGAUTIL.H"
+#include "macrodef.h"
+#include "hhogui.h"
+//#include "SVGAUTIL.H"
 #include "mouse.h"
+
 #include <dos.h>
 #include <graphics.h>
 #include <stdio.h>
+#include <mem.h>
 
 // long mouseback[16][16];
 
@@ -135,38 +139,57 @@ void updateMouseStatus(mousestatus *status)
   status->y = yPos;
 }
 
-// void MouseSavebk(int x, int y)
-// {
-//   int i, j;
-//   for (i = 0; i <= 15; i++)
-//     for (j = 0; j <= 15; j++)
-//       mouseback[i][j] = getpixel(x + i, y + j);
-//   // GetColor64k(x + i, y + j, &mouseback[i][j]);
-// }
+void ReadCursor(unsigned char *buf)
+{
+  FILE *fpcur;
+  int i;
+  char line[17];
 
-// void MousePutbk(int x, int y)
-// {
-//   int i, j;
-//   for (i = 0; i <= 15; i++)
-//     for (j = 0; j <= 15; j++)
-//       putpixel(x + i, y + j, mouseback[i][j]);
-//   // PaintPoint(x + i, y + j, mouseback[i][j]);
-// }
+  if (buf == NULL)
+    return;
 
-// void DrawMouse(int x, int y)
-// {
-//   setcolor(RealDrawColor(0xFFFFFF));
-//   line(x, y, x, y + 15);
-//   line(x + 1, y + 1, x + 1, y + 13);
-//   line(x + 2, y + 3, x + 2, y + 11);
-//   line(x + 3, y + 4, x + 3, y + 9);
-//   line(x + 4, y + 5, x + 4, y + 9);
-//   line(x + 5, y + 7, x + 5, y + 10);
-//   line(x + 6, y + 8, x + 6, y + 10);
-//   line(x + 7, y + 9, x + 7, y + 11);
-//   putpixel(x + 8, y + 11, RealDrawColor(0xFFFFFF));
-//   putpixel(x + 9, y + 12, RealDrawColor(0xFFFFFF));
-// }
+  memset(buf, 0, 16 * 16);
+  fpcur = fopen("c:\\hho\\data\\cursor", "r");
+  if (fpcur == NULL)
+    return;
+
+  for (i = 0; i < 16; i++)
+  {
+    fgets(line, 18, fpcur); //\r\n
+    memcpy(buf + i * 16, line, 16);
+  }
+  fclose(fpcur);
+
+  return buf;
+}
+
+void DrawCursor(unsigned char *cur, int x, int y)
+{
+  int i = 0, j = 0;
+  if (cur == NULL)
+    return;
+
+  for (i = 0; i < 16; i++)
+    for (j = 0; j < 16; j++)
+    {
+      if (cur[j * 16 + i] == '0')
+        continue;
+      else if (cur[j * 16 + i] == '1') //黑色
+        putpixel(x + i, y + j, RealColor(0x003F));
+      else //白色
+        putpixel(x + i, y + j, WhitePixel());
+    }
+}
+
+void MouseSavebk(unsigned int *far buffer, int x, int y)
+{
+  savebackgroundEx(buffer, x, y, 16, 16);
+}
+
+void MousePutbk(unsigned int *far buffer, int x, int y)
+{
+  restorebackgroundEx(buffer, x, y, 16, 16);
+}
 
 // void Mouse()
 // {

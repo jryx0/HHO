@@ -50,6 +50,7 @@ hbasewinAttr *CreateDesktop(int screenmode)
   int maxy = getmaxy() - 1;
 
   desktop = CreateWindowsEx(NULL, 0, 0, maxx, maxy, 0, NULL);
+  SetMouseArea(0, 0, maxx, maxy);
   // SetMouseArea(0, 0, maxx, maxy);
   // setviewport(0, 0, maxx, maxy, 1);
   // switch (screenmode) {

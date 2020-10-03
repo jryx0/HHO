@@ -1,3 +1,5 @@
+//第三方SVGA驱动，支持256、32K、64k等各种模式
+
 /************************************************/
 /* 						*/
 /*          SuperVGA utility routines		*/
@@ -6,14 +8,10 @@
 /*						*/
 /************************************************/
 #include "macrodef.h"
-#include "HBaseWin.h"
 #include "svgautil.h"
 
 #include <dos.h>
-#include <graphics.h>
-#include <memory.h>
-#include <stdio.h>
-
+#include <GRAPHICS.H>
 /************************************************************************/
 /*									*/
 /* 		    Enhanced color setting functions			*/
@@ -356,4 +354,3 @@ int initSvga(int mode)
 
   return mode;
 }
-

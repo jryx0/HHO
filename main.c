@@ -11,6 +11,8 @@
 #include <conio.h>
 #include <graphics.h>
 #include <stdio.h>
+#include <mem.h>
+#include <alloc.h>
 
 int main(int argc, char *argv[])
 {
@@ -21,11 +23,43 @@ int main(int argc, char *argv[])
   hbasewinAttr *desktop;
   hbasewinAttr *currentwin = NULL, *oldwin = NULL;
 
+  int width = 32, height = 32;
+  unsigned int far *buffer;
+  unsigned char cur[16][16];
+
   if (argc > 1)
     screenMode = atoi(argv[1]);
 
   initSvga(screenMode);
-  // InitMouse();
+
+  // clearScreen(WhitePixel());
+
+  // setfillstyle(SOLID_FILL, RealFillColor(0x0555));
+  // bar(100, 200, 500, 400);
+
+  // setfillstyle(SOLID_FILL, RealFillColor(0xA109));
+  // bar(350, 300, 700, 600);
+
+  // setcolor(RealColor(0x56B5));
+  // setlinestyle(SOLID_LINE, 0, NORM_WIDTH);
+  // rectangle(320, 370, 320 + width, 370 + height);
+
+  //cur = malloc(16 * 16);
+  ReadCursor(cur);
+  DrawCursor(cur, 10, 10);
+
+  // buffer = (unsigned int far *)farmalloc(width * height * sizeof(unsigned int));
+  // if (buffer == NULL)
+  //   return;
+  // savebackgroundEx(buffer, 320, 370, width, height);
+  // restorebackgroundEx(buffer, 40, 370, width, height);
+  // free(buffer);
+
+  // savebackgroundFile(320, 370, width, height);
+  // restorebackgroundFile(20, 20, width, height);
+
+  InitMouse();
+  memset(&mouse, 0, sizeof(mouse));
 
   desktop = CreateDesktop(screenMode);
 
@@ -35,11 +69,17 @@ int main(int argc, char *argv[])
   desktop->onPaint(desktop, NULL);
 
   // ShowMouse();
+  SetMouseCoord(0, 0);
+  buffer = (unsigned int far *)farmalloc(16 * 16);
+  MouseSavebk(buffer, mouse.x, mouse.y);
 
   while (1)
   {
-    // updateMouseStatus(&mouse);
-
+    MousePutbk(buffer, mouse.x, mouse.y);
+    updateMouseStatus(&mouse);
+    MouseSavebk(buffer, mouse.x, mouse.y);
+    DrawCursor(cur, mouse.x, mouse.y);
+    delay(30);
     // currentwin = checkmousewin(desktop, &mouse);
     // if (currentwin)
     //   desktop->EventHandler(currentwin, EVENT_MOUSE, &mouse);

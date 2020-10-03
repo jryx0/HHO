@@ -16,7 +16,8 @@
 #define MOUSE_BUTTON_STILL_DOWN 64
 #define MOUSE_BUTTON_STILL_UP 128
 
-typedef struct {
+typedef struct
+{
   unsigned int x, y;
   unsigned char leftDown, rightDown;
   unsigned char oldLeftDown, oldRightDown;
@@ -32,9 +33,10 @@ void SetMouseCoord(int x, int y);
 void SetMouseArea(int Xmin, int Ymin, int Xmax, int Ymax);
 void MouseHideArea(int x1, int y1, int x2, int y2);
 int IsMouseInBox(int x1, int y1, int x2, int y2);
-void MouseSavebk(int x, int y);
-void MousePutbk(int x, int y);
-void DrawMouse(int x, int y);
+void MouseSavebk(unsigned int *far buffer, int x, int y);
+void MousePutbk(unsigned int *far buffer, int x, int y);
+// void DrawMouse(int x, int y);
+void DrawCursor(unsigned char *cur, int x, int y);
 void Mouse();
 void updateMouseStatus(mousestatus *status);
 

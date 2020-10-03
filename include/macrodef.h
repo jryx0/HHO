@@ -14,6 +14,8 @@
 #define DOCTORINFOFILE DATAPATH "doctorinfo.txt"
 #define FILE_PYINDEX DATAPATH "index.txt"
 #define FILE_HANZI DATAPATH "hanzi.txt"
+#define FILE_CURSOR DATAPATH "cursor"
+
 #if !defined(__BORLANDC__)
 #define DATAPATH "data\\"
 #else

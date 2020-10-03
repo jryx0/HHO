@@ -87,11 +87,14 @@ typedef struct winstruct
   struct winstruct *desktop;
 } hbasewinAttr;
 
+
+
 //全局变量结构
 typedef struct _globaldef
 {
   FILE *fphanzi_st; //宋体点阵字库文件指针
   FILE *fphanzi;    //汉字字库文件指针
+  FILE *fpBK;
 
   unsigned char *cursor;  //保存鼠标图形地址
   unsigned int *cursorBK; //鼠标背景地址
