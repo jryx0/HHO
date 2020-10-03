@@ -201,7 +201,7 @@ void DrawCursor(unsigned char *cur, int x, int y, int width, int height)
       else if (cur[j * width + i] == '2') //黑色
         putpixel64k(x + i, y + j, 0x00);
       else //白色
-        putpixel64k(x + i, y + j, 0x7F);
+        putpixel64k(x + i, y + j, 0xffff);
     }
 }
 
