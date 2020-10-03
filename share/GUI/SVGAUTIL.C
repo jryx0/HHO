@@ -356,3 +356,4 @@ int initSvga(int mode)
 
   return mode;
 }
+

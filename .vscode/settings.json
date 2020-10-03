@@ -2,10 +2,5 @@
   "editor.tabSize": 2,
   "files.autoGuessEncoding": true,
   "files.encoding": "gbk",
-  "editor.fontSize": 12,
-  "files.associations": {
-    "SVGAUTIL.C": "cpp",
-    "MOUSE.C": "cpp",
-    "HANZI.C": "cpp"
-  }
+  "editor.fontSize": 12
 }

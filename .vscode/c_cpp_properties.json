@@ -3,17 +3,18 @@
         {
             "name": "C",
             "includePath": [
-                "include",
-                "${workspaceFolder}/**"
+                "${workspaceFolder}/**",
+                "${workspaceFolder}/../BORLANDC/include"
             ],
             "defines": [
                 "_DEBUG",
                 "UNICODE",
                 "_UNICODE"
             ],
-           
             "compilerPath": "..\\env\\MinGW\\bin\\gcc.exe",
-            "intelliSenseMode": "gcc-x64"
+            "intelliSenseMode": "gcc-x64",
+            "cStandard": "c89",
+            "cppStandard": "c++11"
         }
     ],
     "version": 4

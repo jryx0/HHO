@@ -1,7 +1,8 @@
-#include "macrodef.h"
-#include "HBaseWin.h"
+
 #include "SVGAUTIL.H"
+#include "hhogui.h"
 #include "hbutton.h"
+#include "HBaseWin.h"
 #include "mouse.h"
 #include "wResource.h"
 #include "wdesktop.h"

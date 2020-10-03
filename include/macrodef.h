@@ -1,8 +1,8 @@
 #ifndef __MACRODEF_H__
 #define __MACRODEF_H__
 
-// #define SVGA64K
-// // #define SVGA1024x768
+#define SVGA64K
+#define SVGA1024x768
 // // #define SVGA32K
 // #define SVGA800x600
 
