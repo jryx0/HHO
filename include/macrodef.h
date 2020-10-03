@@ -1,43 +1,29 @@
 #ifndef __MACRODEF_H__
 #define __MACRODEF_H__
 
+#include <stdio.h>
+
+//显示模式宏定义
 #define SVGA64K
 #define SVGA1024x768
-// // #define SVGA32K
+// #define SVGA32K
 // #define SVGA800x600
 
+//全局文件路径
 #define USERINFOFILE DATAPATH "userinfo.txt"
 #define DOCTORINFOFILE DATAPATH "doctorinfo.txt"
-
 #define FILE_PYINDEX DATAPATH "index.txt"
 #define FILE_HANZI DATAPATH "hanzi.txt"
-
-#ifndef __BORLANDC__
+#if !defined(__BORLANDC__)
 #define DATAPATH "data\\"
-#define huge
-#define far
-
-#ifndef _REG_DEFS
-#define _REG_DEFS
-struct WORDREGS
-{
-  unsigned int ax, bx, cx, dx, si, di, cflag, flags;
-};
-
-struct BYTEREGS
-{
-  unsigned char al, ah, bl, bh, cl, ch, dl, dh;
-};
-
-union REGS
-{
-  struct WORDREGS x;
-  struct BYTEREGS h;
-};
-#endif //_REG_DEFS
-
 #else
 #define DATAPATH "E:\\HHO\\data\\"
-#endif //__BORLANDC__
+#endif
+
+//处理borlandc在vscode中的兼容性
+#ifndef __BORLANDC__
+#define huge
+#define far
+#endif
 
 #endif

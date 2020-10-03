@@ -1,4 +1,5 @@
 
+#include "macrodef.h"
 #include "SVGAUTIL.H"
 #include "hhogui.h"
 #include "hbutton.h"
@@ -24,24 +25,24 @@ int main(int argc, char *argv[])
     screenMode = atoi(argv[1]);
 
   initSvga(screenMode);
-  InitMouse();
+  // InitMouse();
 
   desktop = CreateDesktop(screenMode);
 
-  btn1 = CreateButton(desktop, 10, 10, 80, 25, ID_WIN_LOG_PANEL, "aaa");
-  btn2 = CreateButton(desktop, 100, 10, 80, 25, ID_WIN_LOGIN, "aa");
+  // btn1 = CreateButton(desktop, 10, 10, 80, 25, ID_WIN_LOG_PANEL, "aaa");
+  // btn2 = CreateButton(desktop, 100, 10, 80, 25, ID_WIN_LOGIN, "aa");
 
   desktop->onPaint(desktop, NULL);
 
-  ShowMouse();
+  // ShowMouse();
 
   while (1)
   {
-    updateMouseStatus(&mouse);
+    // updateMouseStatus(&mouse);
 
-    currentwin = checkmousewin(desktop, &mouse);
-    if (currentwin)
-      desktop->EventHandler(currentwin, EVENT_MOUSE, &mouse);
+    // currentwin = checkmousewin(desktop, &mouse);
+    // if (currentwin)
+    //   desktop->EventHandler(currentwin, EVENT_MOUSE, &mouse);
 
     /*
       if (oldwin != currentwin && oldwin)

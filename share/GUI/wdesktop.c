@@ -50,8 +50,8 @@ hbasewinAttr *CreateDesktop(int screenmode)
   int maxy = getmaxy() - 1;
 
   desktop = CreateWindowsEx(NULL, 0, 0, maxx, maxy, 0, NULL);
-  SetMouseArea(0, 0, maxx, maxy);
-  setviewport(0, 0, maxx, maxy, 1);
+  // SetMouseArea(0, 0, maxx, maxy);
+  // setviewport(0, 0, maxx, maxy, 1);
   // switch (screenmode) {
   // // 1024*768 256
   // case 1:
@@ -96,9 +96,9 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       win->onLeftDown(win, NULL);
       if (win->onPaint)
       {
-        HideMouse();
+        // HideMouse();
         win->onPaint(win, NULL);
-        ShowMouse();
+        // ShowMouse();
       }
     }
     else if (mouse->leftClickState == MOUSE_BUTTON_UP && win->onLeftUp)
@@ -106,9 +106,9 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       win->onLeftUp(win, NULL);
       if (win->onPaint)
       {
-        HideMouse();
+        // HideMouse();
         win->onPaint(win, NULL);
-        ShowMouse();
+        // ShowMouse();
       }
     }
 
