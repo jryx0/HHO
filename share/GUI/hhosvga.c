@@ -1,35 +1,34 @@
 #include "macrodef.h"
 #include "SVGAUTIL.H"
+#include "hhosvga.h"
 
 #include <dos.h>
 #include <GRAPHICS.H>
 #include <stdio.h>
 
-void selectpage(register char page) // 3
+/**
+ * 控制显示页
+ * @param page 页号 
+ */
+void selectpage(register char page)
 {
   union REGS regs;
-
-  /*上一次的页面号,用于减少切换次数,是使用次数很多的重要变量*/
   static unsigned char old_page = 0;
-  /*标志数，用于判断是否是第一次换页*/
   static int flag = 0;
 
   /*窗口页面控制功能号*/
   regs.x.ax = 0x4f05;
   regs.x.bx = 0;
 
-  /*如果是第一次换页*/
   if (flag == 0)
-  {
+  { /*如果是第一次换页*/
     old_page = page;
     regs.x.dx = page;
     int86(0x10, &regs, &regs);
     flag++;
   }
-
-  /*如果和上次页面号不同，则进行换页*/
   else if (page != old_page)
-  {
+  { /*如果和上次页面号不同，则进行换页*/
     old_page = page;
     regs.x.dx = page;
     int86(0x10, &regs, &regs);
@@ -46,7 +45,7 @@ void clearScreen(char color)
   int i, j = 16;
   unsigned int pages = 0, pagesize = 0;
 
-  /*显存指针常量，指向显存首地址，指针本身不允许修改*/
+  /*显存指针常量*/
   unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L;
 
   pages = 24; //1024x768 = 24, 800*600 = 14
@@ -59,7 +58,13 @@ void clearScreen(char color)
   }
 }
 
-//控制区域在屏幕范围内
+/**
+ * 控制区域在屏幕范围内
+ * @param x  
+ * @param y 左上坐标
+ * @param width
+ * @param height 宽度、高度
+ */
 void setStandardRegionEx(int *x, int *y, int *width, int *height)
 {
   if (*x < 0)
@@ -78,56 +83,15 @@ void setStandardRegionEx(int *x, int *y, int *width, int *height)
     *height = getmaxy() - *y;
 }
 
-//把屏幕区域保存在文件中
-void savebackgroundFile(int x, int y, int width, int height)
-{
-  FILE *fpBK = fopen("bk.data", "w");
-
-  int j;
-
-  unsigned char page;                                                     // 要切换的页面号
-  unsigned long int offest;                                               // 对应显存地址偏移量
-  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
-  setStandardRegionEx(&x, &y, &width, &height);
-
-  for (j = 0; j < height; j++)
-  {
-    /* 计算显存地址偏移量和对应的页面号，做换页操作 */
-    offest = ((unsigned long int)(y + j) << 10) + x;
-    page = offest >> 15; /* 32k个点一换页，除以32k的替代算法 */
-    selectpage(page);
-    fwrite(&video_buffer[offest], 1, width * 2, fpBK);
-  }
-  fflush(fpBK);
-  fclose(fpBK);
-}
-
-void restorebackgroundFile(int x, int y, int width, int height)
-{
-  FILE *fpBK = fopen("bk.data", "r");
-  int j;
-
-  unsigned char page;                                                     // 要切换的页面号
-  unsigned long int offest;                                               // 对应显存地址偏移量
-  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
-
-  if (fpBK == NULL)
-    return;
-  setStandardRegionEx(&x, &y, &width, &height);
-  for (j = 0; j < height; j++)
-  {
-    /* 计算显存地址偏移量和对应的页面号，做换页操作 */
-    offest = ((unsigned long int)(y + j) << 10) + x;
-    page = offest >> 15; /* 32k个点一换页，除以32k的替代算法 */
-    selectpage(page);
-
-    fread(&video_buffer[offest], 1, width * 2, fpBK);
-  }
-  fclose(fpBK);
-}
-
-//保存小面积的背景
-//width * heigth * 2 < 65536
+/**
+ * 由于内存限制，仅仅适用于保存小面积的背景，放在在内存堆中
+ * 要求width * heigth * 2 < 65536 
+ * @param buffer 背景保存缓存
+ * @param x
+ * @param y   左上坐标
+ * @param width
+ * @param height 宽度、高度
+ */
 void savebackgroundEx(unsigned int *buffer, int x, int y, int width, int height)
 {
   int j;
@@ -151,6 +115,16 @@ void savebackgroundEx(unsigned int *buffer, int x, int y, int width, int height)
   }
 }
 
+/**
+ * 恢复背景，和savebackgroundEx互为逆操作
+ * 要求width * heigth * 2 < 65536 
+ * 位置可以不一样，高度和宽度要一致。
+ * @param buffer 保存背景缓存
+ * @param x
+ * @param y   左上坐标
+ * @param width
+ * @param height 宽度、高度
+ */
 void restorebackgroundEx(unsigned int *buffer, int x, int y, int width, int height)
 {
   int j;
@@ -174,16 +148,81 @@ void restorebackgroundEx(unsigned int *buffer, int x, int y, int width, int heig
   }
 }
 
-void putpixel64k(int x, int y, unsigned int color)  
+/**
+ * 由于内存限制，把大区域背景保存在文件中。
+ * @param fpBK 文件指针，用于保存背景
+ * @param x
+ * @param y   左上坐标
+ * @param width
+ * @param height 宽度、高度
+ */
+void savebackgroundFile(FILE *fpBK, int x, int y, int width, int height)
 {
-  /*显存指针常量，指向显存首地址，指针本身不允许修改*/
+  int j;
+
+  unsigned char page;       // 要切换的页面号
+  unsigned long int offest; // 对应显存地址偏移量
   unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L;
 
-  /*要切换的页面号*/
-  unsigned char new_page;
+  setStandardRegionEx(&x, &y, &width, &height);
 
-  /*对应显存地址偏移量*/
-  unsigned long int page;   
+  for (j = 0; j < height; j++)
+  {
+    /* 计算显存地址偏移量和对应的页面号，做换页操作 */
+    offest = ((unsigned long int)(y + j) << 10) + x;
+    page = offest >> 15; /* 32k个点一换页，除以32k的替代算法 */
+    selectpage(page);
+    fwrite(&video_buffer[offest], 1, width * 2, fpBK);
+  }
+  fflush(fpBK);
+  fclose(fpBK);
+}
+
+/**
+ * 由于内存限制，把保存在文件大区域背景的背景恢复到屏幕上，
+ * 位置可以不一样，高度和宽度要一致。
+ * @param fpBK 文件指针，用于保存背景
+ * @param x
+ * @param y   左上坐标
+ * @param width
+ * @param height 宽度、高度
+ */
+void restorebackgroundFile(FILE *fpBK, int x, int y, int width, int height)
+{
+  int j;
+
+  unsigned char page;                                                     // 要切换的页面号
+  unsigned long int offest;                                               // 对应显存地址偏移量
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
+
+  if (fpBK == NULL)
+    return;
+  setStandardRegionEx(&x, &y, &width, &height);
+  for (j = 0; j < height; j++)
+  {
+    /* 计算显存地址偏移量和对应的页面号，做换页操作 */
+    offest = ((unsigned long int)(y + j) << 10) + x;
+    page = offest >> 15; /* 32k个点一换页，除以32k的替代算法 */
+    selectpage(page);
+
+    fread(&video_buffer[offest], 1, width * 2, fpBK);
+  }
+  fclose(fpBK);
+}
+
+/**
+ * 画点函数，graphics.h 中的putpixel在1024*768*64k下出错,
+ * 在此模式下,画点函数 
+ * @param x 
+ * @param y 点坐标
+ * @param color 颜色
+ */
+void putpixel64k(int x, int y, unsigned int color)
+{
+  /*显存指针常量，指向显存首地址 */
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L;
+  unsigned char new_page;
+  unsigned long int page;
 
   /*判断点是否在屏幕范围内，不在就退出*/
   if (x < 0 || x > (getmaxx()) || y < 0 || y > (getmaxy()))
@@ -200,15 +239,18 @@ void putpixel64k(int x, int y, unsigned int color)
   video_buffer[page] = color;
 }
 
+/**
+ * 画点函数，graphics.h 中的getpixel在1024*768*64k下出错,
+ * 在此模式下,画点函数 
+ * @param x 
+ * @param y 点坐标
+ * @return color 颜色
+ */
 unsigned int getpixel64k(int x, int y)
 {
   /*显存指针常量，指向显存首地址，指针本身不允许修改*/
   unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L;
-
-  /*要切换的页面号*/
   unsigned char new_page;
-
-  /*对应显存地址偏移量*/
   unsigned long int page;
 
   /*判断点是否在屏幕范围内，不在就退出*/
@@ -222,6 +264,5 @@ unsigned int getpixel64k(int x, int y)
   new_page = page >> 15; /*32k个点一换页，除以32k的替代算法*/
   selectpage(new_page);
 
-  /*返回颜色*/
   return video_buffer[page];
 }

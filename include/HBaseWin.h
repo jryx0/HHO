@@ -87,30 +87,6 @@ typedef struct winstruct
   struct winstruct *desktop;
 } hbasewinAttr;
 
-
-
-//全局变量结构
-typedef struct _globaldef
-{
-  FILE *fphanzi_st; //宋体点阵字库文件指针
-  FILE *fphanzi;    //汉字字库文件指针
-  FILE *fpBK;
-
-  unsigned char *cursor;  //保存鼠标图形地址
-  unsigned int *cursorBK; //鼠标背景地址
-
-  int curcolor;     //当前颜色
-  int curbkcolor;   //当前背景色
-  int curfillcolor; //当前填充色
-
-  char curlinewidth; //当前线宽
-  char curlinestyle; //当前线形
-
-  int pageBKColor; //页面颜色
-
-  hbasewinAttr *foucswin;
-} globaldef;
-
 hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
                               int nHeight, int winID, const char *title);
 void DestoryWindows(hbasewinAttr *win);

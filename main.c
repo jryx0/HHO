@@ -1,12 +1,9 @@
 
 #include "macrodef.h"
 #include "SVGAUTIL.H"
-#include "hhogui.h"
-#include "hbutton.h"
 #include "HBaseWin.h"
 #include "mouse.h"
-#include "wResource.h"
-#include "wdesktop.h"
+#include "hglobal.h"
 
 #include <conio.h>
 #include <graphics.h>
@@ -16,69 +13,38 @@
 
 int main(int argc, char *argv[])
 {
-  int screenMode = -1, type = 0;
+  int screenMode = -1;
   char kbchar;
   mousestatus mouse;
-  hbasewinAttr *btn1, *btn2, *btn3;
-  hbasewinAttr *desktop;
-  hbasewinAttr *currentwin = NULL, *oldwin = NULL;
+  globaldef *_global;
 
-  int width = 32, height = 32;
-  unsigned int far *buffer;
-  unsigned char cur[16][16];
+  //初始化系统参数
+  _global = initGlobalSetting();
+  if (_global == NULL)
+  {
+    printf("初始化失败！\r\n");
+  }
 
+  //初始化图形界面
   if (argc > 1)
     screenMode = atoi(argv[1]);
-
   initSvga(screenMode);
 
-  // clearScreen(WhitePixel());
+  clearScreen(0xff);
 
-  // setfillstyle(SOLID_FILL, RealFillColor(0x0555));
-  // bar(100, 200, 500, 400);
-
-  // setfillstyle(SOLID_FILL, RealFillColor(0xA109));
-  // bar(350, 300, 700, 600);
-
-  // setcolor(RealColor(0x56B5));
-  // setlinestyle(SOLID_LINE, 0, NORM_WIDTH);
-  // rectangle(320, 370, 320 + width, 370 + height);
-
-  //cur = malloc(16 * 16);
-  ReadCursor(cur);
-  DrawCursor(cur, 10, 10);
-
-  // buffer = (unsigned int far *)farmalloc(width * height * sizeof(unsigned int));
-  // if (buffer == NULL)
-  //   return;
-  // savebackgroundEx(buffer, 320, 370, width, height);
-  // restorebackgroundEx(buffer, 40, 370, width, height);
-  // free(buffer);
-
-  // savebackgroundFile(320, 370, width, height);
-  // restorebackgroundFile(20, 20, width, height);
-
-  InitMouse();
-  memset(&mouse, 0, sizeof(mouse));
-
-  desktop = CreateDesktop(screenMode);
-
-  // btn1 = CreateButton(desktop, 10, 10, 80, 25, ID_WIN_LOG_PANEL, "aaa");
-  // btn2 = CreateButton(desktop, 100, 10, 80, 25, ID_WIN_LOGIN, "aa");
-
-  desktop->onPaint(desktop, NULL);
-
-  // ShowMouse();
-  SetMouseCoord(0, 0);
-  buffer = (unsigned int far *)farmalloc(16 * 16);
-  MouseSavebk(buffer, mouse.x, mouse.y);
+  //加载图形资源
+  loadSvgaResouce(_global);
+  loadMouse(_global);
 
   while (1)
   {
-    MousePutbk(buffer, mouse.x, mouse.y);
-    updateMouseStatus(&mouse);
-    MouseSavebk(buffer, mouse.x, mouse.y);
-    DrawCursor(cur, mouse.x, mouse.y);
+
+    MousePutbk(_global->cursorBK, _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
+    updateMouseStatus(&(_global->mouse));
+    MouseSavebk(_global->cursorBK, _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
+    DrawCursor(_global->cursor_arrow, _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
+
+
     delay(10);
     // currentwin = checkmousewin(desktop, &mouse);
     // if (currentwin)

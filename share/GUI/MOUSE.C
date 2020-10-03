@@ -1,13 +1,16 @@
 #include "macrodef.h"
-#include "hhogui.h"
+#include "hhosvga.h"
 #include "mouse.h"
+#include "SVGAUTIL.H"
 
 #include <dos.h>
 #include <stdio.h>
 #include <mem.h>
 
-// long mouseback[16][16];
-
+/**
+ * 初始化鼠标
+ * @return 是否成功
+ */
 int InitMouse(void)
 {
   union REGS Inr, Outr;
@@ -15,6 +18,7 @@ int InitMouse(void)
   int86(0x33, &Inr, &Outr);
   return Outr.x.ax;
 }
+
 void ShowMouse(void)
 {
   union REGS Inr, Outr;
@@ -37,6 +41,7 @@ void ReadMouse(int *f, int *x, int *y)
   *x = Outr.x.cx;
   *y = Outr.x.dx;
 }
+
 void SetMouseCoord(int x, int y)
 {
   union REGS Inr, Outr;
@@ -58,6 +63,7 @@ void SetMouseArea(int Xmin, int Ymin, int Xmax, int Ymax)
   Inr.x.ax = 8;
   int86(0x33, &Inr, &Outr);
 }
+
 void MouseHideArea(int x1, int y1, int x2, int y2)
 {
   union REGS Inr, Outr;
@@ -68,13 +74,12 @@ void MouseHideArea(int x1, int y1, int x2, int y2)
   Inr.x.ax = 0x10;
   int86(0x33, &Inr, &Outr);
 }
-int IsMouseInBox(int x1, int y1, int x2, int y2)
-{
-  int button, x, y;
-  ReadMouse(&button, &x, &y);
-  return ((x >= x1 && x <= x2 && y >= y1 && y <= y2) ? 1 : 0);
-}
 
+/**
+ * 更新鼠标状态
+ * @param status 鼠标
+ * 
+ */
 void updateMouseStatus(mousestatus *status)
 {
   unsigned int xPos, yPos, bState;
@@ -131,81 +136,97 @@ void updateMouseStatus(mousestatus *status)
   status->y = yPos;
 }
 
-void ReadCursor(unsigned char *buf)
+/**
+ * 读取鼠标文件，存储在buf中
+ * 
+ * @param buf 保存缓存
+ * @param width 鼠标宽度
+ * @param height 鼠标高度
+ * @param filename 鼠标文件 
+ * 
+ * @return 1 success 0 failure
+ */
+int ReadCursor(unsigned char *buf, int width, int height, char *filename)
 {
-  FILE *fpcur;
   int i;
+  FILE *fpcur;
   char line[17];
 
-  if (buf == NULL)
-    return;
-
-  memset(buf, 0, 16 * 16);
-  fpcur = fopen("c:\\hho\\data\\cursor", "r");
-  if (fpcur == NULL)
-    return;
-
-  for (i = 0; i < 16; i++)
+  if (buf == NULL || filename == NULL)
   {
-    fgets(line, 18, fpcur); //\r\n
-    memcpy(buf + i * 16, line, 16);
+    fprintf(stderr, "ReadCursor Error!");
+    return 0;
+  }
+
+  memset(buf, 0, width * height);
+  fpcur = fopen(filename, "r");
+  if (fpcur == NULL)
+  {
+    fprintf(stderr, "ReadCursor Error! can't open file:%s", filename);
+    return 0;
+  }
+
+  for (i = 0; i < height; i++)
+  {
+    fgets(line, width + 2, fpcur); //\r\n
+    memcpy(buf + i * width, line, width);
   }
   fclose(fpcur);
 
-  return buf;
+  return 1;
 }
 
-void DrawCursor(unsigned char *cur, int x, int y)
+/**
+ * 根据cur中存储的鼠标形状,绘制鼠标。 cur[i][j] = 0 不绘制 = 1 黑色 =其他 白色
+ * @param cur 鼠标形状, 必须申请 width * height 大小的缓存
+ * @param x
+ * @param y 鼠标左上坐标
+ * @param width 鼠标宽度
+ * @param height 鼠标高度
+ */
+void DrawCursor(unsigned char *cur, int x, int y, int width, int height)
 {
   int i = 0, j = 0;
   if (cur == NULL)
+  {
+    fprintf(stderr, "DrawCursor Error! cur is null!");
     return;
+  }
 
-  for (i = 0; i < 16; i++)
-    for (j = 0; j < 16; j++)
+  for (i = 0; i < width; i++)
+    for (j = 0; j < height; j++)
     {
-      if (cur[j * 16 + i] == '0')
+      if (cur[j * width + i] == '0') //空白区域
         continue;
-      else if (cur[j * 16 + i] == '2') //黑色
-        putpixel64k(x + i, y + j,  0x0);
+      else if (cur[j * width + i] == '2') //黑色
+        putpixel64k(x + i, y + j, 0x00);
       else //白色
-        putpixel64k(x + i, y + j, WhitePixel());
+        putpixel64k(x + i, y + j, 0x7F);
     }
 }
 
-void MouseSavebk(unsigned int *far buffer, int x, int y)
+/**
+ * 保存鼠标覆盖区域
+ * @param buffer 背景保存缓存
+ * @param x
+ * @param y 左上坐标
+ * @param width 鼠标宽度
+ * @Param height 鼠标高度
+ */
+void MouseSavebk(unsigned int *far buffer, int x, int y, int width, int height)
 {
-  savebackgroundEx(buffer, x, y, 16, 16);
+  savebackgroundEx(buffer, x, y, width, height);
 }
 
-void MousePutbk(unsigned int *far buffer, int x, int y)
+/**
+ * 恢复鼠标覆盖区域
+ * @param buffer 背景保存缓存
+ * @param x
+ * @param y 左上坐标
+ * @param width 鼠标宽度
+ * @Param height 鼠标高度
+ */
+void MousePutbk(unsigned int *far buffer, int x, int y, int width, int height)
 {
-  restorebackgroundEx(buffer, x, y, 16, 16);
+  restorebackgroundEx(buffer, x, y, width, height);
 }
-
-// void Mouse()
-// {
-//   int Button, Oldx, Oldy;
-//   int x, y, First = TRUE;
-//   Button = Oldx = Oldy = 0;
-//   if (!InitMouse())
-//     return;
-//   SetMouseArea(0, 0, 790, 599);
-//   HideMouse();
-//   while (Button != LEFT)
-//   {
-//     ReadMouse(&Button, &x, &y);
-//     if (Oldx != x || Oldy != y)
-//     {
-//       if (!First)
-//         MousePutbk(Oldx, Oldy);
-//       MouseSavebk(x, y);
-//       DrawMouse(x, y);
-//       Oldx = x;
-//       Oldy = y;
-//       First = FALSE;
-//     }
-//     delay(30);
-//   }
-//   MousePutbk(x, y);
-// }
