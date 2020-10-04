@@ -2,7 +2,6 @@
 #include "mouse.h"
 #include "SVGAUTIL.H"
 
-
 #include <dos.h>
 #include <stdio.h>
 #include <mem.h>
@@ -82,7 +81,7 @@ void MouseHideArea(int x1, int y1, int x2, int y2)
  */
 void updateMouseStatus(mousestatus *status)
 {
-  unsigned int xPos, yPos, bState;
+  int xPos, yPos, bState;
   if (status == NULL)
     return;
 

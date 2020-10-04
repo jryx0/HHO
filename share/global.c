@@ -1,4 +1,6 @@
 #include "hglobal.h"
+#include "pinyin.h"
+
 #include <GRAPHICS.H>
 #include <memory.h>
 
@@ -11,30 +13,12 @@
     return NULL;               \
   }
 
-globaldef *initGlobalSetting()
+globaldef *initGlobalSetting(void)
 {
   globaldef *_global = malloc(sizeof(globaldef));
   TEST(_global, _global);
 
   memset(_global, 0, sizeof(globaldef));
-
-  // //初始化输入法空间
-  // _global->pingyin = malloc(sizeof(pyInput));
-  // TEST(_global->pingyin, _global);
-
-  //初始化箭头鼠标空间
-  // _global->cursor_arrow = malloc(MOUSE_WIDHT * MOUSE_HEIGHT);
-  // TEST(_global->cursor_arrow, _global);
-
-  // //初始化手型鼠标空间
-  // _global->cursor_hand = malloc(MOUSE_WIDHT * MOUSE_HEIGHT);
-  // TEST(_global->cursor_hand, _global);
-
-  // //初始化鼠标背景空间
-  // _global->cursorBK = malloc(MOUSE_WIDHT * MOUSE_HEIGHT);
-  // TEST(_global->cursorBK, _global);
-
-  //memset(&(_global->mouse), 0, sizeof(mousestatus));
   return _global;
 }
 
@@ -42,20 +26,13 @@ void destoryGlobalSettting(globaldef *_g)
 {
   if (_g)
   {
-    // if (_g->cursorBK)
-    //   free(_g->cursorBK);
-    // if (_g->cursor_arrow)
-    //   free(_g->cursor_arrow);
-    // if (_g->cursor_hand)
-    //   free(_g->cursor_hand);
-
-    fclose(_g->pingyin->fpHanzi);
-    if (_g->pingyin)
-      free(_g->pingyin);
+    ClosePY(_g->pingyin);
 
     fclose(_g->fpBK);
-    fclose(_g->fphanzi_ht24);
-    fclose(_g->fphanzi_st24);
+    fclose(_g->fphanzi_ss24);
+    fclose(_g->fphanzi_sh24);
+    fclose(_g->fphanzi_ss16);
+    fclose(_g->fphanzi_sh16);
 
     free(_g);
   }
@@ -64,15 +41,19 @@ void destoryGlobalSettting(globaldef *_g)
 globaldef *loadSvgaResouce(globaldef *_g)
 {
   //加载鼠标形状
-  ReadCursor(_g->cursor_arrow, MOUSE_WIDHT, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
-  ReadCursor(_g->cursor_hand, MOUSE_WIDHT, MOUSE_HEIGHT, FILE_CURSOR_HAND);
+  ReadCursor((unsigned char *)_g->cursor_arrow, MOUSE_WIDHT, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
+  ReadCursor((unsigned char *)_g->cursor_hand, MOUSE_WIDHT, MOUSE_HEIGHT, FILE_CURSOR_HAND);
 
   //加载拼音索引文件
   _g->pingyin = initPYHZIndex();
   TEST(_g->pingyin, _g);
 
   //打开字库文件
-  // _g->fphanzi_ht24 = fopen();
+  _g->fphanzi_ss24 = fopen(FILE_SIMSUN24, "r");
+  _g->fphanzi_sh24 = fopen(FILE_SIMHEI24, "r");
+  _g->fphanzi_ss16 = fopen(FILE_SIMSUN16, "r");
+  _g->fphanzi_sh16 = fopen(FILE_SIMHEI16, "r");
+  return _g;
 }
 
 void loadMouse(globaldef *_g)
@@ -81,7 +62,7 @@ void loadMouse(globaldef *_g)
 
   SetMouseCoord(0, 0);
   //保存鼠标背景
-  MouseSavebk(_g->cursorBK, _g->mouse.x, _g->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
+  MouseSavebk((unsigned int *)_g->cursorBK, _g->mouse.x, _g->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
   //设置鼠标最大区域
   SetMouseArea(0, 0, getmaxx(), getmaxy());
 }

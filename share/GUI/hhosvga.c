@@ -5,6 +5,7 @@
 #include <dos.h>
 #include <GRAPHICS.H>
 #include <stdio.h>
+#include <memory.h>
 
 /**
  * 控制显示页
@@ -42,7 +43,7 @@ void selectpage(register char page)
  */
 void clearScreen(char color)
 {
-  int i, j = 16;
+  int i;
   unsigned int pages = 0, pagesize = 0;
 
   /*显存指针常量*/
@@ -59,7 +60,6 @@ void clearScreen(char color)
 
   // selectpage(0);
   // memset(video_buffer, 0xff, 1024 * 32 * 2 - 1);
-
   // selectpage(1);
   // memset(video_buffer, 0xff, 1024 * 32 * 2 - 1);
 }

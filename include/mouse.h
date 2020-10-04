@@ -1,7 +1,11 @@
 #ifndef __MOUSE_H__
 #define __MOUSE_H__
 
-//#include "hglobal.h"
+//处理borlandc在vscode中的兼容性
+#ifndef __BORLANDC__
+#define huge
+#define far
+#endif
 
 #define MOUSE_ENTERED 1
 #define MOUSE_LEFT 2
