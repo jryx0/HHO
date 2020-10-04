@@ -1,7 +1,7 @@
-#include "macrodef.h"
 #include "hhosvga.h"
 #include "mouse.h"
 #include "SVGAUTIL.H"
+
 
 #include <dos.h>
 #include <stdio.h>

@@ -7,7 +7,6 @@
 /*	    Jordan Hargraphix Software		*/
 /*						*/
 /************************************************/
-#include "macrodef.h"
 #include "svgautil.h"
 
 #include <dos.h>

@@ -1,11 +1,12 @@
 #include "pinyin.h"
-#include "macrodef.h"
+#include "hglobal.h"
 #include <ctype.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
-pyInput *initPYHZIndex() {
+pyInput *initPYHZIndex()
+{
   FILE *fp1, *fp2;
   char ch;
   char py[16];
@@ -14,11 +15,13 @@ pyInput *initPYHZIndex() {
 
   pyInput *idx;
 
-  if ((fp1 = fopen(FILE_HANZI, "r")) == NULL) {
+  if ((fp1 = fopen(FILE_HANZI, "r")) == NULL)
+  {
     printf("unable to open %s\r\n", FILE_HANZI);
     return NULL;
   }
-  if ((fp2 = fopen(FILE_PYINDEX, "r")) == NULL) {
+  if ((fp2 = fopen(FILE_PYINDEX, "r")) == NULL)
+  {
     printf("unable to open %s\r\n", FILE_PYINDEX);
     return NULL;
   }
@@ -26,13 +29,17 @@ pyInput *initPYHZIndex() {
   idx = malloc(sizeof(pyInput));
   idx->fpHanzi = fp1;
 
-  while ((ch = fgetc(fp2)) != EOF) {
-    if (ch != ';') {
+  while ((ch = fgetc(fp2)) != EOF)
+  {
+    if (ch != ';')
+    {
       py[i] = ch;
       if (ch == ',')
         k = i;
       i++;
-    } else {
+    }
+    else
+    {
       py[i] = 0;
       i = 0;
       strncpy(idx->index[j].pinying, py, k);
@@ -46,7 +53,8 @@ pyInput *initPYHZIndex() {
   return idx;
 }
 
-char *getCandidateHZbyPY(pyInput *hzIdx, const char *py) {
+char *getCandidateHZbyPY(pyInput *hzIdx, const char *py)
+{
   int len;
   int i;
   int offset = 0;
@@ -56,8 +64,10 @@ char *getCandidateHZbyPY(pyInput *hzIdx, const char *py) {
     return NULL;
 
   len = strlen(py);
-  for (i = 0; i < MAXNUMPY; i++) {
-    if (strncmp(hzIdx->index[i].pinying, py, len) == 0) {
+  for (i = 0; i < MAXNUMPY; i++)
+  {
+    if (strncmp(hzIdx->index[i].pinying, py, len) == 0)
+    {
       offset = hzIdx->index[i].postion;
       if (i < MAXNUMPY - 1)
         len = hzIdx->index[i + 1].postion - hzIdx->index[i].postion;
@@ -74,12 +84,14 @@ char *getCandidateHZbyPY(pyInput *hzIdx, const char *py) {
   return hanzi;
 }
 
-int checkvalidatepy(char *py) {
+int checkvalidatepy(char *py)
+{
   int i = 0;
   if (py == NULL)
     return 0;
 
-  for (i = 0; i < strlen(py); i++) {
+  for (i = 0; i < strlen(py); i++)
+  {
     if (!isalpha(py[i]))
       return 0;
   }
@@ -87,7 +99,8 @@ int checkvalidatepy(char *py) {
   return 1;
 }
 
-void ClosePY(pyInput *hzIdx) {
+void ClosePY(pyInput *hzIdx)
+{
   fclose(hzIdx->fpHanzi);
   free(hzIdx);
 }

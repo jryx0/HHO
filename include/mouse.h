@@ -1,6 +1,8 @@
 #ifndef __MOUSE_H__
 #define __MOUSE_H__
 
+//#include "hglobal.h"
+
 #define MOUSE_ENTERED 1
 #define MOUSE_LEFT 2
 #define MOUSE_OUTSIDE 4

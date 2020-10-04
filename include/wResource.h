@@ -1,6 +1,6 @@
 #ifndef __RESOUCE_H__
 #define __RESOUCE_H__
-#include "macrodef.h"
+ 
 ///////////////////////Graphics define/////////////////////////////////////
 
 #if defined(SVGA64K)

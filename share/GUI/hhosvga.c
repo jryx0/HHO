@@ -1,4 +1,4 @@
-#include "macrodef.h"
+#include "hglobal.h"
 #include "SVGAUTIL.H"
 #include "hhosvga.h"
 
@@ -56,6 +56,12 @@ void clearScreen(char color)
     memset(video_buffer, color, pagesize - 1);
     //memset(video_buffer + 0x4000, color, pagesize); // 16 << 10
   }
+
+  // selectpage(0);
+  // memset(video_buffer, 0xff, 1024 * 32 * 2 - 1);
+
+  // selectpage(1);
+  // memset(video_buffer, 0xff, 1024 * 32 * 2 - 1);
 }
 
 /**

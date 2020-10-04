@@ -1,5 +1,4 @@
 
-#include "macrodef.h"
 #include "SVGAUTIL.H"
 #include "HBaseWin.h"
 #include "mouse.h"
@@ -20,11 +19,7 @@ int main(int argc, char *argv[])
 
   //初始化系统参数
   _global = initGlobalSetting();
-  if (_global == NULL)
-  {
-    printf("初始化失败！\r\n");
-  }
-
+ 
   //初始化图形界面
   if (argc > 1)
     screenMode = atoi(argv[1]);
@@ -42,10 +37,9 @@ int main(int argc, char *argv[])
     MousePutbk(_global->cursorBK, _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
     updateMouseStatus(&(_global->mouse));
     MouseSavebk(_global->cursorBK, _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
-    DrawCursor(_global->cursor_arrow, _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
+    DrawCursor(_global->cursor_hand, _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
 
-
-    delay(10);
+    delay(30);
     // currentwin = checkmousewin(desktop, &mouse);
     // if (currentwin)
     //   desktop->EventHandler(currentwin, EVENT_MOUSE, &mouse);
@@ -79,5 +73,6 @@ int main(int argc, char *argv[])
     }
   }
 
+  destoryGlobalSettting(_global);
   return 0;
 }
