@@ -30,14 +30,18 @@ int main(int argc, char *argv[])
   loadSvgaResouce(_global);
   loadMouse(_global);
 
-  setcolor(RealDrawColor(0x00));
-  
+  setfillstyle(SOLID_FILL, RealFillColor(0x0555));
+  bar(0, 0, getmaxx(),getmaxy());
+
+ 
   printHZ(_global->fphanzi_ss16, 100, 200, "你好ａa1１", 0x00, 16);
   printHZ(_global->fphanzi_sh16, 100, 250, "我", 0x00, 16);
 
+  
+
   while (1)
   {
-
+    HideMouse();
     MousePutbk((unsigned int *)_global->cursorBK,
                _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
     updateMouseStatus(&(_global->mouse));
@@ -46,8 +50,8 @@ int main(int argc, char *argv[])
                 _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
     DrawCursor((unsigned char *)_global->cursor_hand,
                _global->mouse.x, _global->mouse.y, MOUSE_WIDHT, MOUSE_HEIGHT);
-
-    delay(30);
+    
+    
     // currentwin = checkmousewin(desktop, &mouse);
     // if (currentwin)
     //   desktop->EventHandler(currentwin, EVENT_MOUSE, &mouse);
@@ -79,6 +83,7 @@ int main(int argc, char *argv[])
         break;
       } //当按下ESC或空格退出时循环，ESC键的键值时27.
     }
+    delay(30);
   }
 
   destoryGlobalSettting(_global);
