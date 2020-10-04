@@ -50,12 +50,15 @@ int main(void)
       if (kbchar == 'c')
       {
         // setcolor(RealColor(15));
-        // line(0, 0, 100, 10);
+        MousePutBk(mouse_new.position);
+        line(mouse_new.position.x, mouse_new.position.y, mouse_new.position.x + random(1024), mouse_new.position.y + random(768), random(65535));
+        MouseStoreBk(mouse_new.position);
       }
       else if (kbchar == 'r')
       {
-        // setfillstyle(SOLID_FILL, RealFillColor(9));
-        // bar(10, 10, 80, 80);
+        MousePutBk(mouse_new.position);
+        bar(mouse_new.position.x, mouse_new.position.y, mouse_new.position.x + random(1024), mouse_new.position.y + random(768), random(65535));
+        MouseStoreBk(mouse_new.position);
       }
       else if (kbchar == 'a')
       {
