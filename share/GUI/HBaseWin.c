@@ -35,7 +35,7 @@ void DestoryWindows(hbasewinAttr *win)
 {
   free(win->title);
   list_destroy(win->children);
-  
+
   free(win);
 }
 
@@ -80,30 +80,7 @@ void OnPaint(hbasewinAttr *win, void *val)
   y2 = y1 + win->nHeight;
 
   switch (type)
-  { 
-  case 2: //∞ºœ›°¢—°÷–
-    // //Õ‚»¶
-    // setcolor(RealDrawColor(Shade3));
-    // line(x1, y1, x2, y1);
-    // line(x1, y1, x1, y2);
-    // setcolor(RealDrawColor(Shade0));
-    // line(x2, y1, x2, y2);
-    // line(x1, y2, x2, y2);
-    // //ƒ⁄»¶
-    // setcolor(RealDrawColor(Shade2));
-    // line(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
-    // line(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
-    // setcolor(RealDrawColor(Shade1));
-    // line(x2 - 1, y1 + 1, x2 - 1, y2 - 1);
-    // line(x1 + 1, y2 - 1, x2 - 1, y2 - 1);
-    // //±≥æ∞ÃÓ≥‰
-    // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
-    // bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
-    
-    setfillstyle(SOLID_FILL,RealFillColor(BLUE));
-    bar(x1, y1, x2, y1);
-    break;
-  
+  {
   case 1: //Õπ∆°¢Œ¥—°÷–
     // //Õ‚»¶
     // setcolor(RealDrawColor(Shade0));
@@ -122,17 +99,44 @@ void OnPaint(hbasewinAttr *win, void *val)
     // //±≥æ∞ÃÓ≥‰
     // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
     // bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
-    // break;
 
-  default: //∆Ω√Ê
+    setfillstyle(SOLID_FILL, RealFillColor(LIGHTBLUE));
+    bar(x1, y1, x2, y1);
+    break;
+  
+  case 2: //∞ºœ›°¢—°÷–
+    // //Õ‚»¶
+    // setcolor(RealDrawColor(Shade3));
+    // line(x1, y1, x2, y1);
+    // line(x1, y1, x1, y2);
+    // setcolor(RealDrawColor(Shade0));
+    // line(x2, y1, x2, y2);
+    // line(x1, y2, x2, y2);
+    // //ƒ⁄»¶
+    // setcolor(RealDrawColor(Shade2));
+    // line(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
+    // line(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
+    // setcolor(RealDrawColor(Shade1));
+    // line(x2 - 1, y1 + 1, x2 - 1, y2 - 1);
+    // line(x1 + 1, y2 - 1, x2 - 1, y2 - 1);
+    // //±≥æ∞ÃÓ≥‰
+    // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
+    // bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
+
+    setfillstyle(SOLID_FILL, RealFillColor(BLUE));
+    bar(x1, y1, x2, y1);
+    break;
+
+  case 3: //ª≠øÚ
 
     // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
     // bar(x1, y1, x2, y2);
-    // setcolor(RealDrawColor(Shade3));
-    // rectangle(x1, y1, x2, y2);
-    
-    setfillstyle(SOLID_FILL,RealFillColor(LIGHTBLUE));
-    bar(x1, y1, x2, y1);
+
+    setcolor(RealDrawColor(BLACK));
+    rectangle(x1, y1, x2, y2);
+    // break;
+
+  default:
     break;
   }
 }
@@ -177,7 +181,8 @@ void repaintChildren(hbasewinAttr *win)
   list_iterator_destroy(it);
 }
 
-int checkpointInside(hbasewinAttr *win, int x, int y) {
+int checkpointInside(hbasewinAttr *win, int x, int y)
+{
   int x1, y1, x2, y2;
   if (win == NULL)
     return 0;

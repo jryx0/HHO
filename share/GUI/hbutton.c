@@ -28,9 +28,9 @@ void OnPaintButtonUp(hbasewinAttr *btn, void *value)
   y = getAbsoluteY(btn);
   setcolor(RealDrawColor(WHITE));
   if (len < btn->nWidth)
-    outtextxy((btn->nWidth - len) / 2 + x, (btn->nHeight - 8) / 2 + y, btn->title); //8个像素点一个字符
+    outtextxy((btn->nWidth - len) / 2 + x, (btn->nHeight - 16) / 2 + y, btn->title); //16个像素点一个字符
   else
-    outtextxy(x, (btn->nHeight - 8) / 2 + y, btn->title);
+    outtextxy(x, (btn->nHeight - 16) / 2 + y, btn->title);
 }
 
 void OnPaintButtonDown(hbasewinAttr *btn, void *value)
@@ -41,14 +41,14 @@ void OnPaintButtonDown(hbasewinAttr *btn, void *value)
   OnPaint(btn, &type);
   if (btn->title == NULL)
     return;
-  len = strlen(btn->title) * 8;
+  len = strlen(btn->title) * 8;//len为像素点数
   x = getAbsoluteX(btn);
   y = getAbsoluteY(btn);
   setcolor(RealDrawColor(WHITE));
   if (len < btn->nWidth)
-    outtextxy((btn->nWidth - len) / 2 + x, (btn->nHeight - 8) / 2 + y, btn->title); //8个像素点一个字符
+    outtextxy((btn->nWidth - len) / 2 + x, (btn->nHeight - 16) / 2 + y, btn->title); //16个像素点一个字符
   else
-    outtextxy(x, (btn->nHeight - 8) / 2 + y, btn->title);
+    outtextxy(x, (btn->nHeight - 16) / 2 + y, btn->title);
 }
 void OnLeftUpButton(hbasewinAttr *btn, void *value)
 {

@@ -4,6 +4,7 @@
   "files.encoding": "gbk",
   "editor.fontSize": 12,
   "files.associations": {
-    "SVGAUTIL.C": "cpp"
+    "SVGAUTIL.C": "cpp",
+    "HANZI.C": "cpp"
   }
 }
