@@ -31,6 +31,7 @@ switch(userinfo.type)
  * 
  */
 
+this is zhangziao
 
 lanuch.json
   "preLaunchTask" = tasks.label
