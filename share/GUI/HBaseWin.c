@@ -33,6 +33,10 @@ hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
 
 void DestoryWindows(hbasewinAttr *win)
 {
+  free(win->title);
+  list_destroy(win->children);
+  
+  free(win);
 }
 
 hbasewinAttr *addChild(hbasewinAttr *parent, hbasewinAttr *child)
@@ -76,50 +80,59 @@ void OnPaint(hbasewinAttr *win, void *val)
   y2 = y1 + win->nHeight;
 
   switch (type)
-  {
-  case 1: //Í¹Æð
-    //ÍâÈ¦
-    setcolor(RealDrawColor(Shade0));
-    line(x1, y1, x2, y1);
-    line(x1, y1, x1, y2);
-    setcolor(RealDrawColor(Shade3));
-    line(x2, y1, x2, y2);
-    line(x1, y2, x2, y2);
-    //ÄÚÈ¦
-    setcolor(RealDrawColor(Shade1));
-    line(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
-    line(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
-    setcolor(RealDrawColor(Shade2));
-    line(x2 - 1, y1 + 1, x2 - 1, y2 - 1);
-    line(x1 + 1, y2 - 1, x2 - 1, y2 - 1);
-    //±³¾°Ìî³ä
-    setfillstyle(SOLID_FILL, RealFillColor(Shade1));
-    bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
+  { 
+  case 2: //°¼ÏÝ¡¢Ñ¡ÖÐ
+    // //ÍâÈ¦
+    // setcolor(RealDrawColor(Shade3));
+    // line(x1, y1, x2, y1);
+    // line(x1, y1, x1, y2);
+    // setcolor(RealDrawColor(Shade0));
+    // line(x2, y1, x2, y2);
+    // line(x1, y2, x2, y2);
+    // //ÄÚÈ¦
+    // setcolor(RealDrawColor(Shade2));
+    // line(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
+    // line(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
+    // setcolor(RealDrawColor(Shade1));
+    // line(x2 - 1, y1 + 1, x2 - 1, y2 - 1);
+    // line(x1 + 1, y2 - 1, x2 - 1, y2 - 1);
+    // //±³¾°Ìî³ä
+    // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
+    // bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
+    
+    setfillstyle(SOLID_FILL,RealFillColor(BLUE));
+    bar(x1, y1, x2, y1);
     break;
-  case 2: //°¼ÏÝ
-    //ÍâÈ¦
-    setcolor(RealDrawColor(Shade3));
-    line(x1, y1, x2, y1);
-    line(x1, y1, x1, y2);
-    setcolor(RealDrawColor(Shade0));
-    line(x2, y1, x2, y2);
-    line(x1, y2, x2, y2);
-    //ÄÚÈ¦
-    setcolor(RealDrawColor(Shade2));
-    line(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
-    line(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
-    setcolor(RealDrawColor(Shade1));
-    line(x2 - 1, y1 + 1, x2 - 1, y2 - 1);
-    line(x1 + 1, y2 - 1, x2 - 1, y2 - 1);
-    //±³¾°Ìî³ä
-    setfillstyle(SOLID_FILL, RealFillColor(Shade1));
-    bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
-    break;
+  
+  case 1: //Í¹Æð¡¢Î´Ñ¡ÖÐ
+    // //ÍâÈ¦
+    // setcolor(RealDrawColor(Shade0));
+    // line(x1, y1, x2, y1);
+    // line(x1, y1, x1, y2);
+    // setcolor(RealDrawColor(Shade3));
+    // line(x2, y1, x2, y2);
+    // line(x1, y2, x2, y2);
+    // //ÄÚÈ¦
+    // setcolor(RealDrawColor(Shade1));
+    // line(x1 + 1, y1 + 1, x2 - 1, y1 + 1);
+    // line(x1 + 1, y1 + 1, x1 + 1, y2 - 1);
+    // setcolor(RealDrawColor(Shade2));
+    // line(x2 - 1, y1 + 1, x2 - 1, y2 - 1);
+    // line(x1 + 1, y2 - 1, x2 - 1, y2 - 1);
+    // //±³¾°Ìî³ä
+    // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
+    // bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
+    // break;
+
   default: //Æ½Ãæ
-    setfillstyle(SOLID_FILL, RealFillColor(Shade1));
-    bar(x1, y1, x2, y2);
-    setcolor(RealDrawColor(Shade3));
-    rectangle(x1, y1, x2, y2);
+
+    // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
+    // bar(x1, y1, x2, y2);
+    // setcolor(RealDrawColor(Shade3));
+    // rectangle(x1, y1, x2, y2);
+    
+    setfillstyle(SOLID_FILL,RealFillColor(LIGHTBLUE));
+    bar(x1, y1, x2, y1);
     break;
   }
 }

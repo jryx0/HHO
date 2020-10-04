@@ -14,6 +14,7 @@ hbasewinAttr *CreateButton(hbasewinAttr *parent, int x, int y, int nWidth,
   button->onLeftDown = OnLeftDownButton;
   return button;
 }
+
 void OnPaintButtonUp(hbasewinAttr *btn, void *value)
 {
   int x, y, type = 1, len;
@@ -25,11 +26,13 @@ void OnPaintButtonUp(hbasewinAttr *btn, void *value)
   len = strlen(btn->title) * 8;
   x = getAbsoluteX(btn);
   y = getAbsoluteY(btn);
+  setcolor(RealDrawColor(WHITE));
   if (len < btn->nWidth)
     outtextxy((btn->nWidth - len) / 2 + x, (btn->nHeight - 8) / 2 + y, btn->title); //8个像素点一个字符
   else
     outtextxy(x, (btn->nHeight - 8) / 2 + y, btn->title);
 }
+
 void OnPaintButtonDown(hbasewinAttr *btn, void *value)
 {
   int x, y, type = 2, len;
@@ -41,6 +44,7 @@ void OnPaintButtonDown(hbasewinAttr *btn, void *value)
   len = strlen(btn->title) * 8;
   x = getAbsoluteX(btn);
   y = getAbsoluteY(btn);
+  setcolor(RealDrawColor(WHITE));
   if (len < btn->nWidth)
     outtextxy((btn->nWidth - len) / 2 + x, (btn->nHeight - 8) / 2 + y, btn->title); //8个像素点一个字符
   else

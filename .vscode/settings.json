@@ -2,5 +2,8 @@
   "editor.tabSize": 2,
   "files.autoGuessEncoding": true,
   "files.encoding": "gbk",
-  "editor.fontSize": 12
+  "editor.fontSize": 12,
+  "files.associations": {
+    "SVGAUTIL.C": "cpp"
+  }
 }
