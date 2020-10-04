@@ -1,6 +1,30 @@
 #ifndef __MOUSE_H__
 #define __MOUSE_H__
 
+//处理borlandc在vscode中的兼容性
+#ifndef __BORLANDC__
+#define huge
+#define far
+#endif
+
+#define MOUSE_ENTERED 1
+#define MOUSE_LEFT 2
+#define MOUSE_OUTSIDE 4
+#define MOUSE_INSIDE 8
+#define MOUSE_BUTTON_DOWN 16
+#define MOUSE_BUTTON_UP 32
+#define MOUSE_BUTTON_STILL_DOWN 64
+#define MOUSE_BUTTON_STILL_UP 128
+
+typedef struct
+{
+	unsigned int x, y;
+	unsigned char leftDown, rightDown;
+	unsigned char oldLeftDown, oldRightDown;
+	char leftClickState, rightClickState;
+	char moveState;
+} mousestatus;
+
 typedef struct Coordinate
 {
 	int x;
@@ -9,8 +33,8 @@ typedef struct Coordinate
 
 typedef struct Area
 {
-    Coordinate lt;
-    Coordinate rb;
+	Coordinate lt;
+	Coordinate rb;
 } Area;
 
 /*鼠标结构体，包含鼠标状态*/
@@ -33,7 +57,7 @@ Return：		unsigned int	函数执行结果，
 								0x0000	不支持
 								0xffff	支持
 **********************************************************/
-extern int MouseInit(void);
+int initMouse(void);
 
 /**********************************************************
 Function：		 MouseRange
@@ -45,7 +69,7 @@ Input：			Area结构体变量（记录了屏幕上某块区域的坐标范围�
 Output：		None
 Return：		None
 **********************************************************/
-extern void MouseRange(Area mouse_area);
+void setMouseRange(int Xmin, int Ymin, int Xmax, int Ymax);
 
 /**********************************************************
 Function：		 MouseXYB
@@ -58,7 +82,7 @@ Output：		MOUSE * mouse	存放鼠标状态结构体被更改
 
 Return：		mouse->but		鼠标按钮状态
 **********************************************************/
-extern int MouseXYB(MOUSE *mouse);
+void MouseXYB(int *status, int *x, int *y);
 
 /**********************************************************
 Function：		 MouseBarLeft

@@ -33,11 +33,11 @@ int main(void)
 
   rectangleEx(10, 10, 10000, 20000, 0x5555, 1, 1);
 
-  MouseInit();
+  initMouse();
   MouseReset();
   while (1)
   {
-    MouseXYB(&mouse_new);
+    MouseXYB(&mouse_new.but, &mouse_new.position.x, &mouse_new.position.y);
     MousePutBk(mouse_old.position);
     MouseStoreBk(mouse_new.position);
     MouseDraw(mouse_new);
