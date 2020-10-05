@@ -1,4 +1,5 @@
 #include "macrodef.h"
+#include "hglobal.h"
 #include "hhosvga.h"
 #include "mouse.h"
 #include "HBaseWin.h"
@@ -7,55 +8,52 @@
 #include <stdlib.h>
 #include <mem.h>
 
+#define DEBUG
+
 int main(void)
 {
-  mousestatus mouse_new, mouse_old = {0, 0, 0}; //鼠标新旧结构体
   char kbchar = 0;
-  int width = 64, height = 64;
-  unsigned int far *buffer;
+  globaldef *_global;
 
+  //初始化系统参数
+  _global = initGlobalSetting();
+
+  //初始化图形界面
   initSVGA64k();
 
+  //初始化屏幕背景
   clearScreen(0xFF);
-  fillRegionEx(100, 200, 300, 160, 0x4AE6);
-  fillRegionEx(150, 250, 300, 160, 0x4356);
 
-  //memory size
-  // buffer = (unsigned int far *)malloc(width * height * sizeof(unsigned int));
-  // if (buffer == NULL)
-  //   return;
+#ifdef DEBUG
+  //屏幕缓存测试
+  hsvgatest();
+#endif
 
-  // rectangleEx(140, 240, width, height, 0x5555, 1, 1);
-  // savebackgroundEx(buffer, 140, 240, width, height);
-  // restorebackgroundEx(buffer, 400, 50, width, height);
+  //初始化鼠标
+  ResetMouse(&_global->mouse);
 
-  // free(buffer);
-
-  rectangleEx(10, 10, 10000, 20000, 0x5555, 1, 1);
-  memset(&mouse_old, 0, sizeof(mousestatus));
-  memset(&mouse_new, 0, sizeof(mousestatus));
-  MouseInit();
-  ResetMouse(&mouse_old);
   while (1)
-  {
+  { //循环
+    UpdateMouseStatus(&_global->mouse);
+    // CreateMouseEvent();
 
-    UpdateMouseStatus(&mouse_new);
-    // RestoreMouseBk(&mouse_old);
-    // SaveMouseBk(&mouse_new);
-    // MouseDraw(&mouse_new);
+    // UpdateKeyboard();
+    // CreateKeyboardEvent();
 
+    // EventHandler();
     delay(30);
-    mouse_old = mouse_new;
 
-    if (mouse_new.leftClickState == MOUSE_BUTTON_UP)
+//////////////////// 测试代码/////////////////////////////////////////
+#ifdef DEBUG
+    if (_global->mouse.leftClickState == MOUSE_BUTTON_UP)
     {
       // setcolor(RealColor(15));
-      RestoreMouseBk(&mouse_new);
-      line(mouse_new.x, mouse_new.y, mouse_new.x - random(1024), mouse_new.y - random(768), random(65535));
-      SaveMouseBk(&mouse_new);
+      RestoreMouseBk(&_global->mouse);
+      line(_global->mouse.x, _global->mouse.y, _global->mouse.x - random(1024), _global->mouse.y - random(768), random(65535));
+      SaveMouseBk(&_global->mouse);
     }
 
-    if (mouse_new.rightClickState == MOUSE_BUTTON_UP)
+    if (_global->mouse.rightClickState == MOUSE_BUTTON_UP)
     {
       break;
     }
@@ -66,15 +64,15 @@ int main(void)
       if (kbchar == 'c')
       {
         // setcolor(RealColor(15));
-        RestoreMouseBk(&mouse_new);
-        line(mouse_new.x, mouse_new.y, mouse_new.x + random(1024), mouse_new.y + random(768), random(65535));
-        SaveMouseBk(&mouse_new);
+        RestoreMouseBk(&_global->mouse);
+        line(_global->mouse.x, _global->mouse.y, _global->mouse.x + random(1024), _global->mouse.y + random(768), random(65535));
+        SaveMouseBk(&_global->mouse);
       }
       else if (kbchar == 'r')
       {
-        RestoreMouseBk(&mouse_new);
-        bar(mouse_new.x, mouse_new.y, mouse_new.x + random(1024), mouse_new.y + random(768), random(65535));
-        SaveMouseBk(&mouse_new);
+        RestoreMouseBk(&_global->mouse);
+        bar(_global->mouse.x, _global->mouse.y, _global->mouse.x + random(1024), _global->mouse.y + random(768), random(65535));
+        SaveMouseBk(&_global->mouse);
       }
       else if (kbchar == 'a')
       {
@@ -85,7 +83,9 @@ int main(void)
         break;
       } //当按下ESC或空格退出时循环，ESC键的键值时27.
     }
+#endif
   }
 
+  destoryGlobalSettting(_global);
   return 0;
 }

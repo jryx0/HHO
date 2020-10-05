@@ -245,6 +245,7 @@ void savebackgroundFile(FILE *fpBK, int x, int y, int width, int height)
   unsigned long int offest; // 对应显存地址偏移量
   unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L;
 
+  fseek(fpBK, 0, SEEK_SET);
   setStandardRegionEx(&x, &y, &width, &height);
 
   for (j = 0; j < height; j++)
@@ -256,7 +257,6 @@ void savebackgroundFile(FILE *fpBK, int x, int y, int width, int height)
     fwrite(&video_buffer[offest], 1, width * 2, fpBK);
   }
   fflush(fpBK);
-  fclose(fpBK);
 }
 
 /**
@@ -278,6 +278,8 @@ void restorebackgroundFile(FILE *fpBK, int x, int y, int width, int height)
 
   if (fpBK == NULL)
     return;
+
+  fseek(fpBK, 0, SEEK_SET);
   setStandardRegionEx(&x, &y, &width, &height);
   for (j = 0; j < height; j++)
   {
@@ -288,7 +290,6 @@ void restorebackgroundFile(FILE *fpBK, int x, int y, int width, int height)
 
     fread(&video_buffer[offest], 1, width * 2, fpBK);
   }
-  fclose(fpBK);
 }
 
 /**
@@ -546,6 +547,29 @@ void rectangleEx(int x, int y, int width, int height, int color, char line_width
   liney_styleEx(x + width, y, height, color, line_width, dot_style);
   linex_styleEx(x, y + height, width, color, line_width, dot_style);
   liney_styleEx(x, y, height, color, line_width, dot_style);
+}
+
+void hsvgatest()
+{
+  unsigned int *buffer, i;
+  int width = 100, height = 100;
+  FILE *fpBak = fopen("scr.bak", "wb+");
+  //memory size
+  buffer = (unsigned int far *)malloc(width * height * sizeof(unsigned int));
+  if (buffer == NULL)
+    return;
+
+  fillRegionEx(100, 200, 300, 160, 0x4AE6);
+  fillRegionEx(150, 250, 300, 160, 0x4356);
+
+  rectangleEx(140, 240, width, height, 0x5555, 1, 1);
+  savebackgroundEx(buffer, 140, 240, width, height);
+  restorebackgroundEx(buffer, 400, 50, width, height);
+
+  savebackgroundFile(fpBak, 80, 150, 200, 100);
+  restorebackgroundFile(fpBak, 0, 0, 200, 100);
+
+  free(buffer);
 }
 
 /**

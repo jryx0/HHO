@@ -13,12 +13,41 @@
     return NULL;               \
   }
 
+/**
+ * 初始化系统参数，并加载系统资源文件
+ * 
+ * @return globaled指针
+ * 错误退出程序 
+ */
 globaldef *initGlobalSetting(void)
 {
   globaldef *_global = malloc(sizeof(globaldef));
   TEST(_global, _global);
 
   memset(_global, 0, sizeof(globaldef));
+
+  ///////////加载资源//////////////////
+  //加载拼音索引文件
+  _global->pingyin = initPYHZIndex();
+  TEST(_global, _global->pingyin);
+
+  //打开字库文件
+  _global->fphanzi_ss24 = fopen(FILE_SIMSUN24, "r");
+  TEST(_global, _global->fphanzi_ss24);
+
+  _global->fphanzi_sh24 = fopen(FILE_SIMHEI24, "r");
+  TEST(_global, _global->fphanzi_sh24);
+
+  _global->fphanzi_ss16 = fopen(FILE_SIMSUN16, "r");
+  TEST(_global, _global->fphanzi_ss16);
+
+  _global->fphanzi_sh16 = fopen(FILE_SIMHEI16, "r");
+  TEST(_global, _global->fphanzi_ss16);
+
+  //加载鼠标形状
+  ReadCursor((unsigned char *)_global->cursor_arrow, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
+  ReadCursor((unsigned char *)_global->cursor_hand, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_HAND);
+
   return _global;
 }
 
@@ -36,26 +65,4 @@ void destoryGlobalSettting(globaldef *_g)
 
     free(_g);
   }
-}
-
-globaldef *loadSvgaResouce(globaldef *_g)
-{
-  //加载鼠标形状
-  ReadCursor((unsigned char *)_g->cursor_arrow, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
-  ReadCursor((unsigned char *)_g->cursor_hand, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_HAND);
-
-  //加载拼音索引文件
-  _g->pingyin = initPYHZIndex();
-  TEST(_g->pingyin, _g);
-
-  //打开字库文件
-  _g->fphanzi_ss24 = fopen(FILE_SIMSUN24, "r");
-  _g->fphanzi_sh24 = fopen(FILE_SIMHEI24, "r");
-  _g->fphanzi_ss16 = fopen(FILE_SIMSUN16, "r");
-  _g->fphanzi_sh16 = fopen(FILE_SIMHEI16, "r");
-}
-
-void loadMouse(globaldef *_g)
-{
-  ResetMouse(&(_g->mouse));
 }
