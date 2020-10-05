@@ -1,10 +1,17 @@
+#include "macrodef.h"
 #include "HBaseWin.h"
 #include "hlabel.h"
 #include "pinyin.h"
 #include "hglobal.h"
 #include <memory.h>
-#include <graphics.h>
+//#include <graphics.h>
 
+/**
+ * 1.写一个函数，专门读文件
+ * 2.要考虑字体大小
+ * 3.考虑到内存的原因，文件在显示的读取是不是更好一些？虽然速度慢一点 
+ * 
+ */
 hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
                           int nHeight, int winID, const char *title)
 { //title指向文件名
@@ -14,8 +21,12 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
   int i, len;
 
   if (title == NULL)
+  {
     label = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
-  if (fptemp = fopen(*title, "r") == NULL)
+    return;
+  }
+
+  if (fptemp = fopen(title, "r") == NULL)
     label = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
   else
   {
@@ -26,8 +37,8 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
       fread(temp + i, 1, 1, fptemp);
     //最后一个字的判定
     if (fptemp != EOF)
-    { //超长
-      *(temp + i) = "…";
+    {                        //超长
+      *(temp + i) = '…';     //单引号
       *(temp + len * 2) = 0; //测试，确保有结尾
     }
     else
@@ -35,14 +46,21 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
       fread(temp + i, 1, 2, fptemp);
     }
     label = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, temp);
+    fclose(fptemp);
   }
   label->onPaint = OnPaintLabel;
+
   return label;
 }
 
+/**
+ * 10.05修改 by 张皓
+ * 
+ * 
+ */
 void OnPaintLabel(hbasewinAttr *label, void *value)
 {
-  FILE *fpFont;
+  //FILE *fpFont; by：张皓不需要
   int x, y, type = 3, len, linemax, maxline, i;
   char *temp = NULL;
   if (label == NULL)
@@ -51,7 +69,8 @@ void OnPaintLabel(hbasewinAttr *label, void *value)
 
   if (label->title == NULL)
     return;
-  fpFont = fopen(FILE_SIMSUN16 DATAPATH, "rt");
+  //fpFont = fopen(FILE_SIMSUN16 DATAPATH, "rt");
+
   len = strlen(label->title) / 2; //一个汉字两个char，len为字数
   x = getAbsoluteX(label);
   y = getAbsoluteY(label);
@@ -63,11 +82,10 @@ void OnPaintLabel(hbasewinAttr *label, void *value)
   for (i = 0; i < maxline - 1; i++)
   {
     memcpy(temp, label->title + i * linemax * 2, linemax * 2);
-    printtextxy(fpFont, x, y + 16 * i, temp, 0 /*color*/, 16);
+    //printtextxy(fpFont, x, y + 16 * i, temp, 0 /*color*/, 16); modified by 张皓
+    printText(x, y + 16 * i, temp, SIMSUN, 24, 0, 0x0 /*color*/); //显示文本的函数改了，不需要打开汉字字库文件指针
   }
   memcpy(temp, label->title + i * linemax * 2, (len - linemax * (maxline - 1)) * 2);
-  printtextxy(fpFont, x, y + 16 * i, temp, 0 /*color*/, 16);
-
-  //   outtextxy((label->nWidth - len) / 2 + x, (label->nHeight - 16) / 2 + y, label->title); //16个像素点一个字符
-  //   outtextxy(x, (label->nHeight - 16) / 2 + y, label->title);
+  //printtextxy(fpFont, x, y + 16 * i, temp, 0 /*color*/, 16);
+  printText(x, y + 16 * i, temp, SIMSUN, 24, 0, 0x0 /*color*/);
 }

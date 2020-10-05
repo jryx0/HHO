@@ -137,6 +137,13 @@ void ClosePY(pyInput *hzIdx)
   }
 }
 
+/**
+ * 获取汉字字库文件
+ * @param type 在marcodef中定义 
+ * @param size 字号 16、24、32、48
+ * 
+ * @return 字库文件指针
+ */
 FILE *getFontFile(int type, int size)
 {
   char fontfile[32];
@@ -157,6 +164,16 @@ FILE *getFontFile(int type, int size)
   return fopen(fontfile, "rb");
 }
 
+/**
+ * 打印ascii码 * 
+ * @param fpACSII ascii字库文件指针
+ * @param x
+ * @param y
+ * @param xsize x缩放比例
+ * @param ysize y缩放比例
+ * @param asc 字符
+ * @param color 颜色
+ */
 void printASCII(FILE *fpACSII, int x, int y, int xsize, int ysize, char asc, int color)
 {
   int i, j, k, m;

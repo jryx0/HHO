@@ -1,10 +1,9 @@
 #include "HBaseWin.h"
+#include "hhosvga.h"
 #include "wResource.h"
-#include "SVGAUTIL.H"
 #include "list.h"
 
 #include <memory.h>
-#include <graphics.h>
 #include <string.h>
 
 hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
@@ -100,10 +99,13 @@ void OnPaint(hbasewinAttr *win, void *val)
     // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
     // bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
 
-    setfillstyle(SOLID_FILL, RealFillColor(LIGHTBLUE));
-    bar(x1, y1, x2, y1);
+    // setfillstyle(SOLID_FILL, RealFillColor(LIGHTBLUE));
+    // bar(x1, y1, x2, y1);
+
+    fillRegion(x1, y1, x2, y2, RGB565(0xca, 0xca, 0xca));
+    rectangle(x1, y1, x2, y2, RGB565(0xba, 0xba, 0xba), 1, 1);
     break;
-  
+
   case 2: //∞ºœ›°¢—°÷–
     // //Õ‚»¶
     // setcolor(RealDrawColor(Shade3));
@@ -123,8 +125,10 @@ void OnPaint(hbasewinAttr *win, void *val)
     // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
     // bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
 
-    setfillstyle(SOLID_FILL, RealFillColor(BLUE));
-    bar(x1, y1, x2, y1);
+    // setfillstyle(SOLID_FILL, RealFillColor(BLUE));
+    // bar(x1, y1, x2, y1);
+    fillRegion(x1, y1, x2, y2, RGB565(0xca, 0xca, 0xca));
+    rectangle(x1, y1, x2, y2, RGB565(0xba, 0xba, 0xba), 1, 1);
     break;
 
   case 3: //ª≠øÚ
@@ -132,11 +136,14 @@ void OnPaint(hbasewinAttr *win, void *val)
     // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
     // bar(x1, y1, x2, y2);
 
-    setcolor(RealDrawColor(BLACK));
-    rectangle(x1, y1, x2, y2);
+    // setcolor(RealDrawColor(BLACK));
+    // rectangle(x1, y1, x2, y2);
     // break;
-
+    fillRegion(x1, y1, x2, y2, RGB565(0xca, 0xca, 0xca));
+    rectangle(x1, y1, x2, y2, RGB565(0xba, 0xba, 0xba), 1, 1);
   default:
+    fillRegion(x1, y1, x2, y2, 0xEF7D); //RGB565(0x55, 0x55, 0xFF));
+    rectangle(x1, y1, x2, y2, 0xDEFB, 1, 1);
     break;
   }
 }

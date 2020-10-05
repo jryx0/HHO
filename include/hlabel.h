@@ -4,6 +4,6 @@
 #include "HBaseWin.h"
 
 hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
-                              int nHeight, int winID, const char *title);
-
+                          int nHeight, int winID, const char *title);
+void OnPaintLabel(hbasewinAttr *label, void *value);
 #endif

@@ -5,8 +5,8 @@
 #include "HBaseWin.h"
 #include "mouse.h"
 
-hbasewinAttr *CreateDesktop(int screenmode);
+hbasewinAttr *CreateDesktop();
 void eventhandlerdesktop(hbasewinAttr *win, int type, void *value);
-hbasewinAttr *creatmouseevent(hbasewinAttr *win,mousestatus *mouse);
+hbasewinAttr *creatmouseevent(hbasewinAttr *win, mousestatus *mouse);
 hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse);
 #endif
