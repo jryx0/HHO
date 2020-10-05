@@ -24,7 +24,7 @@ typedef struct _globaldef
   unsigned char cursor_hand[MOUSE_WIDTH][MOUSE_HEIGHT];  //保存鼠标图形地址
   unsigned int cursorBK[MOUSE_WIDTH][MOUSE_HEIGHT];      //鼠标背景地址
 
-  // mousestatus mouse;
+  mousestatus mouse;
   pyInput *pingyin;
 
   hbasewinAttr *foucswin;

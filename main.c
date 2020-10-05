@@ -1,6 +1,7 @@
-#include "HBaseWin.h"
+#include "macrodef.h"
 #include "hhosvga.h"
 #include "mouse.h"
+#include "HBaseWin.h"
 
 #include <conio.h>
 #include <stdlib.h>
@@ -8,7 +9,7 @@
 
 int main(void)
 {
-  MOUSE mouse_new, mouse_old = {0, 0, 0}; //鼠标新旧结构体
+  mousestatus mouse_new, mouse_old = {0, 0, 0}; //鼠标新旧结构体
   char kbchar = 0;
   int width = 64, height = 64;
   unsigned int far *buffer;
@@ -33,15 +34,28 @@ int main(void)
   rectangleEx(10, 10, 10000, 20000, 0x5555, 1, 1);
 
   MouseInit();
-  MouseReset();
+  ResetMouse(&mouse_old);
   while (1)
   {
-    MouseXYB(&mouse_new);
-    MousePutBk(mouse_old.xpos, mouse_old.ypos);
-    MouseStoreBk(mouse_new.xpos, mouse_new.ypos);
+    UpdateMouseStatus(&mouse_new);
+    RestoreMouseBk(&mouse_old);
+    SaveMouseBk(&mouse_new);
     MouseDraw(mouse_new);
     delay(30);
     mouse_old = mouse_new;
+
+    if (mouse_new.leftClickState == MOUSE_BUTTON_UP)
+    {
+      // setcolor(RealColor(15));
+      RestoreMouseBk(&mouse_new);
+      line(mouse_new.x, mouse_new.y, mouse_new.x - random(1024), mouse_new.y - random(768), random(65535));
+      SaveMouseBk(&mouse_new);
+    }
+
+    if (mouse_new.rightClickState == MOUSE_BUTTON_UP)
+    {
+      break;
+    }
 
     if (kbhit())
     {                   //如果有按键按下，则kbhit()函数返回真
@@ -49,15 +63,15 @@ int main(void)
       if (kbchar == 'c')
       {
         // setcolor(RealColor(15));
-        MousePutBk(mouse_new.xpos, mouse_new.ypos);
-        line(mouse_new.xpos, mouse_new.ypos, mouse_new.xpos + random(1024), mouse_new.ypos + random(768), random(65535));
-        MouseStoreBk(mouse_new.xpos, mouse_new.ypos);
+        RestoreMouseBk(&mouse_new);
+        line(mouse_new.x, mouse_new.y, mouse_new.x + random(1024), mouse_new.y + random(768), random(65535));
+        SaveMouseBk(&mouse_new);
       }
       else if (kbchar == 'r')
       {
-        MousePutBk(mouse_new.xpos, mouse_new.ypos);
-        bar(mouse_new.xpos, mouse_new.ypos, mouse_new.xpos + random(1024), mouse_new.ypos + random(768), random(65535));
-        MouseStoreBk(mouse_new.xpos, mouse_new.ypos);
+        RestoreMouseBk(&mouse_new);
+        bar(mouse_new.x, mouse_new.y, mouse_new.x + random(1024), mouse_new.y + random(768), random(65535));
+        SaveMouseBk(&mouse_new);
       }
       else if (kbchar == 'a')
       {

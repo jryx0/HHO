@@ -1,3 +1,4 @@
+#include "macrodef.h"
 #include "hglobal.h"
 #include "pinyin.h"
 
@@ -40,8 +41,8 @@ void destoryGlobalSettting(globaldef *_g)
 globaldef *loadSvgaResouce(globaldef *_g)
 {
   //加载鼠标形状
-  readCursor((unsigned char *)_g->cursor_arrow, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
-  readCursor((unsigned char *)_g->cursor_hand, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_HAND);
+  ReadCursor((unsigned char *)_g->cursor_arrow, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
+  ReadCursor((unsigned char *)_g->cursor_hand, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_HAND);
 
   //加载拼音索引文件
   _g->pingyin = initPYHZIndex();
@@ -56,5 +57,5 @@ globaldef *loadSvgaResouce(globaldef *_g)
 
 void loadMouse(globaldef *_g)
 {
-  resetMouse();
+  ResetMouse(&(_g->mouse));
 }
