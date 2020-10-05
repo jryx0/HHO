@@ -32,15 +32,18 @@ int main(void)
   // free(buffer);
 
   rectangleEx(10, 10, 10000, 20000, 0x5555, 1, 1);
-
+  memset(&mouse_old, 0, sizeof(mousestatus));
+  memset(&mouse_new, 0, sizeof(mousestatus));
   MouseInit();
   ResetMouse(&mouse_old);
   while (1)
   {
+
     UpdateMouseStatus(&mouse_new);
-    RestoreMouseBk(&mouse_old);
-    SaveMouseBk(&mouse_new);
-    MouseDraw(mouse_new);
+    // RestoreMouseBk(&mouse_old);
+    // SaveMouseBk(&mouse_new);
+    // MouseDraw(&mouse_new);
+
     delay(30);
     mouse_old = mouse_new;
 

@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <memory.h>
 
- 
 #define MOUSEWIDTH 20
 #define MOUSEHIGHT 30
 int const mouse_shape[MOUSEHIGHT][MOUSEWIDTH] =
@@ -44,7 +43,6 @@ int const mouse_shape[MOUSEHIGHT][MOUSEWIDTH] =
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}};
 int mouse_bk[MOUSEHIGHT][MOUSEWIDTH];
-
 
 /**
  * 初始化鼠标 
@@ -92,6 +90,8 @@ void UpdateMouseStatus(mousestatus *status)
   union REGS Inr, Outr;
   if (status == NULL)
     return;
+
+  RestoreMouseBk(status);
 
   Inr.x.ax = 3;
   int86(0x33, &Inr, &Outr);
@@ -146,6 +146,9 @@ void UpdateMouseStatus(mousestatus *status)
 
   status->x = xPos;
   status->y = yPos;
+
+  SaveMouseBk(status);
+  MouseDraw(status);
 }
 
 void SaveMouseBk(mousestatus *mouse) //5
@@ -175,7 +178,7 @@ void ResetMouse(mousestatus *mouse) //7
   SaveMouseBk(mouse);
 }
 
-void MouseDraw(mousestatus mouse) //8
+void MouseDraw(mousestatus *mouse) //8
 {
   int i, j;
   for (i = 0; i < MOUSEHIGHT; i++)
@@ -188,11 +191,11 @@ void MouseDraw(mousestatus mouse) //8
       }
       else if (mouse_shape[i][j] == 1)
       {
-        putpixel64k(j + mouse.x, i + mouse.y, 0);
+        putpixel64k(j + mouse->x, i + mouse->y, 0);
       }
       else if (mouse_shape[i][j] == 2)
       {
-        putpixel64k(j + mouse.x, i + mouse.y, 0xffff);
+        putpixel64k(j + mouse->x, i + mouse->y, 0xffff);
       }
     }
   }

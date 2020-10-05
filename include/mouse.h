@@ -1,22 +1,11 @@
 #ifndef __MOUSE_H__
 #define __MOUSE_H__
 
-// typedef struct Coordinate
-// {
-// 	int x;
-// 	int y;
-// } Coordinate;
-
-// typedef struct Area
-// {
-//     Coordinate lt;
-//     Coordinate rb;
-// } Area;
-
 /*鼠标结构体，包含鼠标状态*/
 typedef struct
 {
 	unsigned int x, y;
+	unsigned int oldx, oldy;
 	unsigned char leftDown, rightDown;
 	unsigned char oldLeftDown, oldRightDown;
 	char leftClickState, rightClickState;
@@ -53,7 +42,7 @@ void SaveMouseBk(mousestatus *mouse);
 /**
  * 恢复被鼠标覆盖区域的显存内容
  */
-void RestorMouseBk(mousestatus *mouse);
+void RestoreMouseBk(mousestatus *mouse);
 
 /**
  * 重置鼠标状态，范围为全屏
@@ -64,7 +53,7 @@ void ResetMouse(mousestatus *mouse);
 /**
  * 画鼠标光标函数 
  **/
-void MouseDraw(mousestatus mouse);
+void MouseDraw(mousestatus *mouse);
 
 /**
  * 读取鼠标形状文件，存储在buf中
