@@ -1,10 +1,10 @@
 #include "pinyin.h"
 #include "hglobal.h"
+#include "svga.h"
+
 #include <ctype.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <string.h>
-#include <GRAPHICS.H>
 
 /**
  * 打开拼音索引文件,读入数组中。
@@ -23,12 +23,12 @@ pyInput *initPYHZIndex(void)
 
   if ((fp1 = fopen(FILE_HANZI, "r")) == NULL)
   {
-    printf("unable to open %s\r\n", FILE_HANZI);
+    fprintf(stderr, "unable to open %s\r\n", FILE_HANZI);
     return NULL;
   }
   if ((fp2 = fopen(FILE_PYINDEX, "r")) == NULL)
   {
-    printf("unable to open %s\r\n", FILE_PYINDEX);
+    fprintf(stderr, "unable to open %s\r\n", FILE_PYINDEX);
     return NULL;
   }
 
@@ -137,6 +137,63 @@ void ClosePY(pyInput *hzIdx)
   }
 }
 
+void printHZ(FILE *fpFont, int x, int y, unsigned char *str, int color, int fontsize)
+{ //16
+  unsigned char qh, wh, byte, i, j;
+  unsigned long offset;
+  unsigned char *buffer;
+  char eng[2];
+
+  if (fpFont == NULL || str == NULL)
+  {
+    fprintf(stderr, "无法打开汉字字库");
+    return;
+  }
+
+  eng[1] = 0;
+  buffer = malloc(fontsize * 2);
+
+  while (*str)
+  {
+    if (*str >= 0xa0 && *(str + 1) >= 0xa0)
+    {
+      qh = str[0] - 0xa1; //汉字区位码
+      wh = str[1] - 0xa1;
+      offset = (94 * (qh) + (wh)) * 32L; //计算该汉字在字库中偏移量
+      fseek(fpFont, offset, SEEK_SET);
+      fread(buffer, fontsize * 2, 1, fpFont);
+
+      for (j = 0; j < fontsize * 2; j++)
+      {
+        byte = *buffer++;
+        for (i = x; i < x + 8; i++)
+        {
+          if (byte & 0x80)
+          {
+            if (j % 2)
+              putpixel64k(i + 8, y + j / 2, (color));
+            else
+              putpixel64k(i, y + j / 2, (color));
+          }
+          byte <<= 1;
+        }
+      }
+
+      x += fontsize;
+      str += 2;
+    }
+    else
+    { //英文
+      eng[0] = str[0];
+
+      str++;
+      x += fontsize / 2;
+    }
+  }
+
+  free(buffer);
+}
+
 // void printtextxy(FILE *fpFont, int x, int y, unsigned char *str, int color, int fontsize)
 // {
 //   int i, j;
@@ -193,61 +250,3 @@ void ClosePY(pyInput *hzIdx)
 //   }
 //   free(fontdata);
 // }
-
-void printHZ(FILE *fpFont, int x, int y, unsigned char *str, int color, int fontsize)
-{ //16
-  unsigned char qh, wh, byte, i, j;
-  unsigned long offset;
-  unsigned char *buffer;
-  char eng[2];
-
-  if (fpFont == NULL || str == NULL)
-  {
-    fprintf(stderr, "无法打开汉字字库");
-    return;
-  }
-
-  eng[1] = 0;
-  buffer = malloc(fontsize * 2);
-
-  while (*str)
-  {
-    if (*str >= 0xa0 && *(str + 1) >= 0xa0)
-    {
-      qh = str[0] - 0xa1; //汉字区位码
-      wh = str[1] - 0xa1;
-      offset = (94 * (qh) + (wh)) * 32L; //计算该汉字在字库中偏移量
-      fseek(fpFont, offset, SEEK_SET);
-      fread(buffer, fontsize * 2, 1, fpFont);
-
-      for (j = 0; j < fontsize * 2; j++)
-      {
-        byte = *buffer++;
-        for (i = x; i < x + 8; i++)
-        {
-          if (byte & 0x80)
-          {
-            if (j % 2)
-              putpixel(i + 8, y + j / 2, (color));
-            else
-              putpixel(i, y + j / 2, (color));
-          }
-          byte <<= 1;
-        }
-      }
-
-      x += fontsize;
-      str += 2;
-    }
-    else
-    { //英文
-      eng[0] = str[0];
-      settextstyle(1, HORIZ_DIR, 2);
-      outtextxy(x, y, eng);
-      str++;
-      x += fontsize / 2;
-    }
-  }
-
-  free(buffer);
-}

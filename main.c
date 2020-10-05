@@ -27,6 +27,12 @@ int main(void)
 #ifdef DEBUG
   //屏幕缓存测试
   hsvgatest();
+
+  //printHZ(_global->fphanzi_sh16, 700, 50, "华中科技大学校医院", 0x5F40, 16);
+  // printtextxy(_global->fphanzi_sh16, 700, 50, "华中科技大学校医院", 0x5F40, 16);
+  // printtextxy(_global->fphanzi_ss16, 700, 70, "华中科技大学校医院", 0x5F40, 16);
+  // printtextxy(_global->fphanzi_sh24, 700, 90, "华中科技大学校医院", 0x5F40, 16);
+  // printtextxy(_global->fphanzi_ss24, 700, 110, "华中科技大学校医院", 0x5F40, 16);
 #endif
 
   //初始化鼠标
