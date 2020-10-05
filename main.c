@@ -1,11 +1,11 @@
 #include "HBaseWin.h"
-#include "hhogui.h"
+#include "hhosvga.h"
 #include "mouse.h"
 
 #include <conio.h>
 #include <stdlib.h>
 #include <mem.h>
-#include <alloc.h>
+ 
 
 int main(void)
 {
