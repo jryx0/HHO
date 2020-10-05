@@ -5,11 +5,10 @@
 #include <conio.h>
 #include <stdlib.h>
 #include <mem.h>
- 
 
 int main(void)
 {
-  MOUSE mouse_new, mouse_old = {{0, 0}, 0}; //鼠标新旧结构体
+  MOUSE mouse_new, mouse_old = {0, 0, 0}; //鼠标新旧结构体
   char kbchar = 0;
   int width = 64, height = 64;
   unsigned int far *buffer;
@@ -38,8 +37,8 @@ int main(void)
   while (1)
   {
     MouseXYB(&mouse_new);
-    MousePutBk(mouse_old.position);
-    MouseStoreBk(mouse_new.position);
+    MousePutBk(mouse_old.xpos, mouse_old.ypos);
+    MouseStoreBk(mouse_new.xpos, mouse_new.ypos);
     MouseDraw(mouse_new);
     delay(30);
     mouse_old = mouse_new;
@@ -50,15 +49,15 @@ int main(void)
       if (kbchar == 'c')
       {
         // setcolor(RealColor(15));
-        MousePutBk(mouse_new.position);
-        line(mouse_new.position.x, mouse_new.position.y, mouse_new.position.x + random(1024), mouse_new.position.y + random(768), random(65535));
-        MouseStoreBk(mouse_new.position);
+        MousePutBk(mouse_new.xpos, mouse_new.ypos);
+        line(mouse_new.xpos, mouse_new.ypos, mouse_new.xpos + random(1024), mouse_new.ypos + random(768), random(65535));
+        MouseStoreBk(mouse_new.xpos, mouse_new.ypos);
       }
       else if (kbchar == 'r')
       {
-        MousePutBk(mouse_new.position);
-        bar(mouse_new.position.x, mouse_new.position.y, mouse_new.position.x + random(1024), mouse_new.position.y + random(768), random(65535));
-        MouseStoreBk(mouse_new.position);
+        MousePutBk(mouse_new.xpos, mouse_new.ypos);
+        bar(mouse_new.xpos, mouse_new.ypos, mouse_new.xpos + random(1024), mouse_new.ypos + random(768), random(65535));
+        MouseStoreBk(mouse_new.xpos, mouse_new.ypos);
       }
       else if (kbchar == 'a')
       {

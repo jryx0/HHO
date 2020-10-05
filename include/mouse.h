@@ -7,16 +7,16 @@ typedef struct Coordinate
 	int y;
 } Coordinate;
 
-typedef struct Area
-{
-    Coordinate lt;
-    Coordinate rb;
-} Area;
+// typedef struct Area
+// {
+//     Coordinate lt;
+//     Coordinate rb;
+// } Area;
 
 /*鼠标结构体，包含鼠标状态*/
 typedef struct mouse_
 {
-	Coordinate position;
+	int xpos, ypos;
 	int but; /*按钮的状态，0,1位分别表示左右键，该位为1表示按下，0表示松开*/
 } MOUSE;
 
@@ -45,7 +45,7 @@ Input：			Area结构体变量（记录了屏幕上某块区域的坐标范围�
 Output：		None
 Return：		None
 **********************************************************/
-extern void MouseRange(Area mouse_area);
+// extern void MouseRange(Area mouse_area);
 
 /**********************************************************
 Function：		 MouseXYB
@@ -72,7 +72,7 @@ Output：		None
 Return：		1		鼠标左键在指定区域内按下
 				0		鼠标左键没在指定区域内按下
 **********************************************************/
-extern int MouseBarLeft(Area mouse_area);
+// extern int MouseBarLeft(Area mouse_area);
 
 /**********************************************************
 Function：		 MouseStoreBk
@@ -85,7 +85,7 @@ Output：		存储屏幕上被鼠标覆盖区域的显存内容
 
 Return：		None
 **********************************************************/
-extern void MouseStoreBk(Coordinate position);
+extern void MouseStoreBk(int xpos, int ypos);
 
 /**********************************************************
 Function：		 MousePutBk
@@ -98,7 +98,7 @@ Output：		在屏幕上恢复被鼠标覆盖区域的显存内容
 
 Return：		None
 **********************************************************/
-extern void MousePutBk(Coordinate position);
+extern void MousePutBk(int xpos, int ypos);
 
 /**********************************************************
 Function：		 MouseReset

@@ -259,8 +259,6 @@ void savebackgroundFile(FILE *fpBK, int x, int y, int width, int height)
   fclose(fpBK);
 }
 
- 
-
 /**
  * 由于内存限制，把保存在文件大区域背景的背景恢复到屏幕上，
  * 位置可以不一样，高度和宽度要一致。
