@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <mem.h>
 
-#define DEBUG
+//#define DEBUG
 
 int main(void)
 {
@@ -23,11 +23,13 @@ int main(void)
 
   //初始化屏幕背景
   clearScreen(0xFF);
+  Putbmp64k(0, 0, "c:\\hho\\data\\bmp\\hhologo.bmp");
+  linexEx(0, 80, SCR_WIDTH, RGB565(100, 100, 100));
 
 #ifdef DEBUG
   //屏幕缓存测试
   hsvgatest();
-
+#endif
   //字体测试
   // printHZKSS16(300 + 16, 150, "华中科技大学校医院华中科技大学校医院", 0x0);
   // printHZKSH16(300 + 16, 150 + 16, "啊华中科技大学校医院", 0x0);
@@ -36,7 +38,7 @@ int main(void)
   printText(300 + 16, 150 + 50, "华Aa中科技大学校医院华中科技大学校医院青霉素", SIMSUN, 24, 0, 0x0);
   printText(300 + 16, 150 + 100, "华中vcc科技大学校医院华中科技大学校医院青霉素", SIMKAI, 32, 0, 0x0);
   printText(300 + 16, 150 + 140, "华中科hust技大学校医院华中科技大学校医院青霉素", SIMHEI, 48, 0, 0x0);
-#endif
+
 
   //初始化鼠标
   ResetMouse(&_global->mouse);
@@ -66,6 +68,7 @@ int main(void)
     {
       break;
     }
+#endif
 
     if (kbhit())
     {                   //如果有按键按下，则kbhit()函数返回真
@@ -81,15 +84,13 @@ int main(void)
       }
       else if (kbchar == 'a')
       {
-        //printHZKSS24(_global->mouse.x + 24, _global->mouse.y, "啊华中科技大学校医院青霉素眼科内外妇儿精神感冒", 0x0);
       }
       else if (kbchar == ' ' || kbchar == 27)
-      {
+      { //当按下ESC或空格退出时循环，ESC键的键值时27
 
         break;
-      } //当按下ESC或空格退出时循环，ESC键的键值时27.
+      }
     }
-#endif
   }
 
   destoryGlobalSettting(_global);

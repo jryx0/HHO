@@ -1,9 +1,11 @@
 #ifndef __HHOSVGA_H__
 #define __HHOSVGA_H__
- 
+
 #include "SVGA.h"
 #include <stdio.h>
- 
+
+unsigned int RGB565(char, char, char);
+
 /**
  * 清除屏幕,使用char填充屏幕,由于64K是int,故填充的颜色是 color << 8 | color
  * 填充0xFFFF,0x0000,等颜色速度更快

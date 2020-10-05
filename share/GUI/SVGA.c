@@ -1,5 +1,6 @@
 #include "macrodef.h"
 #include "SVGA.h"
+#include "hhosvga.h"
 
 #include <dos.h>
 #include <stdio.h>
@@ -122,4 +123,117 @@ unsigned int getpixel64k(int x, int y) // 4
 
   /*返回颜色*/
   return video_buffer[page];
+}
+
+int Putbmp64k(int x, int y, const char *path) //4
+{
+  /*指向图片文件的文件指针*/
+  FILE *fpbmp;
+
+  /*行像素缓存指针*/
+  COLORS24 *buffer;
+
+  /*图片的宽度、高度、一行像素所占字节数（含补齐空字节）*/
+  long int width, height, linebytes;
+
+  /*循环变量*/
+  int i, j;
+
+  /*图片位深*/
+  unsigned int bit;
+
+  /*压缩类型数*/
+  unsigned long int compression;
+
+  /*打开文件*/
+  if ((fpbmp = fopen(path, "rb")) == NULL)
+  {
+    return -1;
+  }
+
+  /*读取位深*/
+  fseek(fpbmp, 28L, 0);
+  fread(&bit, 2, 1, fpbmp);
+
+  /*非24位图则退出*/
+  if (bit != 24U)
+  {
+    return -1;
+  }
+
+  /*读取压缩类型*/
+  fseek(fpbmp, 30L, 0);
+  fread(&compression, 4, 1, fpbmp);
+
+  /*采用压缩算法则退出*/
+  if (compression != 0UL)
+  {
+    return -1;
+  }
+
+  /*读取宽度、高度*/
+  fseek(fpbmp, 18L, 0);
+  fread(&width, 4, 1, fpbmp);
+  fread(&height, 4, 1, fpbmp);
+
+  /*宽度超限则退出*/
+  if (width > SCR_WIDTH)
+  {
+    return -1;
+  }
+
+  /*计算一行像素占字节数，包括补齐的空字节*/
+  linebytes = (3 * width) % 4;
+
+  if (!linebytes)
+  {
+    linebytes = 3 * width;
+  }
+  else
+  {
+    linebytes = 3 * width + 4 - linebytes;
+  }
+
+  /*开辟行像素数据动态储存空间*/
+  if ((buffer = (COLORS24 *)malloc(linebytes)) == 0)
+  {
+    return -1;
+  }
+
+  /*行扫描形式读取图片数据并显示*/
+  fseek(fpbmp, 54L, 0);
+  // for (i = height - 1; i > -1; i--)
+  // {
+  //   fread(buffer, linebytes, 1, fpbmp); /*读取一行像素数据*/
+
+  //   /*一行像素的数据处理和画出*/
+  //   for (j = 0; j < width; j++)
+  //   {
+  //     /*0x117模式下，原图红绿蓝各8位分别近似为5位、6位、5位*/
+  //     buffer[j].R >>= 3;
+  //     buffer[j].G >>= 2;
+  //     buffer[j].B >>= 3;
+  //     putpixel64k(j + x, i + y,
+  //                 ((((unsigned int)buffer[j].R) << 11) | (((unsigned int)buffer[j].G) << 5) | ((unsigned int)buffer[j].B))); /*计算最终颜色，红绿蓝从高位到低位排列*/
+  //   }
+  // }
+  for (i = 1; i < height; i++)
+  {
+    fseek(fpbmp, -linebytes * i, SEEK_END);
+    fread(buffer, linebytes, 1, fpbmp); /*读取一行像素数据*/
+
+    /*一行像素的数据处理和画出*/
+    for (j = 0; j < width; j++)
+    {
+      /*0x117模式下，原图红绿蓝各8位分别近似为5位、6位、5位*/
+      buffer[j].R >>= 3;
+      buffer[j].G >>= 2;
+      buffer[j].B >>= 3;
+      putpixel64k(j + x, i + y, ((((unsigned int)buffer[j].R) << 11) | (((unsigned int)buffer[j].G) << 5) | ((unsigned int)buffer[j].B))); /*计算最终颜色，红绿蓝从高位到低位排列*/
+    }
+  }
+
+  free(buffer);
+  fclose(fpbmp);
+  return 0;
 }

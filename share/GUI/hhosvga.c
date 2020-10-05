@@ -6,6 +6,16 @@
 #include <stdlib.h>
 #include <mem.h>
 
+unsigned int RGB565(char rVal, char gVal, char bVal)
+{
+
+  unsigned int r = (rVal >> 3) & 0x1F;
+  unsigned int g = (gVal >> 2) & 0x1F;
+  unsigned int b = (bVal >> 3) & 0x1F;
+
+  return r << 11 | g << 5 | b;
+}
+
 /**
  * 清除屏幕,使用char填充屏幕,由于64K是int,故填充的颜色是 color << 8 | color
  * 填充0xFFFF,0x0000,等颜色速度更快
