@@ -1,6 +1,6 @@
 #ifndef __HHOSVGA_H__
 #define __HHOSVGA_H__
-#include "macrodef.h"
+ 
 #include "SVGA.h"
 #include <stdio.h>
 

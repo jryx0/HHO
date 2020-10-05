@@ -229,7 +229,6 @@ void restorebackgroundEx(unsigned int *buffer, int x, int y, int width, int heig
     memcpy(&video_buffer[offest], buffer + j * width, width * 2); //width * 2, int 两位
   }
 }
-
 /**
  * 由于内存限制，把大区域背景保存在文件中。
  * @param fpBK 文件指针，用于保存背景
@@ -259,6 +258,8 @@ void savebackgroundFile(FILE *fpBK, int x, int y, int width, int height)
   fflush(fpBK);
   fclose(fpBK);
 }
+
+ 
 
 /**
  * 由于内存限制，把保存在文件大区域背景的背景恢复到屏幕上，
