@@ -13,10 +13,10 @@
 //全局变量结构
 typedef struct _globaldef
 {
-  FILE *fphanzi_ss24; //宋体点阵字库文件指针
-  FILE *fphanzi_sh24; //黑体点阵字库文件指针
-  FILE *fphanzi_ss16; //宋体点阵字库文件指针
-  FILE *fphanzi_sh16; //黑体点阵字库文件指针
+  // FILE *fphanzi_ss24; //宋体点阵字库文件指针
+  // FILE *fphanzi_sh24; //黑体点阵字库文件指针
+  // FILE *fphanzi_ss16; //宋体点阵字库文件指针
+  // FILE *fphanzi_sh16; //黑体点阵字库文件指针
 
   FILE *fpBK; //背景存放的文件
 

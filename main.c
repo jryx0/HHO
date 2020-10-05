@@ -28,11 +28,14 @@ int main(void)
   //屏幕缓存测试
   hsvgatest();
 
-  //printHZ(_global->fphanzi_sh16, 700, 50, "华中科技大学校医院", 0x5F40, 16);
-  // printtextxy(_global->fphanzi_sh16, 700, 50, "华中科技大学校医院", 0x5F40, 16);
-  // printtextxy(_global->fphanzi_ss16, 700, 70, "华中科技大学校医院", 0x5F40, 16);
-  // printtextxy(_global->fphanzi_sh24, 700, 90, "华中科技大学校医院", 0x5F40, 16);
-  // printtextxy(_global->fphanzi_ss24, 700, 110, "华中科技大学校医院", 0x5F40, 16);
+  //字体测试
+  // printHZKSS16(300 + 16, 150, "华中科技大学校医院华中科技大学校医院", 0x0);
+  // printHZKSH16(300 + 16, 150 + 16, "啊华中科技大学校医院", 0x0);
+  //int x, int y, char *s, int flag, int part, int color
+  printText(300 + 16, 150, "啊a华中科技大学校医院华中科技大学校医院内外妇儿精神头脑著", SIMKAI, 16, 0, 0x0);
+  printText(300 + 16, 150 + 50, "华Aa中科技大学校医院华中科技大学校医院青霉素", SIMSUN, 24, 0, 0x0);
+  printText(300 + 16, 150 + 100, "华中vcc科技大学校医院华中科技大学校医院青霉素", SIMKAI, 32, 0, 0x0);
+  printText(300 + 16, 150 + 140, "华中科hust技大学校医院华中科技大学校医院青霉素", SIMHEI, 48, 0, 0x0);
 #endif
 
   //初始化鼠标
@@ -69,10 +72,6 @@ int main(void)
       kbchar = getch(); //使用getch()函数获取按下的键值
       if (kbchar == 'c')
       {
-        // setcolor(RealColor(15));
-        RestoreMouseBk(&_global->mouse);
-        line(_global->mouse.x, _global->mouse.y, _global->mouse.x + random(1024), _global->mouse.y + random(768), random(65535));
-        SaveMouseBk(&_global->mouse);
       }
       else if (kbchar == 'r')
       {
@@ -82,6 +81,7 @@ int main(void)
       }
       else if (kbchar == 'a')
       {
+        //printHZKSS24(_global->mouse.x + 24, _global->mouse.y, "啊华中科技大学校医院青霉素眼科内外妇儿精神感冒", 0x0);
       }
       else if (kbchar == ' ' || kbchar == 27)
       {

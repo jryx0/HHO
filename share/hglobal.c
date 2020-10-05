@@ -31,18 +31,18 @@ globaldef *initGlobalSetting(void)
   _global->pingyin = initPYHZIndex();
   TEST(_global, _global->pingyin);
 
-  //打开字库文件
-  _global->fphanzi_ss24 = fopen(FILE_SIMSUN24, "r");
-  TEST(_global, _global->fphanzi_ss24);
+  // //打开字库文件
+  // _global->fphanzi_ss24 = fopen(FILE_SIMSUN24, "r");
+  // TEST(_global, _global->fphanzi_ss24);
 
-  _global->fphanzi_sh24 = fopen(FILE_SIMHEI24, "r");
-  TEST(_global, _global->fphanzi_sh24);
+  // _global->fphanzi_sh24 = fopen(FILE_SIMHEI24, "r");
+  // TEST(_global, _global->fphanzi_sh24);
 
-  _global->fphanzi_ss16 = fopen(FILE_SIMSUN16, "r");
-  TEST(_global, _global->fphanzi_ss16);
+  // _global->fphanzi_ss16 = fopen(FILE_SIMSUN16, "r");
+  // TEST(_global, _global->fphanzi_ss16);
 
-  _global->fphanzi_sh16 = fopen(FILE_SIMHEI16, "r");
-  TEST(_global, _global->fphanzi_ss16);
+  // _global->fphanzi_sh16 = fopen(FILE_SIMHEI16, "r");
+  // TEST(_global, _global->fphanzi_ss16);
 
   //加载鼠标形状
   ReadCursor((unsigned char *)_global->cursor_arrow, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
@@ -57,11 +57,11 @@ void destoryGlobalSettting(globaldef *_g)
   {
     ClosePY(_g->pingyin);
 
-    fclose(_g->fpBK);
-    fclose(_g->fphanzi_ss24);
-    fclose(_g->fphanzi_sh24);
-    fclose(_g->fphanzi_ss16);
-    fclose(_g->fphanzi_sh16);
+    // fclose(_g->fpBK);
+    // fclose(_g->fphanzi_ss24);
+    // fclose(_g->fphanzi_sh24);
+    // fclose(_g->fphanzi_ss16);
+    // fclose(_g->fphanzi_sh16);
 
     free(_g);
   }

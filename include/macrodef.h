@@ -28,13 +28,10 @@
 #define FILE_HANZI DATAPATH "pinyin\\hanzi.txt"
 
 //字体文件
-#define FONTSIZE16 32                         //一个汉字32字节
-#define FILE_SIMSUN16 DATAPATH "font\\HZK16S" //宋体16点阵字库
-#define FILE_SIMHEI16 DATAPATH "font\\HZK16H" //黑体16点阵字库
-
-#define FONTSIZE24 72                         //一个汉字72字节
-#define FILE_SIMSUN24 DATAPATH "font\\HZK24S" //宋体24点阵字库
-#define FILE_SIMHEI24 DATAPATH "font\\HZK24H" //黑体24点阵字库
+#define FONTPATH DATAPATH "font\\"
+#define SIMSUN 0 //宋体
+#define SIMHEI 1 //黑体
+#define SIMKAI 2 //楷体
 
 //mouse cursors
 //鼠标大小

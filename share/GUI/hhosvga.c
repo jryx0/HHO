@@ -569,6 +569,7 @@ void hsvgatest()
   savebackgroundFile(fpBak, 80, 150, 200, 100);
   restorebackgroundFile(fpBak, 0, 0, 200, 100);
 
+  fclose(fpBak);
   free(buffer);
 }
 

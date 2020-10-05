@@ -137,116 +137,261 @@ void ClosePY(pyInput *hzIdx)
   }
 }
 
-void printHZ(FILE *fpFont, int x, int y, unsigned char *str, int color, int fontsize)
-{ //16
-  unsigned char qh, wh, byte, i, j;
-  unsigned long offset;
-  unsigned char *buffer;
-  char eng[2];
+FILE *getFontFile(int type, int size)
+{
+  char fontfile[32];
 
-  if (fpFont == NULL || str == NULL)
+  switch (type)
   {
-    fprintf(stderr, "无法打开汉字字库");
-    return;
+  case SIMKAI: //楷体
+    sprintf(fontfile, FONTPATH "HZK%dK", size);
+    break;
+  case SIMHEI: //黑体
+    sprintf(fontfile, FONTPATH "HZK%dH", size);
+    break;
+  default: //宋体
+    sprintf(fontfile, FONTPATH "HZK%dS", size);
+    break;
   }
 
-  eng[1] = 0;
-  buffer = malloc(fontsize * 2);
-
-  while (*str)
-  {
-    if (*str >= 0xa0 && *(str + 1) >= 0xa0)
-    {
-      qh = str[0] - 0xa1; //汉字区位码
-      wh = str[1] - 0xa1;
-      offset = (94 * (qh) + (wh)) * 32L; //计算该汉字在字库中偏移量
-      fseek(fpFont, offset, SEEK_SET);
-      fread(buffer, fontsize * 2, 1, fpFont);
-
-      for (j = 0; j < fontsize * 2; j++)
-      {
-        byte = *buffer++;
-        for (i = x; i < x + 8; i++)
-        {
-          if (byte & 0x80)
-          {
-            if (j % 2)
-              putpixel64k(i + 8, y + j / 2, (color));
-            else
-              putpixel64k(i, y + j / 2, (color));
-          }
-          byte <<= 1;
-        }
-      }
-
-      x += fontsize;
-      str += 2;
-    }
-    else
-    { //英文
-      eng[0] = str[0];
-
-      str++;
-      x += fontsize / 2;
-    }
-  }
-
-  free(buffer);
+  return fopen(fontfile, "rb");
 }
 
-// void printtextxy(FILE *fpFont, int x, int y, unsigned char *str, int color, int fontsize)
-// {
-//   int i, j;
-//   char byte;
+void printASCII(FILE *fpACSII, int x, int y, int xsize, int ysize, char asc, int color)
+{
+  int i, j, k, m;
+  long addr = asc * 16l;
+  unsigned char buffer[16];
 
-//   int hanzibytes;
-//   unsigned char *fontdata;
+  fseek(fpACSII, addr, SEEK_SET);
+  fread(buffer, 16, 1, fpACSII);
 
-//   unsigned char qh, wh;
-//   unsigned long offset;
+  for (i = 0; i < 16; i++)
+    for (m = 1; m <= ysize; m++)
+      for (j = 0; j < 8; j++)
+        for (k = 1; k <= xsize; k++)
+          if ((buffer[i] >> 7 - j) & 1)
+            putpixel64k(x + j * xsize + k, y + m + i * ysize, color);
+}
 
-//   if (fpFont == NULL || str == NULL)
-//   {
-//     fprintf(stderr, "无法打开汉字字库");
-//     return;
-//   }
+/**
+ * 打印一行汉字
+ * 
+ * @param x
+ * @param y 坐标
+ * @param text 文本串
+ * @param fonttype 字体-宏定义 宋体(SIMSUN)黑体(SIMHEI)楷体(SIMKAI)
+ * @param fontsize 字号 16、24、32、48
+ * @param gap 字和字之间的间距，像素为单位
+ * @param color 颜色
+ */
+void printText(int x, int y, char *text, int fonttype, int fontsize, int gap, int color)
+{
+  FILE *fpfont = NULL, *fpascii = NULL;                                    //定义汉字库文件指针
+  unsigned char quma, weima;                                               //定义汉字的区码和位码
+  unsigned long offset;                                                    //定义汉字在字库中的偏移量
+  unsigned char mask[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01}; //功能数组，用于显示汉字点阵中的亮点
+  int i, j, pos;
 
-//   if (fontsize == 24)
-//     hanzibytes = 72; //24宽字体，每个汉字占72字节
-//   else
-//     hanzibytes = 32; //默认情况下，16宽字体，每个汉字占32字节
-//   fontdata = malloc(hanzibytes);
+  fpascii = fopen(FONTPATH "ASC16", "rb");
 
-//   while (*str)
-//   {
-//     if (*str >= 0xa0 && *(str + 1) > 0xa0)
-//     {
-//       qh = *str - 0xa1; //汉字区位码
-//       wh = *(str + 1) - 0xa1;
-//       offset = (94 * (qh) + (wh)) * 32; //计算该汉字在字库中偏移量
+  switch (fontsize) //不同的flag对应不同的汉字库，实现了汉字的大小可根据需要改变
+  {
+  case 16:
+  {
+    char mat[32]; //16*16的汉字需要32个字节的数组来存储
+    int y0 = y;
+    int x0 = x;
+    fpfont = getFontFile(fonttype, 16); //fopen("data\\font\\HZK16S", "rb"); //使用相对路径
+    if (fpfont == NULL)
+    {
+      fprintf(stderr, "无法打开HZ16S字库");
+      return;
+    }
 
-//       //读取字库
-//       fseek(fpFont, offset, SEEK_SET);
-//       fread(fontdata, hanzibytes, 1, fpFont);
+    while (*text != NULL)
+    {
+      y = y0;
+      if (((unsigned char)text[0] >= 0xa0) &&
+          ((unsigned char)text[1] >= 0xa0))
+      {
+        quma = text[0] - 0xa1;                  //求出区码
+        weima = text[1] - 0xa1;                 //求出位码
+        offset = (94 * (quma) + (weima)) * 32L; //求出要显示的汉字在字库文件中的偏移
+        fseek(fpfont, offset, SEEK_SET);        //重定位文件指针
+        fread(mat, 32, 1, fpfont);              //读出该汉字的具体点阵数据,1为要读入的项数
 
-//       //显示字体数据
-//       for (j = 0; j < hanzibytes; j++)
-//       {
-//         byte = *fontdata++;
-//         for (i = x; i < x + 8; i++)
-//         {
-//           if (byte & 0x80) //01101001
-//           {                //显示byte中为1的点
-//             if (j % 2)
-//               putpixel64k(i + 8, y + j / 2, 0);
-//             else
-//               putpixel64k(i, y + j / 2, 0);
-//           }
-//           byte <<= 1;
-//         }
-//       }
-//     }
-//     str += 2;
-//   }
-//   free(fontdata);
-// }
+        for (i = 0; i < 16; i++)
+        {
+          pos = 2 * i;             //16*16矩阵中有每一行有两外字节
+          for (j = 0; j < 16; j++) //一行一行地扫描，将位上为了1的点显示出来
+          {
+            if ((mask[j % 8] & mat[pos + j / 8]) != NULL) //j%8只能在0—8之间循环，j/8在0，1之间循环
+            {
+              putpixel64k(x + j, y, color);
+            }
+          }
+          y++;
+        }
+        x += 16 + gap; //汉字宽16偏移gap个像素
+        text += 2;     //汉字2个字节
+      }
+      else
+      {
+        printASCII(fpascii, x, y, 1, 1, text[0], color);
+        //printASCII(fpASCII, x, y, text[0]);
+        x += 8 * 1 + gap; //8*放大倍数，偏移gap个像素
+        text++;
+      }
+    }
+
+    break;
+  }
+
+  case 24:
+  {
+    char mat[72]; //24*24矩阵要72个字节来存储
+    int y0 = y;
+    int x0 = x;
+    fpfont = getFontFile(fonttype, 24); //fopen("data\\font\\Hzk24k", "rb");
+    if (fpfont == NULL)
+    {
+      fprintf(stderr, "无法打开HZk24k字库");
+      return;
+    }
+    while (*text != NULL)
+    {
+      y = y0;
+      if (((unsigned char)text[0] >= 0xa0) &&
+          ((unsigned char)text[1] >= 0xa0))
+      {
+        quma = text[0] - 0xa1;  //求出区码
+        weima = text[1] - 0xa1; //求出位码
+        offset = (94 * (quma) + (weima)) * 72L;
+        fseek(fpfont, offset, SEEK_SET);
+        fread(mat, 72, 1, fpfont);
+        for (i = 0; i < 24; i++)
+        {
+          pos = 3 * i;             //矩阵中每一行有三个字节
+          for (j = 0; j < 24; j++) // 每一行有24位
+          {
+            if ((mask[j % 8] & mat[pos + j / 8]) != NULL)
+              putpixel64k(x + j, y, color);
+          }
+          y++;
+        }
+        x += 24 + gap; //汉字宽24偏移gap个像素
+        text += 2;
+      }
+      else
+      {
+        printASCII(fpascii, x, y - 3, 2, 2, text[0], color);
+        x += 8 * 2 + gap; //8*放大倍数，偏移gap个像素
+        text++;
+      }
+    }
+    break;
+  }
+
+  case 32:
+  {
+    char mat[128]; //32*32的汉字需要128个字节的数组来存储
+    int y0 = y;
+    int x0 = x;
+    fpfont = getFontFile(fonttype, 32); //fopen("data\\font\\HZK32S", "rb");
+    if (fpfont == NULL)
+    {
+      fprintf(stderr, "无法打开HZK32S字库");
+      return;
+    }
+    while (*text != NULL)
+    {
+
+      y = y0;
+      if (((unsigned char)text[0] >= 0xa0) &&
+          ((unsigned char)text[1] >= 0xa0))
+      {
+        quma = text[0] - 0xa1;  //求出区码
+        weima = text[1] - 0xa1; //求出位码
+        offset = (94 * (quma) + (weima)) * 128L;
+        fseek(fpfont, offset, SEEK_SET);
+        fread(mat, 128, 1, fpfont);
+        for (i = 0; i < 32; i++)
+        {
+          pos = 4 * i; //32*32矩阵中有每一行有两外字节
+          for (j = 0; j < 32; j++)
+          {
+            if ((mask[j % 8] & mat[pos + j / 8]) != NULL)
+            {
+              putpixel64k(x + j, y, color);
+            }
+          }
+          y++;
+        }
+        x += 32 + gap; //汉字宽32偏移gap个像素
+        text += 2;     //汉字2个字节
+      }
+      else
+      {
+        printASCII(fpascii, x, y - 8, 3, 3, text[0], color);
+        x += 8 * 3 + gap; //8*放大倍数，偏移gap个像素
+        text++;
+      }
+    }
+    break;
+  }
+
+  case 48:
+  {
+    char mat[288]; //48*48的汉字需要288个字节的数组来存储
+    int y0 = y;
+    int x0 = x;
+    fpfont = getFontFile(fonttype, 48); //fopen("data\\font\\Hzk48k", "rb");
+    if (fpfont == NULL)
+    {
+      fprintf(stderr, "无法打开Hzk48k字库");
+      return;
+    }
+    while (*text != NULL)
+    {
+      y = y0;
+      if (((unsigned char)text[0] >= 0xa0) &&
+          ((unsigned char)text[1] >= 0xa0))
+      {
+        quma = text[0] - 0xa1;                   //求出区码
+        weima = text[1] - 0xa1;                  //求出位码
+        offset = (94 * (quma) + (weima)) * 288L; //求出要显示的汉字在字库文件中的偏移
+        fseek(fpfont, offset, SEEK_SET);         //重定位文件指针
+        fread(mat, 288, 1, fpfont);              //读出该汉字的具体点阵数据,1为要读入的项数
+
+        for (i = 0; i < 48; i++)
+        {
+          pos = 6 * i;
+          for (j = 0; j < 48; j++) //一行一行地扫描，将位上为了1的点显示出来
+          {
+            if ((mask[j % 8] & mat[pos + j / 8]) != NULL) //j%8只能在0—8之间循环，j/8在0，1之间循环
+            {
+              putpixel64k(x + j, y, color);
+            }
+          }
+          y++;
+        }
+        x += 48 + gap; //汉字宽48偏移gap个像素
+        text += 2;     //汉字2个字节
+      }
+      else
+      {
+        printASCII(fpascii, x, y - 4, 4, 4, text[0], color);
+        x += 8 * 4 + gap; //8*放大倍数，偏移gap个像素
+        text++;
+      }
+    }
+    break;
+  }
+
+  default:
+    break;
+  }
+  fclose(fpascii);
+  fclose(fpfont);
+}
