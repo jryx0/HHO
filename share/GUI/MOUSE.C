@@ -1,45 +1,48 @@
-#include "macrodef.h"
-#include "hhogui.h"
+#include "hglobal.h"
+#include "hhosvga.h"
+#include "svga.h"
 #include "mouse.h"
 
 #include <dos.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <memory.h>
 
-#define MOUSEWIDTH 20
-#define MOUSEHIGHT 30
-int const mouse_shape[MOUSEHIGHT][MOUSEWIDTH] =
-    {
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 1, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 1, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 1, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0},
-        {1, 1, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}};
-int mouse_bk[MOUSEHIGHT][MOUSEWIDTH];
+// #define MOUSEWIDTH 20
+// #define MOUSEHIGHT 30
+// int const mouse_shape[MOUSEHIGHT][MOUSEWIDTH] =
+//     {
+//         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 2, 1, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 2, 1, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
+//         {1, 2, 1, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0},
+//         {1, 1, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
+//         {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
+//         {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0},
+//         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}};
+// int mouse_bk[MOUSEHIGHT][MOUSEWIDTH];
 
 int initMouse(void)
 {
@@ -65,7 +68,7 @@ void setMouseRange(int Xmin, int Ymin, int Xmax, int Ymax)
   int86(0x33, &Inr, &Outr);
 }
 
-void MouseXYB(int *status, int *x, int *y)
+void getMouseStatus(int *status, int *x, int *y)
 {
 
   union REGS Inr, Outr;
@@ -75,68 +78,148 @@ void MouseXYB(int *status, int *x, int *y)
   *x = Outr.x.cx;
   *y = Outr.x.dx;
 }
-
-int MouseBarLeft(Area mouse_area) //4
+void saveMouseBK(unsigned int *curBK, int x, int y, int width, int height)
 {
-  /*存放鼠标状态的结构体*/
-  MOUSE mouse = {0, 0, 0};
-
-  /*读取鼠标状态*/
-  MouseXYB(&mouse.but, &mouse.position.x, &mouse.position.y);
-
-  /*判断鼠标左键是否在指定区域内按下*/
-  if ((mouse.position.x >= mouse_area.lt.x) && (mouse.position.x <= mouse_area.rb.x) && (mouse.position.y >= mouse_area.lt.y) && (mouse.position.y <= mouse_area.rb.y) && ((mouse.but & 1) == 1))
-  {
-    return 1;
-  }
-  else
-  {
-    return 0;
-  }
+  savebackgroundEx(curBK, x, y, width, height);
 }
 
-void MouseStoreBk(Coordinate position) //5
+void restoreMouseBk(unsigned int *curBK, int x, int y, int width, int height) //6
 {
-  savebackgroundEx(mouse_bk, position.x, position.y, MOUSEWIDTH, MOUSEHIGHT);
+  restorebackgroundEx(curBK, x, y, width, height);
 }
 
-void MousePutBk(Coordinate position) //6
+void resetMouse(unsigned int *curBK) //7
 {
-  restorebackgroundEx(mouse_bk, position.x, position.y, MOUSEWIDTH, MOUSEHIGHT);
-}
-
-void MouseReset(void) //7
-{
-  Area mouse_area = {{0, 0}, {SCR_WIDTH - 1, SCR_HEIGHT - 1}};
+  //Area mouse_area = {{0, 0}, {SCR_WIDTH - 1, SCR_HEIGHT - 1}};
   if (initMouse() == 0)
   {
     printf("ERROR In MouseInit\n");
-    exit(1);
+    return;
   }
 
   setMouseRange(0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1);
-  MouseStoreBk(mouse_area.lt);
+  saveMouseBK(curBK, 0, 0, MOUSE_WIDTH, MOUSE_HEIGHT);
 }
 
-void MouseDraw(MOUSE mouse) //8
+void drawMousecursor(unsigned char *cur, int x, int y) //8
 {
   int i, j;
-  for (i = 0; i < MOUSEHIGHT; i++)
+  for (i = 0; i < MOUSE_HEIGHT; i++)
   {
-    for (j = 0; j < MOUSEWIDTH; j++)
+    for (j = 0; j < MOUSE_WIDTH; j++)
     {
-      if (mouse_shape[i][j] == 0)
+      if (*(cur + i + j * MOUSE_WIDTH) == 0)
       {
         continue;
       }
-      else if (mouse_shape[i][j] == 1)
+      else if (*(cur + i + j * MOUSE_WIDTH) == 1)
       {
-        putpixel64k(j + mouse.position.x, i + mouse.position.y, 0);
+        putpixel64k(j + x, i + y, 0);
       }
-      else if (mouse_shape[i][j] == 2)
+      else if (*(cur + i + j * MOUSE_WIDTH) == 2)
       {
-        putpixel64k(j + mouse.position.x, i + mouse.position.y, 0xffff);
+        putpixel64k(j + x, i + y, 0xffff);
       }
     }
   }
+}
+
+/**
+ * 更新鼠标状态
+ * @param status 鼠标 * 
+ */
+void updateMouseStatus(mousestatus *status)
+{
+  int xPos, yPos, bState;
+  if (status == NULL)
+    return;
+
+  getMouseStatus(&bState, &xPos, &yPos);
+
+  switch (bState)
+  {
+  case 0:
+    status->oldLeftDown = status->leftDown;
+    status->leftDown = 0;
+    status->oldRightDown = status->rightDown;
+    status->rightDown = 0;
+    break;
+  case 1:
+    status->oldLeftDown = status->leftDown;
+    status->leftDown = 1;
+    break;
+  case 2:
+    status->oldRightDown = status->rightDown;
+    status->rightDown = 1;
+    break;
+  case 3:
+    status->oldLeftDown = status->leftDown;
+    status->leftDown = 1;
+    status->oldRightDown = status->rightDown;
+    status->rightDown = 1;
+    break;
+  default:
+    break;
+  }
+
+  //检测鼠标状态
+  if ((status->leftDown == 1) && (status->oldLeftDown == 0))
+    status->leftClickState = MOUSE_BUTTON_DOWN;
+  if ((status->leftDown == 0) && (status->oldLeftDown == 1))
+    status->leftClickState = MOUSE_BUTTON_UP;
+  if ((status->leftDown == 1) && (status->oldLeftDown == 1))
+    status->leftClickState = MOUSE_BUTTON_STILL_DOWN;
+  if ((status->leftDown == 0) && (status->oldLeftDown == 0))
+    status->leftClickState = MOUSE_BUTTON_STILL_UP;
+  if ((status->rightDown == 1) && (status->oldRightDown == 0))
+    status->leftClickState = MOUSE_BUTTON_DOWN;
+  if ((status->rightDown == 0) && (status->oldRightDown == 1))
+    status->leftClickState = MOUSE_BUTTON_UP;
+  if ((status->rightDown == 1) && (status->oldRightDown == 1))
+    status->rightClickState = MOUSE_BUTTON_STILL_DOWN;
+  if ((status->rightDown == 0) && (status->oldRightDown == 0))
+    status->rightClickState = MOUSE_BUTTON_STILL_UP;
+
+  status->x = xPos;
+  status->y = yPos;
+}
+
+/**
+ * 读取鼠标文件，存储在buf中
+ * 
+ * @param buf 保存缓存
+ * @param width 鼠标宽度
+ * @param height 鼠标高度
+ * @param filename 鼠标文件 
+ * 
+ * @return 1 success 0 failure
+ */
+int readCursor(unsigned char *buf, int width, int height, char *filename)
+{
+  int i;
+  FILE *fpcur;
+  char line[17];
+
+  if (buf == NULL || filename == NULL)
+  {
+    fprintf(stderr, "ReadCursor Error!");
+    return 0;
+  }
+
+  memset(buf, 0, width * height);
+  fpcur = fopen(filename, "r");
+  if (fpcur == NULL)
+  {
+    fprintf(stderr, "ReadCursor Error! can't open file:%s", filename);
+    return 0;
+  }
+
+  for (i = 0; i < height; i++)
+  {
+    fgets(line, width + 2, fpcur); //\r\n
+    memcpy(buf + i * width, line, width);
+  }
+  fclose(fpcur);
+
+  return 1;
 }

@@ -1,4 +1,4 @@
-#include "macrodef.h"
+#include "hglobal.h"
 #include "SVGA.h"
 
 #include <dos.h>

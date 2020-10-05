@@ -1,21 +1,6 @@
 #ifndef __MOUSE_H__
 #define __MOUSE_H__
 
-//处理borlandc在vscode中的兼容性
-#ifndef __BORLANDC__
-#define huge
-#define far
-#endif
-
-#define MOUSE_ENTERED 1
-#define MOUSE_LEFT 2
-#define MOUSE_OUTSIDE 4
-#define MOUSE_INSIDE 8
-#define MOUSE_BUTTON_DOWN 16
-#define MOUSE_BUTTON_UP 32
-#define MOUSE_BUTTON_STILL_DOWN 64
-#define MOUSE_BUTTON_STILL_UP 128
-
 typedef struct
 {
 	unsigned int x, y;
@@ -25,130 +10,84 @@ typedef struct
 	char moveState;
 } mousestatus;
 
-typedef struct Coordinate
-{
-	int x;
-	int y;
-} Coordinate;
-
-typedef struct Area
-{
-	Coordinate lt;
-	Coordinate rb;
-} Area;
-
-/*鼠标结构体，包含鼠标状态*/
-typedef struct mouse_
-{
-	Coordinate position;
-	int but; /*按钮的状态，0,1位分别表示左右键，该位为1表示按下，0表示松开*/
-} MOUSE;
-
-/**********************************************************
-Function：		 MouseInit
-
-Description：	鼠标复位
-
-Input：			None
-
-Output：		鼠标复位
-
-Return：		unsigned int	函数执行结果，
-								0x0000	不支持
-								0xffff	支持
-**********************************************************/
+/**
+ * 鼠标初始化
+ * 
+ * @return  0x0000	不支持鼠标  	0xffff	支持鼠标
+ */
 int initMouse(void);
 
-/**********************************************************
-Function：		 MouseRange
-
-Description：	设置鼠标移动范围
-
-Input：			Area结构体变量（记录了屏幕上某块区域的坐标范围）
-
-Output：		None
-Return：		None
-**********************************************************/
+/**
+ * 
+ * 设置鼠标移动范围
+ * @param  Xmin 
+ * @param  Ymin 左上坐标
+ * @param  Xmax 
+ * @param  Ymax 右下坐标
+ * 
+ **/
 void setMouseRange(int Xmin, int Ymin, int Xmax, int Ymax);
 
-/**********************************************************
-Function：		 MouseXYB
+/**
+ * 读取当前鼠标状态，存入指定结构体
+ * 
+ * @param status 返回鼠标按钮状态
+ * @param x 返回鼠标x坐标
+ * @param y 返回鼠标y坐标
+ */
+void getMouseStatus(int *status, int *x, int *y);
 
-Description：	读取当前鼠标状态，存入指定结构体
+/**
+ * 储存被鼠标覆盖区域的显存内容
+ * 
+ * @param curBK 鼠标背景
+ * @param x  鼠标x坐标
+ * @param y  鼠标y坐标
+ * @param width 鼠标宽度
+ * @param height 鼠标宽度
+ **/
+void saveMouseBK(unsigned int *curBK, int x, int y, int width, int height);
 
-Input：			MOUSE * mouse	存放鼠标状态结构体的地址
+/**
+ * 恢复被鼠标覆盖区域的显存内容
+ * 
+ * @param curBK 鼠标背景
+ * @param x  恢复位置的x坐标
+ * @param y  恢复位置的y坐标
+ * 
+ */
+void restoreMouseBk(unsigned int *curBK, int x, int y, int width, int height);
 
-Output：		MOUSE * mouse	存放鼠标状态结构体被更改
+/**
+ * 
+ * 重置鼠标状态，范围为全屏
+ */
+void resetMouset(unsigned int *curBK);
 
-Return：		mouse->but		鼠标按钮状态
-**********************************************************/
-void MouseXYB(int *status, int *x, int *y);
+/**
+ * 	画鼠标光标
+ * @param x  显示位置的x坐标
+ * @param y  显示位置的y坐标
+ * 
+ * 
+ */
+void drawMousecursor(unsigned char *cur, int x, int y);
 
-/**********************************************************
-Function：		 MouseBarLeft
+/**
+ * 读取鼠标文件，存储在buf中
+ * 
+ * @param buf 保存缓存
+ * @param width 鼠标宽度
+ * @param height 鼠标高度
+ * @param filename 鼠标文件 
+ * 
+ * @return 1 success 0 failure
+ */
+int readCursor(unsigned char *buf, int width, int height, char *filename);
 
-Description：	判断鼠标左键是否在指定区域内按下
-
-Input：			Area结构体变量（记录了屏幕上某块区域的坐标范围）
-
-Output：		None
-
-Return：		1		鼠标左键在指定区域内按下
-				0		鼠标左键没在指定区域内按下
-**********************************************************/
-extern int MouseBarLeft(Area mouse_area);
-
-/**********************************************************
-Function：		 MouseStoreBk
-
-Description：	储存被鼠标覆盖区域的显存内容（Bk是background的缩写）
-
-Input：			Coordinate结构体变量（对应屏幕中某个点的坐标）	鼠标所在区域左上角的坐标
-
-Output：		存储屏幕上被鼠标覆盖区域的显存内容
-
-Return：		None
-**********************************************************/
-extern void MouseStoreBk(Coordinate position);
-
-/**********************************************************
-Function：		 MousePutBk
-
-Description：	恢复被鼠标覆盖区域的显存内容（Bk是background的缩写）
-
-Input：			Coordinate结构体变量（对应屏幕中某个点的坐标）	鼠标所在区域左上角的坐标
-
-Output：		在屏幕上恢复被鼠标覆盖区域的显存内容
-
-Return：		None
-**********************************************************/
-extern void MousePutBk(Coordinate position);
-
-/**********************************************************
-Function：		 MouseReset
-
-Description：	重置鼠标状态，范围为全屏
-
-Input：			None
-
-Output：		重置鼠标状态
-
-Return：		None
-**********************************************************/
-extern void MouseReset(void);
-
-/**********************************************************
-Function		MouseDraw
-
-Description：	画鼠标光标函数
-
-Input：			MOUSE mouse						存放鼠标状态的结构体
-				int const mouse_shape[10][10]	鼠标形状全局变量数组
-
-Output：		在指定坐标处画鼠标光标
-
-Return：		None
-**********************************************************/
-extern void MouseDraw(MOUSE mouse);
-
+/**
+ * 更新鼠标状态
+ * @param status 鼠标 * 
+ */
+void updateMouseStatus(mousestatus *status);
 #endif

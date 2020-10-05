@@ -16,8 +16,10 @@ typedef struct
   hanziIndex index[MAXNUMPY];
 } pyInput;
 
-pyInput *initPYHZIndex();
+pyInput *initPYHZIndex(void);
 char *getCandidateHZbyPY(pyInput *hzIdx, const char *py);
 void ClosePY(pyInput *hzIdx);
 int checkvalidatepy(char *py);
+
+void printtextxy(FILE *fpFont, int x, int y, unsigned char *str, int color, int fontsize);
 #endif

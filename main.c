@@ -1,20 +1,32 @@
+
+#include "hglobal.h"
+#include "hhosvga.h"
+#include "svga.h"
 #include "HBaseWin.h"
-#include "hhogui.h"
 #include "mouse.h"
 
 #include <conio.h>
 #include <stdlib.h>
 #include <mem.h>
-#include <alloc.h>
+
+#define MOUSEWIDTH 20
+#define MOUSEHIGHT 30
 
 int main(void)
 {
-  MOUSE mouse_new, mouse_old = {{0, 0}, 0}; //鼠标新旧结构体
+  mousestatus mouse_new, mouse_old; //鼠标新旧结构体
   char kbchar = 0;
-  int width = 64, height = 64;
-  unsigned int far *buffer;
+  mousestatus _mouse;
+  globaldef *_global;
 
+  //初始化系统参数
+  _global = initGlobalSetting();
+
+  //初始化图形界面
   initSVGA64k();
+
+  //加载图形资源
+  loadSvgaResouce(_global);
 
   clearScreen(0xFF);
   fillRegionEx(100, 200, 300, 160, 0x4AE6);
@@ -33,14 +45,17 @@ int main(void)
 
   rectangleEx(10, 10, 10000, 20000, 0x5555, 1, 1);
 
-  initMouse();
-  MouseReset();
+  mouse_old.x = 0;
+  mouse_old.y = 0;
+
+  resetMouse();
+
   while (1)
   {
-    MouseXYB(&mouse_new.but, &mouse_new.position.x, &mouse_new.position.y);
-    MousePutBk(mouse_old.position);
-    MouseStoreBk(mouse_new.position);
-    MouseDraw(mouse_new);
+    getMouseStatus(&mouse_new.leftClickState, &mouse_new.x, &mouse_new.y);
+    restoreMouseBk(_global->cursorBK, mouse_old.x, mouse_old.y, MOUSE_WIDTH, MOUSE_HEIGHT);
+    saveMouseBK(_global->cursorBK, mouse_new.x, mouse_new.y, MOUSEWIDTH, MOUSEHIGHT);
+    drawMousecursor(_global->cursor_arrow, mouse_new.x, mouse_new.y);
     delay(30);
     mouse_old = mouse_new;
 
@@ -50,15 +65,15 @@ int main(void)
       if (kbchar == 'c')
       {
         // setcolor(RealColor(15));
-        MousePutBk(mouse_new.position);
-        line(mouse_new.position.x, mouse_new.position.y, mouse_new.position.x + random(1024), mouse_new.position.y + random(768), random(65535));
-        MouseStoreBk(mouse_new.position);
+        restoreMouseBk(_global->cursorBK, mouse_new.x, mouse_new.y, MOUSE_WIDTH, MOUSE_HEIGHT);
+        line(mouse_new.x, mouse_new.y, mouse_new.x + random(1024), mouse_new.y + random(768), random(65535));
+        saveMouseBK(_global->cursorBK, mouse_new.x, mouse_new.y, MOUSEWIDTH, MOUSEHIGHT);
       }
       else if (kbchar == 'r')
       {
-        MousePutBk(mouse_new.position);
-        bar(mouse_new.position.x, mouse_new.position.y, mouse_new.position.x + random(1024), mouse_new.position.y + random(768), random(65535));
-        MouseStoreBk(mouse_new.position);
+        restoreMouseBk(_global->cursorBK, mouse_new.x, mouse_new.y, MOUSE_WIDTH, MOUSE_HEIGHT);
+        bar(mouse_new.x, mouse_new.y, mouse_new.x + random(1024), mouse_new.y + random(768), random(65535));
+        saveMouseBK(_global->cursorBK, mouse_new.x, mouse_new.y, MOUSEWIDTH, MOUSEHIGHT);
       }
       else if (kbchar == 'a')
       {
