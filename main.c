@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <mem.h>
 
-//#define DEBUG
+// #define DEBUG
 
 int main(void)
 {
