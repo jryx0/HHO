@@ -1,6 +1,7 @@
 #include "pinyin.h"
 #include "hglobal.h"
 #include "svga.h"
+#include "hhosvga.h"
 
 #include <ctype.h>
 #include <stdio.h>
@@ -138,60 +139,6 @@ void ClosePY(pyInput *hzIdx)
 }
 
 /**
- * 获取汉字字库文件
- * @param type 在marcodef中定义 
- * @param size 字号 16、24、32、48
- * 
- * @return 字库文件指针
- */
-FILE *getFontFile(int type, int size)
-{
-  char fontfile[32];
-
-  switch (type)
-  {
-  case SIMKAI: //楷体
-    sprintf(fontfile, FONTPATH "HZK%dK", size);
-    break;
-  case SIMHEI: //黑体
-    sprintf(fontfile, FONTPATH "HZK%dH", size);
-    break;
-  default: //宋体
-    sprintf(fontfile, FONTPATH "HZK%dS", size);
-    break;
-  }
-
-  return fopen(fontfile, "rb");
-}
-
-/**
- * 打印ascii码 * 
- * @param fpACSII ascii字库文件指针
- * @param x
- * @param y
- * @param xsize x缩放比例
- * @param ysize y缩放比例
- * @param asc 字符
- * @param color 颜色
- */
-void printASCII(FILE *fpACSII, int x, int y, int xsize, int ysize, char asc, int color)
-{
-  int i, j, k, m;
-  long addr = asc * 16l;
-  unsigned char buffer[16];
-
-  fseek(fpACSII, addr, SEEK_SET);
-  fread(buffer, 16, 1, fpACSII);
-
-  for (i = 0; i < 16; i++)
-    for (m = 1; m <= ysize; m++)
-      for (j = 0; j < 8; j++)
-        for (k = 1; k <= xsize; k++)
-          if ((buffer[i] >> 7 - j) & 1)
-            putpixel64k(x + j * xsize + k, y + m + i * ysize, color);
-}
-
-/**
  * 打印一行汉字
  * 
  * @param x
@@ -201,7 +148,7 @@ void printASCII(FILE *fpACSII, int x, int y, int xsize, int ysize, char asc, int
  * @param fontsize 字号 16、24、32、48
  * @param gap 字和字之间的间距，像素为单位
  * @param color 颜色
- */
+ 
 void printText(int x, int y, char *text, int fonttype, int fontsize, int gap, int color)
 {
   FILE *fpfont = NULL, *fpascii = NULL;                                    //定义汉字库文件指针
@@ -232,6 +179,7 @@ void printText(int x, int y, char *text, int fonttype, int fontsize, int gap, in
       if (((unsigned char)text[0] >= 0xa0) &&
           ((unsigned char)text[1] >= 0xa0))
       {
+
         quma = text[0] - 0xa1;                  //求出区码
         weima = text[1] - 0xa1;                 //求出位码
         offset = (94 * (quma) + (weima)) * 32L; //求出要显示的汉字在字库文件中的偏移
@@ -255,13 +203,11 @@ void printText(int x, int y, char *text, int fonttype, int fontsize, int gap, in
       }
       else
       {
-        printASCII(fpascii, x, y, 1, 1, text[0], color);
-        //printASCII(fpASCII, x, y, text[0]);
+        //printASCII(fpascii, x, y, 1, 1, text[0], color);
         x += 8 * 1 + gap; //8*放大倍数，偏移gap个像素
         text++;
       }
     }
-
     break;
   }
 
@@ -302,7 +248,7 @@ void printText(int x, int y, char *text, int fonttype, int fontsize, int gap, in
       }
       else
       {
-        printASCII(fpascii, x, y - 3, 2, 2, text[0], color);
+        //printASCII(fpascii, x, y - 3, 2, 2, text[0], color);
         x += 8 * 2 + gap; //8*放大倍数，偏移gap个像素
         text++;
       }
@@ -350,7 +296,7 @@ void printText(int x, int y, char *text, int fonttype, int fontsize, int gap, in
       }
       else
       {
-        printASCII(fpascii, x, y - 8, 3, 3, text[0], color);
+        //printASCII(fpascii, x, y - 8, 3, 3, text[0], color);
         x += 8 * 3 + gap; //8*放大倍数，偏移gap个像素
         text++;
       }
@@ -398,7 +344,7 @@ void printText(int x, int y, char *text, int fonttype, int fontsize, int gap, in
       }
       else
       {
-        printASCII(fpascii, x, y - 4, 4, 4, text[0], color);
+        //printASCII(fpascii, x, y - 4, 4, 4, text[0], color);
         x += 8 * 4 + gap; //8*放大倍数，偏移gap个像素
         text++;
       }
@@ -412,3 +358,4 @@ void printText(int x, int y, char *text, int fonttype, int fontsize, int gap, in
   fclose(fpascii);
   fclose(fpfont);
 }
+*/

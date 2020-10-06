@@ -559,6 +559,167 @@ void rectangleEx(int x, int y, int width, int height, int color, char line_width
   liney_styleEx(x, y, height, color, line_width, dot_style);
 }
 
+/**
+ * 显示一个ascii码
+ * @param x
+ * @param y 
+ * @param asc 字符
+ * @param font 字体信息
+ */
+void printASC(int x, int y, char acs, hfont *font)
+{
+  int i, j, k, m;
+  unsigned char buffer[16];
+
+  TESTNULL(font, );
+  TESTNULL(font->fpASC, );
+
+  fseek(font->fpASC, acs * 16L, SEEK_SET);
+  fread(buffer, 16, 1, font->fpASC);
+
+  for (i = 0; i < 16; i++)
+    for (m = 1; m <= font->ascScaley; m++) //y方向缩放
+      for (j = 0; j < 8; j++)
+        for (k = 1; k <= font->ascScalex; k++) //x方向缩放
+          if ((buffer[i] >> 7 - j) & 1)
+            putpixel64k(x + j * font->ascScalex + k, y + m + i * font->ascScaley, font->fontcolor);
+}
+
+void calcFontSetting(hfont *font)
+{
+  TESTNULL(font, );
+
+  //计算汉字每行像素需要多少个字节保存
+  font->byteperline = (font->currentFontSize + 7) / 8;
+
+  //计算汉字像素需要多少字节保存
+  font->totalbytes = font->byteperline * font->currentFontSize;
+  switch (font->currentFontSize)
+  {
+  case 16:
+    font->ascScalex = 1;
+    font->ascScaley = 1;
+    font->ascy = 0;
+    font->ascSize = 8 * 1;
+    break;
+  case 24:
+    font->ascScalex = 2;
+    font->ascScaley = 2;
+    font->ascy = 3;
+    font->ascSize = 8 * 2;
+    break;
+  case 32:
+    font->ascScalex = 3;
+    font->ascScaley = 3;
+    font->ascy = 8;
+    font->ascSize = 8 * 3;
+    break;
+  case 48:
+    font->ascScalex = 4;
+    font->ascScaley = 4;
+    font->ascy = 6;
+    font->ascSize = 8 * 4;
+    break;
+  default:
+    break;
+  }
+}
+
+/**
+ * 显示一个汉字
+ * @param fpfont 字库文件指针
+ * @param x
+ * @param y 
+ * @param buffer 字库数据
+ * @param fontsize 汉字大小 16,24,32,48
+ * @param color 颜色 */
+void printHZWord(int x, int y, unsigned char *buffer, hfont *font)
+{
+  unsigned char mask[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01}; //功能数组，用于显示汉字点阵中的亮点
+  int i, j, pos;
+
+  TESTNULL(font, );
+  TESTNULL(font->fpCurrentFont, );
+
+  for (i = 0; i < font->currentFontSize; i++)
+  {
+    pos = font->byteperline * i;                //16*16矩阵中有每一行有两外字节
+    for (j = 0; j < font->currentFontSize; j++) //一行一行地扫描，将位上为了1的点显示出来
+    {
+      if ((mask[j % 8] & buffer[pos + j / 8]) != NULL) //j%8只能在0—8之间循环，j/8在0，1之间循环
+      {
+        putpixel64k(x + j, y, font->fontcolor);
+      }
+    }
+    y++;
+  }
+}
+
+void printTextEx(hregion *region, char *text, hfont *_font)
+{
+
+  int x0, y0;                //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  int linenum = 0;
+
+  TESTNULL(region, );
+  TESTNULL(_font, );
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULL(buffer, );
+
+  x0 = region->left_top.x;
+  while (*text)
+  {
+    if ((x0 + _font->currentFontSize) < region->right_bottom.x)                 //计算x0 + 字符宽度 是否大于右边界
+    {                                                                           //在同一行内输出
+      y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
+
+      if ((y0 + _font->currentFontSize) > region->right_bottom.y) //判断是否超高度
+        break;
+
+      if (((unsigned char)text[0] >= 0xa0) &&
+          ((unsigned char)text[1] >= 0xa0))
+      {                                                            //汉字
+        quma = text[0] - 0xa1;                                     //求出区码
+        weima = text[1] - 0xa1;                                    //求出位码
+        offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+        fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+        fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+        printHZWord(x0, y0, buffer, _font); //输出单个汉字
+
+        x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+        text += 2;                                  //下一个汉字
+      }
+      else
+      {                                               //字符
+        printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
+        x0 += _font->ascSize + _font->xgap;           //偏移一个字符宽度+字间距
+        text++;                                       //下一个字符
+      }
+    }
+    else
+    { //换行
+      if ((unsigned char)text[0] < 0xa0)
+      { //最后一个是字符
+        if ((x0 + _font->ascSize) < region->right_bottom.x)
+        {
+          printASC(x0, y0 - _font->ascy, *text, _font);
+          x0 += _font->ascSize + _font->xgap;
+          text++;
+        }
+      }
+      x0 = region->left_top.x;
+      linenum++;
+    }
+  }
+
+  free(buffer);
+}
+
 void hsvgatest()
 {
   unsigned int *buffer, i;
@@ -584,8 +745,51 @@ void hsvgatest()
 }
 
 /**
- *Slow verion 
- 
+ * 显示一个汉字
+ * @param fpfont 字库文件指针
+ * @param x
+ * @param y 
+ * @param word 汉字
+ * @param fontsize 汉字大小 16,24,32,48
+ * @param color 颜色 * 
+ * 
+void printHZWord(int x, int y, unsigned char word[2], hfont *font)
+{
+  unsigned char quma, weima;                                               //定义汉字的区码和位码
+  unsigned long offset;                                                    //定义汉字在字库中的偏移量
+  unsigned char mask[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01}; //功能数组，用于显示汉字点阵中的亮点
+  int i, j, pos;
+  unsigned char *buffer;
+
+  TESTNULL(font, );
+  TESTNULL(font->fpCurrentFont, );
+
+  buffer = (unsigned char *)malloc(font->totalbytes);
+
+  quma = word[0] - 0xa1;                                   //求出区码
+  weima = word[1] - 0xa1;                                  //求出位码
+  offset = (94L * (quma) + (weima)) * font->totalbytes;    //求出要显示的汉字在字库文件中的偏移
+  fseek(font->fpCurrentFont, offset, SEEK_SET);            //重定位文件指针
+  fread(buffer, font->totalbytes, 1, font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+  for (i = 0; i < font->currentFontSize; i++)
+  {
+    pos = font->byteperline * i;                //16*16矩阵中有每一行有两外字节
+    for (j = 0; j < font->currentFontSize; j++) //一行一行地扫描，将位上为了1的点显示出来
+    {
+      if ((mask[j % 8] & buffer[pos + j / 8]) != NULL) //j%8只能在0—8之间循环，j/8在0，1之间循环
+      {
+        putpixel64k(x + j, y, font->fontcolor);
+      }
+    }
+    y++;
+  }
+
+  free(buffer);
+}*/
+
+/**
+//Slow verion
 void linexx(int x1, int y1, int x2, int y2, int color) // 1
 {
   int i;

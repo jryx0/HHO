@@ -1,6 +1,14 @@
 #ifndef __MACRODEF_H__
 #define __MACRODEF_H__
 
+//////////////////////////////错误处理宏////////////////////////////////////////////
+#define TESTNULL(X, Y)                                    \
+  if (X == NULL)                                          \
+  {                                                       \
+    fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
+    return Y;                                             \
+  }
+
 //////////////////////////////////////宏定义///////////////////////////////////
 //显示模式宏定义
 #define SVGA64K
@@ -32,11 +40,14 @@
 #define SIMSUN 0 //宋体
 #define SIMHEI 1 //黑体
 #define SIMKAI 2 //楷体
+#define ASCII 10 //英文字符
+
+ 
 
 //mouse cursors
 //鼠标大小
-#define MOUSE_WIDTH 16
-#define MOUSE_HEIGHT 16
+#define MOUSE_WIDTH 20
+#define MOUSE_HEIGHT 30
 #define FILE_CURSOR_ARROW DATAPATH "cursor\\arrows.cur"
 #define FILE_CURSOR_HAND DATAPATH "cursor\\hand.cur"
 

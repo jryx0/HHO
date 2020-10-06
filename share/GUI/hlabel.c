@@ -83,9 +83,9 @@ void OnPaintLabel(hbasewinAttr *label, void *value)
   {
     memcpy(temp, label->title + i * linemax * 2, linemax * 2);
     //printtextxy(fpFont, x, y + 16 * i, temp, 0 /*color*/, 16); modified by 张皓
-    printText(x, y + 16 * i, temp, SIMSUN, 24, 0, 0x0 /*color*/); //显示文本的函数改了，不需要打开汉字字库文件指针
+    //printText(x, y + 16 * i, temp, SIMSUN, 24, 0, 0x0 /*color*/); //显示文本的函数改了，不需要打开汉字字库文件指针
   }
   memcpy(temp, label->title + i * linemax * 2, (len - linemax * (maxline - 1)) * 2);
   //printtextxy(fpFont, x, y + 16 * i, temp, 0 /*color*/, 16);
-  printText(x, y + 16 * i, temp, SIMSUN, 24, 0, 0x0 /*color*/);
+  //printText(x, y + 16 * i, temp, SIMSUN, 24, 0, 0x0 /*color*/);
 }

@@ -4,6 +4,8 @@
 
 #define MAXNUMPY 403
 
+
+
 typedef struct
 {
   char pinying[7];
@@ -48,18 +50,7 @@ void ClosePY(pyInput *hzIdx);
  */
 int checkvalidatepy(char *py);
 
-/**
- * 打印ascii码 * 
- * @param fpACSII ascii字库文件指针
- * @param x
- * @param y
- * @param xsize x缩放比例
- * @param ysize y缩放比例
- * @param asc 字符
- * @param color 颜色
- */
 
-void printASCII(FILE *fpACSII, int x, int y, int xsize, int ysize, char asc, int color);
 /**
  * 打印一行文本，可以中英文混合
  * 

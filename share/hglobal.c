@@ -4,13 +4,12 @@
 
 #include <memory.h>
 
-#define TEST(X, G)             \
-  if (X == NULL)               \
-  {                            \
-    fprintf(stderr, "%s", #X); \
-    destoryGlobalSettting(G);  \
-    exit(-1);                  \
-    return NULL;               \
+#define TESTGLOBAL(X, Y)                                  \
+  if (X == NULL)                                          \
+  {                                                       \
+    fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
+    destoryGlobalSettting(Y);                             \
+    exit(-1);                                             \
   }
 
 /**
@@ -21,34 +20,58 @@
  */
 globaldef *initGlobalSetting(void)
 {
+
   globaldef *_global = malloc(sizeof(globaldef));
-  TEST(_global, _global);
+  TESTNULL(_global, NULL);
+
+  _global->fpLog = fopen("hho.log", "w"); //日志文件
+  //TESTNULL(_global->fpLog, NULL);
+
+  setvbuf(_global->fpLog, NULL, _IOFBF, 512);
+  fprintf(stderr, "test %s", "hho.log");
 
   memset(_global, 0, sizeof(globaldef));
 
   ///////////加载资源//////////////////
   //加载拼音索引文件
   _global->pingyin = initPYHZIndex();
-  TEST(_global, _global->pingyin);
-
-  // //打开字库文件
-  // _global->fphanzi_ss24 = fopen(FILE_SIMSUN24, "r");
-  // TEST(_global, _global->fphanzi_ss24);
-
-  // _global->fphanzi_sh24 = fopen(FILE_SIMHEI24, "r");
-  // TEST(_global, _global->fphanzi_sh24);
-
-  // _global->fphanzi_ss16 = fopen(FILE_SIMSUN16, "r");
-  // TEST(_global, _global->fphanzi_ss16);
-
-  // _global->fphanzi_sh16 = fopen(FILE_SIMHEI16, "r");
-  // TEST(_global, _global->fphanzi_ss16);
+  TESTNULL(_global->pingyin, NULL);
 
   //加载鼠标形状
-  ReadCursor((unsigned char *)_global->cursor_arrow, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
-  ReadCursor((unsigned char *)_global->cursor_hand, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_HAND);
+  // ReadCursor((unsigned char *)_global->cursor_arrow, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
+  // ReadCursor((unsigned char *)_global->cursor_hand, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_HAND);
 
   return _global;
+}
+
+/**
+ * 获取汉字字库文件
+ * @param type 在marcodef中定义 
+ * @param size 字号 16、24、32、48
+ * 
+ * @return 字库文件指针
+ */
+FILE *getFontFile(int type, int size)
+{
+  char fontfile[32];
+
+  switch (type)
+  {
+  case SIMKAI: //楷体
+    sprintf(fontfile, FONTPATH "HZK%dK", size);
+    break;
+  case SIMHEI: //黑体
+    sprintf(fontfile, FONTPATH "HZK%dH", size);
+    break;
+  case ASCII:
+    sprintf(fontfile, FONTPATH "ASC16");
+    break;
+  default: //宋体
+    sprintf(fontfile, FONTPATH "HZK%dS", size);
+    break;
+  }
+
+  return fopen(fontfile, "rb");
 }
 
 void destoryGlobalSettting(globaldef *_g)
@@ -56,13 +79,11 @@ void destoryGlobalSettting(globaldef *_g)
   if (_g)
   {
     ClosePY(_g->pingyin);
-
     // fclose(_g->fpBK);
-    // fclose(_g->fphanzi_ss24);
-    // fclose(_g->fphanzi_sh24);
-    // fclose(_g->fphanzi_ss16);
-    // fclose(_g->fphanzi_sh16);
 
+    fclose(_g->fpLog);
     free(_g);
+
+    _g = NULL;
   }
 }

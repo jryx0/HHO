@@ -8,9 +8,9 @@
 #include <stdlib.h>
 #include <memory.h>
 
-#define MOUSEWIDTH 20
-#define MOUSEHIGHT 30
-int const mouse_shape[MOUSEHIGHT][MOUSEWIDTH] =
+// #define MOUSEWIDTH 20
+// #define MOUSEHIGHT 30
+int const mouse_shape[MOUSE_HEIGHT][MOUSE_WIDTH] =
     {
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
         {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -42,7 +42,7 @@ int const mouse_shape[MOUSEHIGHT][MOUSEWIDTH] =
         {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0},
         {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}};
-int mouse_bk[MOUSEHIGHT][MOUSEWIDTH];
+int mouse_bk[MOUSE_HEIGHT][MOUSE_WIDTH];
 
 /**
  * 初始化鼠标 
@@ -156,14 +156,14 @@ void SaveMouseBk(mousestatus *mouse) //5
   if (mouse == NULL)
     return;
 
-  savebackgroundEx(mouse_bk, mouse->x, mouse->y, MOUSEWIDTH, MOUSEHIGHT);
+  savebackgroundEx(mouse_bk, mouse->x, mouse->y, MOUSE_WIDTH, MOUSE_HEIGHT);
 }
 
 void RestoreMouseBk(mousestatus *mouse) //6
 {
   if (mouse == NULL)
     return;
-  restorebackgroundEx(mouse_bk, mouse->x, mouse->y, MOUSEWIDTH, MOUSEHIGHT);
+  restorebackgroundEx(mouse_bk, mouse->x, mouse->y, MOUSE_WIDTH, MOUSE_HEIGHT);
 }
 
 void ResetMouse(mousestatus *mouse) //7
@@ -181,9 +181,9 @@ void ResetMouse(mousestatus *mouse) //7
 void MouseDraw(mousestatus *mouse) //8
 {
   int i, j;
-  for (i = 0; i < MOUSEHIGHT; i++)
+  for (i = 0; i < MOUSE_HEIGHT; i++)
   {
-    for (j = 0; j < MOUSEWIDTH; j++)
+    for (j = 0; j < MOUSE_WIDTH; j++)
     {
       if (mouse_shape[i][j] == 0)
       {

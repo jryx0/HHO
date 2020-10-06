@@ -10,7 +10,7 @@
 #include <stdlib.h>
 #include <mem.h>
 
-//#define DEBUG
+#define DEBUG
 
 int main(void)
 {
@@ -25,8 +25,8 @@ int main(void)
   initSVGA64k();
 
   mainPage = CreateDesktop();
-  CreateLabel(mainPage, 5, 90,300, 150, 0, NULL);
-  
+  CreateLabel(mainPage, 5, 90, 300, 150, 0, NULL);
+
   if (mainPage && mainPage->onPaint)
     mainPage->onPaint(mainPage, NULL);
 
@@ -41,10 +41,11 @@ int main(void)
   // printHZKSS16(300 + 16, 150, "华中科技大学校医院华中科技大学校医院", 0x0);
   // printHZKSH16(300 + 16, 150 + 16, "啊华中科技大学校医院", 0x0);
   //int x, int y, char *s, int flag, int part, int color
-  printText(300 + 16, 150, "啊a华中科技大学校医院华中科技大学校医院内外妇儿精神头脑著", SIMKAI, 16, 0, 0x0);
-  printText(300 + 16, 150 + 50, "华Aa中科技大学校医院华中科技大学校医院青霉素", SIMSUN, 24, 0, 0x0);
-  printText(300 + 16, 150 + 100, "华中vcc科技大学校医院华中科技大学校医院青霉素", SIMKAI, 32, 0, 0x0);
-  printText(300 + 16, 150 + 140, "华中科hust技大学校医院华中科技大学校医院青霉素", SIMHEI, 48, 0, 0x0);
+  //printText(300 + 16, 150, "啊a华中科技大学校医院华中科技大学校医院内外妇儿精神头脑著", SIMKAI, 16, 0, 0x0);
+  //printText(300 + 16, 150 + 50, "华Aa中科技大学校医院华中科技大学校医院青霉素", SIMSUN, 24, 0, 0x0);
+  //printText(300 + 16, 150 + 100, "华中vcc科技大学校医院华中科技大学校医院青霉素", SIMKAI, 32, 0, 0x0);
+  //printText(300 + 16, 150 + 140, "华中科hust技大学校医院华中科技大学校医院青霉素", SIMHEI, 48, 0, 0x0);
+
 #endif
 
   //初始化鼠标
@@ -68,6 +69,47 @@ int main(void)
       // setcolor(RealColor(15));
       RestoreMouseBk(&_global->mouse);
       line(_global->mouse.x, _global->mouse.y, _global->mouse.x - random(1024), _global->mouse.y - random(768), random(65535));
+      {
+        hfont *_hfont;
+        hregion *region;
+
+        unsigned char *c = "我";
+        memset(_hfont, 0, sizeof(hfont));
+        //chinese setting
+        _hfont->currentFontSize = 16;
+        _hfont->byteperline = (_hfont->currentFontSize + 7) / 8;
+        _hfont->currentFontType = SIMHEI;
+        _hfont->totalbytes = _hfont->byteperline * _hfont->currentFontSize;
+        _hfont->fpCurrentFont = getFontFile(_hfont->currentFontType, _hfont->currentFontSize);
+        _hfont->xgap = 5;
+        _hfont->ygap = 6;
+        _hfont->fontcolor = 0x0;
+
+        //ACS setting
+        _hfont->fpASC = getFontFile(ASCII, 16);
+        _hfont->ascScaley = 1;
+        _hfont->ascScalex = 1;
+        _hfont->ascy = 0;
+        _hfont->ascSize = 8;
+
+        calcFontSetting(_hfont);
+        // printHZWord(_global->mouse.x + 16, _global->mouse.y + 16, c, _hfont);
+        // printASC(_global->mouse.x + 64, _global->mouse.y + 16, 'c', _hfont);
+
+        region = malloc(sizeof(hregion));
+        region->left_top.x = _global->mouse.x + 16;
+        region->left_top.y = _global->mouse.y;
+        region->right_bottom.x = region->left_top.x + 150;
+        region->right_bottom.y = region->left_top.y + 150;
+        rectangleEx(region->left_top.x, region->left_top.y, 150, 150, 0x0, 1, 1);
+        printTextEx(region, "华a中afA科aB技Fa大a学,", _hfont);
+
+        free(c);
+        free(region);
+        fclose(_hfont->fpCurrentFont);
+        fclose(_hfont->fpASC);
+        free(_hfont);
+      }
       SaveMouseBk(&_global->mouse);
     }
 
