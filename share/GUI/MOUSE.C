@@ -8,42 +8,6 @@
 #include <stdlib.h>
 #include <memory.h>
 
-// #define MOUSEWIDTH 20
-// #define MOUSEHIGHT 30
-int const mouse_shape[MOUSE_HEIGHT][MOUSE_WIDTH] =
-    {
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 2, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 2, 1, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 2, 1, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0, 0},
-        {1, 2, 1, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0, 0},
-        {1, 1, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
-        {1, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 2, 2, 1, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 2, 2, 1, 1, 0, 0, 0, 0, 0, 0},
-        {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0}};
-int mouse_bk[MOUSE_HEIGHT][MOUSE_WIDTH];
-
 /**
  * 初始化鼠标 
  */
@@ -88,8 +52,8 @@ void UpdateMouseStatus(mousestatus *status)
 {
   int xPos, yPos, bState;
   union REGS Inr, Outr;
-  if (status == NULL)
-    return;
+
+  TESTNULLVOID(status);
 
   RestoreMouseBk(status);
 
@@ -156,14 +120,14 @@ void SaveMouseBk(mousestatus *mouse) //5
   if (mouse == NULL)
     return;
 
-  savebackgroundEx(mouse_bk, mouse->x, mouse->y, MOUSE_WIDTH, MOUSE_HEIGHT);
+  savebackgroundEx((unsigned int *)mouse->cursorBK, mouse->x, mouse->y, MOUSE_WIDTH, MOUSE_HEIGHT);
 }
 
 void RestoreMouseBk(mousestatus *mouse) //6
 {
   if (mouse == NULL)
     return;
-  restorebackgroundEx(mouse_bk, mouse->x, mouse->y, MOUSE_WIDTH, MOUSE_HEIGHT);
+  restorebackgroundEx((unsigned int *)mouse->cursorBK, mouse->x, mouse->y, MOUSE_WIDTH, MOUSE_HEIGHT);
 }
 
 void ResetMouse(mousestatus *mouse) //7
@@ -181,24 +145,23 @@ void ResetMouse(mousestatus *mouse) //7
 void MouseDraw(mousestatus *mouse) //8
 {
   int i, j;
-  for (i = 0; i < MOUSE_HEIGHT; i++)
-  {
-    for (j = 0; j < MOUSE_WIDTH; j++)
-    {
-      if (mouse_shape[i][j] == 0)
+
+  TESTNULLVOID(mouse);
+  TESTNULLVOID(mouse->currentCur);
+  for (j = 0; j < MOUSE_HEIGHT; j++)
+    for (i = 0; i < MOUSE_WIDTH; i++)
+      if (mouse->currentCur[j][i] == '0')
       {
         continue;
       }
-      else if (mouse_shape[i][j] == 1)
+      else if (mouse->currentCur[j][i] == '1')
       {
-        putpixel64k(j + mouse->x, i + mouse->y, 0);
+        putpixel64k(i + mouse->x, j + mouse->y, 0xffff);
       }
-      else if (mouse_shape[i][j] == 2)
+      else if (mouse->currentCur[j][i] == '2')
       {
-        putpixel64k(j + mouse->x, i + mouse->y, 0xffff);
+        putpixel64k(i + mouse->x, j + mouse->y, 0x0);
       }
-    }
-  }
 }
 
 /**
@@ -211,11 +174,11 @@ void MouseDraw(mousestatus *mouse) //8
  * 
  * @return 1 success 0 failure
  */
-int ReadCursor(unsigned char *buf, int width, int height, char *filename)
+int ReadCursor(unsigned char *buf, /*int width, int height,*/ char *filename)
 {
   int i;
   FILE *fpcur;
-  char line[17];
+  char line[MOUSE_WIDTH + 1];
 
   if (buf == NULL || filename == NULL)
   {
@@ -223,7 +186,7 @@ int ReadCursor(unsigned char *buf, int width, int height, char *filename)
     return 0;
   }
 
-  memset(buf, 0, width * height);
+  memset(buf, 0, MOUSE_WIDTH * MOUSE_HEIGHT);
   fpcur = fopen(filename, "r");
   if (fpcur == NULL)
   {
@@ -231,10 +194,10 @@ int ReadCursor(unsigned char *buf, int width, int height, char *filename)
     return 0;
   }
 
-  for (i = 0; i < height; i++)
+  for (i = 0; i < MOUSE_HEIGHT; i++)
   {
-    fgets(line, width + 2, fpcur); //\r\n
-    memcpy(buf + i * width, line, width);
+    fgets(line, MOUSE_WIDTH + 2, fpcur); //\r\n
+    memcpy(buf + i * MOUSE_WIDTH, line, MOUSE_WIDTH);
   }
   fclose(fpcur);
 

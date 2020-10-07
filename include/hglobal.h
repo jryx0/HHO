@@ -17,13 +17,11 @@ typedef struct _globaldef
   FILE *fpBK;  //背景存放的文件
   FILE *fpLog; //日志文件指针
 
-  unsigned char cursor_arrow[MOUSE_WIDTH][MOUSE_HEIGHT]; //保存鼠标图形地址
-  unsigned char cursor_hand[MOUSE_WIDTH][MOUSE_HEIGHT];  //保存鼠标图形地址
-  unsigned int cursorBK[MOUSE_WIDTH][MOUSE_HEIGHT];      //鼠标背景地址
-
+  unsigned char cursor_arrow[MOUSE_WIDTH][MOUSE_HEIGHT]; //保存鼠标图形地址-箭头
+  unsigned char cursor_hand[MOUSE_WIDTH][MOUSE_HEIGHT];  //保存鼠标图形地址-手
   mousestatus mouse;
-  pyInput *pingyin;
 
+  pyInput *pingyin;
   hbasewinAttr *foucswin;
 } globaldef;
 

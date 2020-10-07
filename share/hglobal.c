@@ -38,8 +38,10 @@ globaldef *initGlobalSetting(void)
   TESTNULL(_global->pingyin, NULL);
 
   //¼ÓÔØÊó±êÐÎ×´
-  // ReadCursor((unsigned char *)_global->cursor_arrow, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_ARROW);
-  // ReadCursor((unsigned char *)_global->cursor_hand, MOUSE_WIDTH, MOUSE_HEIGHT, FILE_CURSOR_HAND);
+  ReadCursor((unsigned char *)_global->cursor_arrow, FILE_CURSOR_ARROW);
+  ReadCursor((unsigned char *)_global->cursor_hand, FILE_CURSOR_HAND);
+
+  _global->mouse.currentCur = _global->cursor_hand;
 
   return _global;
 }

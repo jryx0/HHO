@@ -1,15 +1,18 @@
 #ifndef __MOUSE_H__
 #define __MOUSE_H__
+#include "macrodef.h"
 
 /*鼠标结构体，包含鼠标状态*/
 typedef struct
 {
 	unsigned int x, y;
-	unsigned int oldx, oldy;
 	unsigned char leftDown, rightDown;
 	unsigned char oldLeftDown, oldRightDown;
 	char leftClickState, rightClickState;
 	char moveState;
+
+	unsigned int cursorBK[MOUSE_HEIGHT][MOUSE_WIDTH]; //鼠标背景缓存
+	unsigned char (*currentCur)[MOUSE_WIDTH];
 } mousestatus;
 
 /**
@@ -58,12 +61,10 @@ void MouseDraw(mousestatus *mouse);
 /**
  * 读取鼠标形状文件，存储在buf中
  * 
- * @param buf 保存缓存
- * @param width 鼠标宽度
- * @param height 鼠标高度
+ * @param buf 保存缓存  
  * @param filename 鼠标文件 
  * 
  * @return 1 success 0 failure
  */
-int ReadCursor(unsigned char *buf, int width, int height, char *filename);
+int ReadCursor(unsigned char *buf, char *filename);
 #endif

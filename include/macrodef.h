@@ -9,6 +9,13 @@
     return Y;                                             \
   }
 
+#define TESTNULLVOID(X)                                   \
+  if (X == NULL)                                          \
+  {                                                       \
+    fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
+    return;                                               \
+  }
+
 //////////////////////////////////////宏定义///////////////////////////////////
 //显示模式宏定义
 #define SVGA64K
@@ -42,14 +49,13 @@
 #define SIMKAI 2 //楷体
 #define ASCII 10 //英文字符
 
- 
-
 //mouse cursors
 //鼠标大小
 #define MOUSE_WIDTH 20
 #define MOUSE_HEIGHT 30
-#define FILE_CURSOR_ARROW DATAPATH "cursor\\arrows.cur"
-#define FILE_CURSOR_HAND DATAPATH "cursor\\hand.cur"
+#define FILE_CURSOR_ARROW DATAPATH "cursor\\arrowbg.cur"
+#define FILE_CURSOR_HAND DATAPATH "cursor\\handbg.cur"
+//#define FILE_CURSOR_ARROW DATAPATH "cursor\\arrowbg.cur"
 
 #define MOUSE_ENTERED 1
 #define MOUSE_LEFT 2
