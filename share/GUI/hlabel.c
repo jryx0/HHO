@@ -4,8 +4,12 @@
 #include "pinyin.h"
 #include "hglobal.h"
 #include <memory.h>
-//#include <graphics.h>
- 
+
+
+/**
+ * label-显示文本文件中的内容
+ * 
+ */ 
 hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
                           int nHeight, int winID, const char *title)
 {
@@ -18,12 +22,16 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
 }
 
 /**
- * 10.05修改 by 张皓
- * 
+ * 10.05修改
+ * 绘制label
  * 
  */
 void OnPaintLabel(hbasewinAttr *label, void *value) //全当汉字输出，数组为奇数时，直接忽略最后一个
 {
+   
+
+
+
   // FILE *fpFont;
   // FILE *fptemp;
   // int x, y, type = 3, len, linemax, line, i, maxline;

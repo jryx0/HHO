@@ -90,6 +90,7 @@ union REGS
   struct WORDREGS x;
   struct BYTEREGS h;
 };
+
 #endif //_REG_DEFS
 #endif
 

@@ -78,7 +78,7 @@ int main(void)
         //chinese setting
         _hfont->currentFontSize = 16;
         _hfont->byteperline = (_hfont->currentFontSize + 7) / 8;
-        _hfont->currentFontType = SIMHEI;
+        _hfont->currentFontType = SIMSUN;
         _hfont->totalbytes = _hfont->byteperline * _hfont->currentFontSize;
         _hfont->fpCurrentFont = getFontFile(_hfont->currentFontType, _hfont->currentFontSize);
         _hfont->xgap = 0;
@@ -103,10 +103,10 @@ int main(void)
         region->right_bottom.y = region->left_top.y + 150;
         clearRegion(region->left_top.x, region->left_top.y,
                     region->left_top.x + 150, region->left_top.y + 155, 0xff);
-        
+
         rectangleEx(region->left_top.x, region->left_top.y, 150, 155, 0x0, 1, 1);
         //printTextEx(region, "武汉大学人民医院附属口腔医院\r\na\n中\ra\rf\rA\r中国科技大学附属人民医院科\ra\rB内外妇儿肠胃眼睛骨头等等科室\r技\rFa\r大\ra学,\r\n", _hfont);
-        print(region, "武汉大学人民医院附属口腔医院\r\na\n中\ra\rf\rA\r中国科技大学附属人民医院科\ra\rB内外妇儿肠胃眼睛骨头等等科室\r技\rFa\r大\ra学,\r\n", _hfont);
+        printText(region, "武汉大学人民医院附属口腔医院\r\na\n中\ra\rf\rA\r中国科技大学附属人民医院科\ra\rB内外妇儿肠胃眼睛骨头等等科室\r技\rFa\r大\ra学,\r\n", _hfont);
 
         free(c);
         free(region);

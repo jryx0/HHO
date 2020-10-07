@@ -1,7 +1,7 @@
 #include "macrodef.h"
+#include "mouse.h"
 #include "hglobal.h"
 #include "hhosvga.h"
-#include "mouse.h"
 
 #include <dos.h>
 #include <stdio.h>
@@ -41,6 +41,18 @@ void SetMouseRange(int Xmin, int Ymin, int Xmax, int Ymax)
   Inr.x.dx = Ymax;
   Inr.x.ax = 8;
   int86(0x33, &Inr, &Outr);
+}
+
+void ResetMouse(mousestatus *mouse) //7
+{
+
+  if (MouseInit() == 0 || mouse == NULL)
+  {
+    printf("ERROR In MouseInit\n");
+    exit(1);
+  };
+  SetMouseRange(0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1);
+  SaveMouseBk(mouse);
 }
 
 /**
@@ -130,18 +142,6 @@ void RestoreMouseBk(mousestatus *mouse) //6
   restorebackgroundEx((unsigned int *)mouse->cursorBK, mouse->x, mouse->y, MOUSE_WIDTH, MOUSE_HEIGHT);
 }
 
-void ResetMouse(mousestatus *mouse) //7
-{
-
-  if (MouseInit() == 0 || mouse == NULL)
-  {
-    printf("ERROR In MouseInit\n");
-    exit(1);
-  };
-  SetMouseRange(0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1);
-  SaveMouseBk(mouse);
-}
-
 void MouseDraw(mousestatus *mouse) //8
 {
   int i, j;
@@ -174,7 +174,7 @@ void MouseDraw(mousestatus *mouse) //8
  * 
  * @return 1 success 0 failure
  */
-int ReadCursor(unsigned char *buf, /*int width, int height,*/ char *filename)
+int ReadCursor(unsigned char *buf, char *filename)
 {
   int i;
   FILE *fpcur;
