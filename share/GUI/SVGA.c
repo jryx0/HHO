@@ -158,6 +158,7 @@ int Putbmp64k(int x, int y, const char *path) //4
   /*非24位图则退出*/
   if (bit != 24U)
   {
+    fclose(fpbmp);
     return -1;
   }
 
@@ -168,6 +169,7 @@ int Putbmp64k(int x, int y, const char *path) //4
   /*采用压缩算法则退出*/
   if (compression != 0UL)
   {
+    fclose(fpbmp);
     return -1;
   }
 
@@ -179,6 +181,7 @@ int Putbmp64k(int x, int y, const char *path) //4
   /*宽度超限则退出*/
   if (width > SCR_WIDTH)
   {
+    fclose(fpbmp);
     return -1;
   }
 
@@ -197,6 +200,7 @@ int Putbmp64k(int x, int y, const char *path) //4
   /*开辟行像素数据动态储存空间*/
   if ((buffer = (COLORS24 *)malloc(linebytes)) == 0)
   {
+    fclose(fpbmp);
     return -1;
   }
 

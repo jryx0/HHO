@@ -1,48 +1,91 @@
 #include "macrodef.h"
+#include "hhosvga.h"
+#include "hglobal.h"
+#include "pinyin.h"
+
 #include "HBaseWin.h"
 #include "hlabel.h"
-#include "pinyin.h"
-#include "hglobal.h"
+
 #include <memory.h>
-
-
+#include <errno.h>
+#include <stdlib.h>
+extern char *sys_errlist[];
 /**
  * label-显示文本文件中的内容
  * 
- */ 
+ */
 hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
                           int nHeight, int winID, const char *title)
 {
   hbasewinAttr *label;
-   
+
   label = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
-  label->onPaint = OnPaintLabel;
+  label->onPaint = OnPaint_Label;
+  label->onDestroy = OnDestoy_Lable;
 
   return label;
 }
 
 /**
- * 10.05修改
+ * 删除自身
+ * 
+ * 
+ */
+void OnDestoy_Lable(hbasewinAttr *label, void *value)
+{
+  TESTNULLVOID(label);
+  destoryChildren(label);
+
+  OnDestory(label, value);  
+
+  free(label);
+  label = NULL;
+}
+
+/**
+ *  
  * 绘制label
  * 
  */
-void OnPaintLabel(hbasewinAttr *label, void *value) //全当汉字输出，数组为奇数时，直接忽略最后一个
+void OnPaint_Label(hbasewinAttr *label, void *value)
 {
-   
-
-
-
-  // FILE *fpFont;
-  // FILE *fptemp;
+  int errNum = 0;
+  FILE *fpFont;
+  FILE *fptemp;
+  hregion _region;
+  char str[30];
   // int x, y, type = 3, len, linemax, line, i, maxline;
   // char *temp, *content;
   // if (label == NULL)
   //   return;
   // OnPaint(label, &type);
+  OnPaint(label, NULL);
 
-  // if (label->title == NULL)
-  //   return;
-  // //fpFont = fopen(FILE_SIMSUN16 DATAPATH, "rt");
+  TESTNULLVOID(label);
+  TESTNULLVOID(label->title);
+
+  fpFont = getFont(SIMSUN, 16, 0x00);
+
+  _region.left_top.x = getAbsoluteX(label);
+  _region.left_top.y = getAbsoluteY(label);
+  _region.right_bottom.x = _region.left_top.x + label->nWidth;
+  _region.right_bottom.y = _region.left_top.y + label->nHeight;
+
+  fptemp = fopen(label->title, "r");
+  if (fptemp == NULL)
+  {
+    errNum = errno;
+    sprintf(str, "open fail errno = %d reason = %s \n", errNum, sys_errlist[errNum]);
+    //fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, "fptemp");
+    return;
+  }
+
+  printTextFile(&_region, fptemp, fpFont);
+  freeFont(fpFont);
+  fclose(fptemp);
+
+  fpFont = NULL;
+  fptemp = NULL;
 
   // x = getAbsoluteX(label);
   // y = getAbsoluteY(label);

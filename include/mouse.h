@@ -3,7 +3,7 @@
 #include "macrodef.h"
 
 /*鼠标结构体，包含鼠标状态*/
-typedef struct
+typedef struct _mouse
 {
 	unsigned int x, y;
 	unsigned char leftDown, rightDown;

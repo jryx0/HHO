@@ -3,6 +3,8 @@
 #include "pinyin.h"
 
 #include <memory.h>
+#include <stdarg.h>
+#include <stdio.h>
 
 #define TESTGLOBAL(X, Y)                                  \
   if (X == NULL)                                          \
@@ -25,11 +27,8 @@ globaldef *initGlobalSetting(void)
   TESTNULL(_global, NULL);
 
   _global->fpLog = fopen("hho.log", "w"); //日志文件
-  //TESTNULL(_global->fpLog, NULL);
-
-  setvbuf(_global->fpLog, NULL, _IOFBF, 512);
-  fprintf(stderr, "test %s", "hho.log");
-
+  TESTNULL(_global->fpLog, NULL);
+ 
   memset(_global, 0, sizeof(globaldef));
 
   ///////////加载资源//////////////////
@@ -46,36 +45,6 @@ globaldef *initGlobalSetting(void)
   return _global;
 }
 
-/**
- * 获取汉字字库文件
- * @param type 在marcodef中定义 
- * @param size 字号 16、24、32、48
- * 
- * @return 字库文件指针
- */
-FILE *getFontFile(int type, int size)
-{
-  char fontfile[32];
-
-  switch (type)
-  {
-  case SIMKAI: //楷体
-    sprintf(fontfile, FONTPATH "HZK%dK", size);
-    break;
-  case SIMHEI: //黑体
-    sprintf(fontfile, FONTPATH "HZK%dH", size);
-    break;
-  case ASCII:
-    sprintf(fontfile, FONTPATH "ASC16");
-    break;
-  default: //宋体
-    sprintf(fontfile, FONTPATH "HZK%dS", size);
-    break;
-  }
-
-  return fopen(fontfile, "rb");
-}
-
 void destoryGlobalSettting(globaldef *_g)
 {
   if (_g)
@@ -88,4 +57,12 @@ void destoryGlobalSettting(globaldef *_g)
 
     _g = NULL;
   }
+}
+
+void dbg_printf(const char *fmt, ...)
+{
+  va_list args;
+  va_start(args, fmt);
+  vfprintf(stderr, fmt, args);
+  va_end(args);
 }

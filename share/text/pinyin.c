@@ -135,6 +135,7 @@ void ClosePY(pyInput *hzIdx)
   {
     fclose(hzIdx->fpHanzi);
     free(hzIdx);
+    hzIdx = NULL;
   }
 }
 

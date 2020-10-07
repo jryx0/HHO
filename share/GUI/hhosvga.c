@@ -610,9 +610,362 @@ void printASC(int x, int y, char acs, hfont *font)
             putpixel64k(x + j * font->ascScalex + k, y + m + i * font->ascScaley, font->fontcolor);
 }
 
+/**
+ * 显示一个汉字
+ * @param fpfont 字库文件指针
+ * @param x
+ * @param y 
+ * @param buffer 字库数据
+ * @param fontsize 汉字大小 16,24,32,48
+ * @param color 颜色 */
+void printHZWord(int x, int y, unsigned char *buffer, hfont *font)
+{
+  unsigned char mask[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01}; //功能数组，用于显示汉字点阵中的亮点
+  int i, j, pos;
+
+  TESTNULL(font, );
+  TESTNULL(font->fpCurrentFont, );
+
+  for (i = 0; i < font->currentFontSize; i++)
+  {
+    pos = font->byteperline * i;                //16*16矩阵中有每一行有两外字节
+    for (j = 0; j < font->currentFontSize; j++) //一行一行地扫描，将位上为了1的点显示出来
+    {
+      if ((mask[j % 8] & buffer[pos + j / 8]) != NULL) //j%8只能在0—8之间循环，j/8在0，1之间循环
+      {
+        putpixel64k(x + j, y, font->fontcolor);
+      }
+    }
+    y++;
+  }
+}
+
+/**
+ * @version v1 输出文本函数版本1
+ * @brief  在一个行内输出，不截断(回车换行符也不换行，忽略)。字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
+ * 字符串可以是中英文混合。 非打印字符以空格替代
+ * 
+ * @param region  要显示的区域
+ * @param text 字符串
+ * @param _font 字体设置
+ * @return 无
+ */
+void printTextLine(hregion *region, char *text, hfont *_font)
+{
+
+  int x0, y0;                //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  int linenum = 0;
+  //char isNewLine = FALSE;
+
+  TESTNULLVOID(region);
+  TESTNULLVOID(_font);
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULL(buffer, );
+
+  x0 = region->left_top.x;
+  while (*text)
+  {
+
+    y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
+
+    if (((unsigned char)text[0] >= 0xa0) &&
+        ((unsigned char)text[1] >= 0xa0))
+    {                                                            //打印中文                                                            //汉字
+      quma = text[0] - 0xa1;                                     //求出区码
+      weima = text[1] - 0xa1;                                    //求出位码
+      offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+      fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+      fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+      printHZWord(x0, y0, buffer, _font); //输出单个汉字
+
+      x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+      text += 2;                                  //下一个汉字
+    }
+    else
+    {                                               //打印字符
+      printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符,非打印字符用空格替代
+      x0 += _font->ascSize + _font->xgap;           //偏移一个字符宽度+字间距
+      text++;                                       //下一个字符
+    }
+  }
+  free(buffer);
+}
+
+/**
+ * @version v2 输出文本函数版本2 
+ * @author 
+ * @brief 在一个区域内输出字符串，字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
+ * 字符串可以是中英文混合。能首行空两格，根据区域高度和宽度，自动换行、截断。非打印字符以空格替代，
+ * 单个回车、换行或回车换行表示新行。
+ * 
+ * @param region  要显示的区域
+ * @param text 字符串
+ * @param _font 字体设置
+ *  @return 无
+ */
+void printTextEx(hregion *region, char *text, hfont *_font)
+{
+  int x0, y0;                //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  int linenum = 0;
+  char isNewLine = FALSE;
+
+  char isFirstLine = TRUE; //是否是段落首行，首行空两个字宽度
+
+  TESTNULLVOID(region);
+  TESTNULLVOID(_font);
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULLVOID(buffer);
+
+  //判断高度和宽度是否足够
+  // if ((region->left_top.x + _font->currentFontSize) > region->right_bottom.x ||
+  //     (region->left_top.y + _font->currentFontSize) > region->right_bottom.y)
+  // {
+  //   return;
+  // }
+
+  x0 = region->left_top.x;
+  while (*text)
+  {
+    if (isFirstLine)
+    { //段落首行空两个字。
+      x0 += _font->currentFontSize * 2;
+      isFirstLine = FALSE;
+    }
+
+    y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
+    if (((unsigned char)text[0] >= 0xa0) &&
+        ((unsigned char)text[1] >= 0xa0))
+    {                                                            //打印中文
+      quma = text[0] - 0xa1;                                     //求出区码
+      weima = text[1] - 0xa1;                                    //求出位码
+      offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+      fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+      fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+      printHZWord(x0, y0, buffer, _font); //输出单个汉字
+
+      x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+      text += 2;                                  //下一个汉字
+    }
+    else
+    { //打印字符
+      if (*text == '\r' || *text == '\n')
+      {                     //换行处理
+        isFirstLine = TRUE; //有回车换行符说明是新的一段
+
+        // if (*(text + 1) != 0) //不是最后一个字符
+        //   if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
+        //     text += 2; //处理\r\n情况
+        //   else
+        //     text++; //只有一个\r或\n
+        if (*(text + 1) != 0) //不是最后一个字符
+          if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
+            text++; //处理\r\n情况
+
+        text++; //只有一个\r或\n
+        isNewLine = TRUE;
+      }
+      else
+      {                                               //字符
+        printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
+
+        x0 += _font->ascSize + _font->xgap; //偏移一个字符宽度+字间距
+        text++;                             //下一个字符
+      }
+    }
+
+    if ((unsigned char)text[0] < 0xa0)
+    { //字符用字符宽度判断
+      if (x0 + _font->ascSize > region->right_bottom.x)
+        isNewLine = TRUE;
+    }
+    else
+    { //汉字用汉字宽度判断
+      if (x0 + _font->currentFontSize > region->right_bottom.x)
+        isNewLine = TRUE;
+    }
+
+    if (isNewLine)
+    {
+      linenum++;
+      isNewLine = FALSE;
+
+      if ((region->left_top.y + (linenum + 1) * _font->currentFontSize + _font->ygap) > region->right_bottom.y)
+      { //判断是否超高度，退出 高度截断
+        break;
+      }
+
+      x0 = region->left_top.x;
+    }
+  }
+  free(buffer);
+}
+
+/**
+ * @version v3 输出文本函数版本3
+ * @author 
+ * @brief 读取文件，在一个区域内输出字符串，字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
+ * 字符串可以是中英文混合。能首行空两格，根据区域高度和宽度，自动换行、截断
+ * @param region  要显示的区域  
+ * @param fp 文件指针
+ * @param _font 字体设置
+ * @return 无
+ */
+void printTextFile(hregion *region, FILE *fp, hfont *_font)
+{
+#define BUFFEESIZE 256
+  unsigned char Line[BUFFEESIZE];
+  unsigned char *c;
+  int x0, y0;                //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  int linenum = 0;
+  char isNewLine = FALSE;
+  char isOutofRange = FALSE;
+
+  char isFirstLine = TRUE; //是否是段落首行，首行空两个字宽度
+
+  TESTNULLVOID(region);
+  TESTNULLVOID(_font);
+  TESTNULLVOID(fp);
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULLVOID(buffer);
+
+  //判断高度和宽度是否足够
+  // if ((region->left_top.x + _font->currentFontSize) > region->right_bottom.x ||
+  //     (region->left_top.y + _font->currentFontSize) > region->right_bottom.y)
+  // {
+  //   return;
+  // }
+
+  x0 = region->left_top.x;
+  while (fgets(Line, sizeof(Line), fp) && !isOutofRange)
+  { //fgets 不过滤0a
+    c = Line;
+    while (*c)
+    {
+      if (isFirstLine)
+      { //段落首行空两个字。
+        x0 += _font->currentFontSize * 2;
+        isFirstLine = FALSE;
+      }
+
+      y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
+      if (((unsigned char)c[0] >= 0xa0) &&
+          ((unsigned char)c[1] >= 0xa0))
+      {                                                            //打印中文
+        quma = c[0] - 0xa1;                                        //求出区码
+        weima = c[1] - 0xa1;                                       //求出位码
+        offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+        fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+        fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+        printHZWord(x0, y0, buffer, _font); //输出单个汉字
+
+        x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+        c += 2;                                     //下一个汉字
+      }
+      else
+      { //打印字符
+        if (*c == '\r' || *c == '\n')
+        {                     //换行处理
+          isFirstLine = TRUE; //有回车换行符说明是新的一段
+          c++;
+          if (*(c + 1) != 0) //不是最后一个字符
+            if (*(c + 1) == '\r' || (*(c + 1) == '\n'))
+              c++; //处理\r\n情况
+
+          isNewLine = TRUE;
+        }
+        else
+        {                                            //字符
+          printASC(x0, y0 - _font->ascy, *c, _font); //输出单个字符
+
+          x0 += _font->ascSize + _font->xgap; //偏移一个字符宽度+字间距
+          c++;                                //下一个字符
+        }
+      }
+
+      if ((unsigned char)c[0] < 0xa0)
+      { //字符用字符宽度判断
+        if (x0 + _font->ascSize > region->right_bottom.x)
+          isNewLine = TRUE;
+      }
+      else
+      { //汉字用汉字宽度判断
+        if (x0 + _font->currentFontSize > region->right_bottom.x)
+          isNewLine = TRUE;
+      }
+
+      if (isNewLine)
+      {
+        linenum++;
+        isNewLine = FALSE;
+
+        if ((region->left_top.y + (linenum + 1) * _font->currentFontSize + _font->ygap) > region->right_bottom.y)
+        { //判断是否超高度，退出 高度截断
+          isOutofRange = TRUE;
+          break;
+        }
+
+        x0 = region->left_top.x;
+      }
+    }
+
+    //printf("%s", Line);
+  }
+
+  free(buffer);
+}
+
+/**
+ * 获取汉字字库文件
+ * @param type 在marcodef中定义 
+ * @param size 字号 16、24、32、48
+ * 
+ * @return 字库文件指针
+ */
+FILE *getFontFile(int type, int size)
+{
+  char fontfile[32];
+  switch (type)
+  {
+  case SIMKAI: //楷体
+    sprintf(fontfile, FONTPATH "HZK%dK", size);
+    break;
+  case SIMHEI: //黑体
+    sprintf(fontfile, FONTPATH "HZK%dH", size);
+    break;
+  case ASCII:
+    sprintf(fontfile, FONTPATH "ASC16");
+    break;
+  default: //宋体
+    sprintf(fontfile, FONTPATH "HZK%dS", size);
+    break;
+  }
+
+  return fopen(fontfile, "rb");
+}
+
+/**
+ * 计算字体信息
+ * 
+ * 
+ */
 void calcFontSetting(hfont *font)
 {
-  TESTNULL(font, );
+  TESTNULLVOID(font);
 
   //计算汉字每行像素需要多少个字节保存
   font->byteperline = (font->currentFontSize + 7) / 8;
@@ -649,274 +1002,50 @@ void calcFontSetting(hfont *font)
     break;
   }
 }
-
 /**
- * 显示一个汉字
- * @param fpfont 字库文件指针
- * @param x
- * @param y 
- * @param buffer 字库数据
- * @param fontsize 汉字大小 16,24,32,48
- * @param color 颜色 */
-void printHZWord(int x, int y, unsigned char *buffer, hfont *font)
+ * 获取默认字体信息
+ * @warning 调用者必须负责释放hfont指针
+ * @param type 在marcodef中定义 
+ * @param size 字号 16、24、32、48 
+ */
+hfont *getFont(int type, int size, int color)
 {
-  unsigned char mask[] = {0x80, 0x40, 0x20, 0x10, 0x08, 0x04, 0x02, 0x01}; //功能数组，用于显示汉字点阵中的亮点
-  int i, j, pos;
+  hfont *_hfont;
+  char fontfile[32];
 
-  TESTNULL(font, );
-  TESTNULL(font->fpCurrentFont, );
+  _hfont = malloc(sizeof(hfont));
+  TESTNULL(_hfont, NULL);
+  memset(_hfont, 0, sizeof(hfont));
 
-  for (i = 0; i < font->currentFontSize; i++)
-  {
-    pos = font->byteperline * i;                //16*16矩阵中有每一行有两外字节
-    for (j = 0; j < font->currentFontSize; j++) //一行一行地扫描，将位上为了1的点显示出来
-    {
-      if ((mask[j % 8] & buffer[pos + j / 8]) != NULL) //j%8只能在0—8之间循环，j/8在0，1之间循环
-      {
-        putpixel64k(x + j, y, font->fontcolor);
-      }
-    }
-    y++;
-  }
+  _hfont->fpCurrentFont = getFontFile(type, size);
+  TESTNULL(_hfont->fpCurrentFont, NULL);
+  _hfont->fpASC = getFontFile(ASCII, 16);
+  TESTNULL(_hfont->fpASC, NULL);
+
+  _hfont->currentFontSize = size;
+  _hfont->fontcolor = color;
+
+  _hfont->currentFontType = type;
+  _hfont->xgap = 1;
+  _hfont->ygap = 1;
+
+  calcFontSetting(_hfont);
+
+  return _hfont;
 }
 
 /**
- * 输出文本函数版本1
- * 在一个区域内输出字符串，字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
- * 字符串可以是中英文混合。
- * 
- * @param region  要显示的区域
- * @param text 字符串
- * @param _font 字体设置
+ * 释放font信息
  * 
  */
-void printTextEx(hregion *region, char *text, hfont *_font)
+void freeFont(hfont *_f)
 {
-
-  int x0, y0;                //每个汉字起始点
-  unsigned char quma, weima; //定义汉字的区码和位码
-  unsigned long offset;
-  unsigned char *buffer;
-  int linenum = 0;
-  //char isNewLine = FALSE;
-
-  TESTNULLVOID(region);
-  TESTNULLVOID(_font);
-
-  buffer = (unsigned char *)malloc(_font->totalbytes);
-  TESTNULL(buffer, );
-
-  //判断高度和宽度是否足够
-  if ((region->left_top.x + _font->currentFontSize) > region->right_bottom.x ||
-      (region->left_top.y + _font->currentFontSize) > region->right_bottom.y)
+  if (_f)
   {
-    return;
-  }
+    fclose(_f->fpCurrentFont);
+    fclose(_f->fpASC);
 
-  x0 = region->left_top.x;
-  while (*text)
-  {
-
-    if ((x0 + _font->currentFontSize) < region->right_bottom.x)                 //计算x0 + 字符宽度 是否大于右边界
-    {                                                                           //在同一行内输出
-      y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
-
-      if (((unsigned char)text[0] >= 0xa0) &&
-          ((unsigned char)text[1] >= 0xa0))
-      {                                                            //打印中文                                                            //汉字
-        quma = text[0] - 0xa1;                                     //求出区码
-        weima = text[1] - 0xa1;                                    //求出位码
-        offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
-        fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
-        fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
-
-        printHZWord(x0, y0, buffer, _font); //输出单个汉字
-
-        x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
-        text += 2;                                  //下一个汉字
-      }
-      else
-      { //打印字符
-
-        if (*text == '\r' || *text == '\n')
-        {                              //换行
-          x0 = region->right_bottom.x; //强行设置x0换行
-          if (*(text + 1) != 0)        //不是最后一个字符
-            if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
-              text += 2; //处理\r\n情况
-            else
-              text++; //只有一个\r或\n
-        }
-        else
-        {                                               //字符
-          printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
-          x0 += _font->ascSize + _font->xgap;           //偏移一个字符宽度+字间距
-          text++;                                       //下一个字符
-        }
-      }
-    }
-    else
-    { //换行
-
-      if ((unsigned char)text[0] < 0xa0)
-      { //最后一个是字符
-        if ((x0 + _font->ascSize) < region->right_bottom.x)
-        {
-          printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
-          x0 += _font->ascSize + _font->xgap;           //偏移一个字符 +　字间距
-          text++;                                       //下一个字符
-        }
-      }
-
-      linenum++;
-
-      if ((region->left_top.y + (linenum + 1) * _font->currentFontSize + _font->ygap) > region->right_bottom.y)
-      { //判断是否超高度，退出 高度截断
-        int clearwidth = _font->currentFontSize;
-        int clearheight = _font->currentFontSize;
-
-        if ((unsigned char)*(text - 1) < 0xa0)
-          clearwidth = _font->ascSize;
-
-        clearRegion(x0 - clearwidth, y0, x0, y0 + clearheight, 0xff);
-        printASC(x0 - clearwidth, y0 - _font->ascy, '.', _font);
-        break;
-      }
-
-      x0 = region->left_top.x;
-    }
-  }
-  free(buffer);
-}
-
-/**
- * 输出文本函数版本2
- * 在一个区域内输出字符串，字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
- * 字符串可以是中英文混合。能首行空两格，根据区域高度和宽度，自动换行、截断
- * @param region  要显示的区域
- * @param text 字符串
- * @param _font 字体设置
- * 
- */
-void printText(hregion *region, char *text, hfont *_font)
-{
-  int x0, y0;                //每个汉字起始点
-  unsigned char quma, weima; //定义汉字的区码和位码
-  unsigned long offset;
-  unsigned char *buffer;
-  int linenum = 0;
-  char isNewLine = FALSE;
-  //int lasetwordstartx = 0;
-  char isFirstLine = TRUE; //是否是段落首行，首行空两个字宽度
-
-  TESTNULLVOID(region);
-  TESTNULLVOID(_font);
-
-  buffer = (unsigned char *)malloc(_font->totalbytes);
-  TESTNULLVOID(buffer);
-
-  //判断高度和宽度是否足够
-  if ((region->left_top.x + _font->currentFontSize) > region->right_bottom.x ||
-      (region->left_top.y + _font->currentFontSize) > region->right_bottom.y)
-  {
-    return;
-  }
-
-  x0 = region->left_top.x;
-  while (*text)
-  {
-    if (isFirstLine)
-    { //段落首行空两个字。
-      x0 += _font->currentFontSize * 2;
-      isFirstLine = FALSE;
-    }
-
-    y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
-    if (((unsigned char)text[0] >= 0xa0) &&
-        ((unsigned char)text[1] >= 0xa0))
-    {                                                            //打印中文
-      quma = text[0] - 0xa1;                                     //求出区码
-      weima = text[1] - 0xa1;                                    //求出位码
-      offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
-      fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
-      fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
-
-      printHZWord(x0, y0, buffer, _font); //输出单个汉字
-      //lasetwordstartx = x0;
-
-      x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
-      text += 2;                                  //下一个汉字
-    }
-    else
-    { //打印字符
-      if (*text == '\r' || *text == '\n')
-      {                     //换行处理
-        isFirstLine = TRUE; //有回车换行符说明是新的一段
-
-        if (*(text + 1) != 0) //不是最后一个字符
-          if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
-            text += 2; //处理\r\n情况
-          else
-            text++; //只有一个\r或\n
-        isNewLine = TRUE;
-      }
-      else
-      {                                               //字符
-        printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
-        //lasetwordstartx = x0;
-        x0 += _font->ascSize + _font->xgap; //偏移一个字符宽度+字间距
-        text++;                             //下一个字符
-      }
-    }
-
-    if ((unsigned char)text[0] < 0xa0)
-    {
-      if (x0 + _font->ascSize > region->right_bottom.x)
-        isNewLine = TRUE;
-    }
-    else
-    {
-      if (x0 + _font->currentFontSize > region->right_bottom.x)
-        isNewLine = TRUE;
-    }
-
-    if (isNewLine)
-    {
-      linenum++;
-      isNewLine = FALSE;
-
-      if ((region->left_top.y + (linenum + 1) * _font->currentFontSize + _font->ygap) > region->right_bottom.y)
-      { //判断是否超高度，退出 高度截断
-        break;
-      }
-
-      x0 = region->left_top.x;
-    }
-  }
-  free(buffer);
-}
-
-/**
- * 输出文本函数版本3
- * 读取文件，在一个区域内输出字符串，字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
- * 字符串可以是中英文混合。能首行空两格，根据区域高度和宽度，自动换行、截断
- * @param region  要显示的区域
- * @param text 字符串
- * @param _font 字体设置
- */
-#define BUFFEESIZE 256
-void printTextFile(hregion *region, char *text, FILE *fp, hfont *_font)
-{
-  unsigned char Line[BUFFEESIZE];
-
-  TESTNULLVOID(region);
-  TESTNULLVOID(_font);
-  TESTNULLVOID(fp);
-
-  while (fgets(line, sizeof(line), fp))
-  {
-
-    printf("%s", line);
+    free(_f);
   }
 }
 

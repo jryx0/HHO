@@ -2,6 +2,7 @@
 #define __HBASEWIN_H__
 //#include "SVGAUTIL.H"
 #include "list.h"
+#include "mouse.h"
 //#include <memory.h>
 
 typedef enum winStatus
@@ -34,72 +35,154 @@ typedef struct
   int desktopColour;
   int capFontColour;
 
-  //å±å¹•æœ€å¤§æ˜¾ç¤ºé¢œè‰² 256 32k 64ké¢œè‰²
+  //ÆÁÄ»×î´óÏÔÊ¾ÑÕÉ« 256 32k 64kÑÕÉ«
   int maxcolors;
 } win_colors;
 
 typedef struct winstruct
 {
-  //çª—å£ç±»å‹ï¼šæŒ‰é’®ã€æ–‡æœ¬è¾“å…¥æ¡†ã€å¤šé€‰æ¡†
+  //´°¿ÚÀàĞÍ£º°´Å¥¡¢ÎÄ±¾ÊäÈë¿ò¡¢¶àÑ¡¿ò
   int hhowintype;
-  //çª—å£å”¯ä¸€ID
+  //´°¿ÚÎ¨Ò»ID
   int winID;
 
-  //ç›¸å¯¹çˆ¶çª—å£å·¦ä¸Šè§’åæ ‡x,y
+  //Ïà¶Ô¸¸´°¿Ú×óÉÏ½Ç×ø±êx,y
   int x;
   int y;
-  //å®½åº¦
+  //¿í¶È
   int nWidth;
-  //é«˜åº¦
+  //¸ß¶È
   int nHeight;
 
-  //çª—å£çŠ¶æ€
+  //´°¿Ú×´Ì¬
   int status; // winStatus
 
-  //çª—å£é¢œè‰²
+  //´°¿ÚÑÕÉ«
   // win_colors *colors;
 
-  //æ˜¾ç¤ºæ ‡é¢˜
+  //ÏÔÊ¾±êÌâ
   char *title;
 
-  //å­˜å‚¨çš„æ•°æ®ï¼Œå¦‚æ–‡æœ¬è¾“å…¥æ¡†çš„å­—ç¬¦ä¸²
+  //´æ´¢µÄÊı¾İ£¬ÈçÎÄ±¾ÊäÈë¿òµÄ×Ö·û´®
   void *value;
 
-  //èƒŒæ™¯
+  //±³¾°
   int *bkarea;
 
-  //å“åº”é¼ æ ‡äº‹ä»¶å‡½æ•°æŒ‡é’ˆå•å‡»,å·¦é”®æŒ‰ä¸‹ï¼Œå·¦é”®æŒ‰èµ·ï¼Œé¼ æ ‡ç¦»å¼€ï¼Œé¼ æ ‡è¿›å…¥
+  //ÏìÓ¦Êó±êÊÂ¼şº¯ÊıÖ¸Õëµ¥»÷,×ó¼ü°´ÏÂ£¬×ó¼ü°´Æğ£¬Êó±êÀë¿ª£¬Êó±ê½øÈë
   hhoevent onClick, onLeftUp, onLeftDown, onLeave, onEnter;
-  //å“åº”é”®ç›˜äº‹ä»¶å‡½æ•°æŒ‡é’ˆå•å‡»é”®ç›˜
+  //ÏìÓ¦¼üÅÌÊÂ¼şº¯ÊıÖ¸Õëµ¥»÷¼üÅÌ
   hhoevent onKeyPress;
-  //å“åº”ç»˜åˆ¶äº‹ä»¶ï¼Œç»˜åˆ¶è‡ªèº«çª—å£
+  //ÏìÓ¦»æÖÆÊÂ¼ş£¬»æÖÆ×ÔÉí´°¿Ú
   hhoevent onPaint;
-  //å“åº”æ¿€æ´»äº‹ä»¶ï¼Œçª—å£æ¿€æ´»
+  //ÏìÓ¦¼¤»îÊÂ¼ş£¬´°¿Ú¼¤»î
   hhoevent onActivate;
 
-  //å¤„ç†äº‹ä»¶
+  //´°¿ÚÉ¾³ı
+  hhoevent onDestroy;
+
+  //´¦ÀíÊÂ¼ş
   hhoeventhandler EventHandler;
 
-  //å­çª—å£åˆ—è¡¨
+  //×Ó´°¿ÚÁĞ±í
   list_t *children;
-  //çˆ¶çª—å£
+  //¸¸´°¿Ú
   struct winstruct *parent;
   struct winstruct *desktop;
 } hbasewinAttr;
 
+/**
+ * @brief ³õÊ¼»¯´°¿Ú»ù±¾ĞÅÏ¢¡£
+ * @author 
+ * @param parent ¸¸´°¿ÚÖ¸Õë¿ÉÎª¿Õ
+ * @param x      Ïà¶Ô¸¸´°¿Ú ×óÉÏ
+ * @param y      Ïà¶Ô¸¸´°¿Ú ÓÒÉÏ
+ * @param nWidth  ´°¿Ú¿í¶È
+ * @param nHeight ´°¿Ú¸ß¶È
+ * @param winID  ´°¿ÚID£¬È«¾ÖÎ¨Ò»ĞÔ
+ * @param title  ´°¿Ú±êÌâ
+ * @return NULL Ê§°Ü
+ */
 hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
                               int nHeight, int winID, const char *title);
-void DestoryWindows(hbasewinAttr *win);
+/**
+ * @brief hhoeventº¯ÊıÉ¾³ı´°¿Ú£¬²¢ÊÍ·Å×ÊÔ´
+ * @param win ´ıÉ¾³ı´°¿Ú * 
+ */
+void OnDestory(hbasewinAttr *win, void *val);
 
-hbasewinAttr *addChild(hbasewinAttr *parent, hbasewinAttr *child);
-hbasewinAttr *removeChild(hbasewinAttr *parent, hbasewinAttr *child);
-hbasewinAttr *removeChildByID(hbasewinAttr *parent, int childid);
-
-win_colors *getWinStandrandColors();
+/**
+ * @brief hhoevent»æÖÆ´°¿Ú
+ * @param win Òª»æÖÆµÄ´°¿Ú
+ * @param val ´«ÈëµÄ²ÎÊı
+ */
 void OnPaint(hbasewinAttr *win, void *val);
-void repaintChildren(hbasewinAttr *win);
+
+/**
+ * @brief ±éÀúËùÓĞ×Ó´°¿Ú£¬µ÷ÓÃOnDestory´°¿Úº¯ÊıÖ¸Õë£¬É¾³ı×Ó´°¿Ú * 
+ * @param win ÒªÉ¾³ıµÄ´°¿Ú  
+ * @return ÎŞ 
+ */
+void destoryChildren(hbasewinAttr *win);
+
+/**
+ * Ìí¼Ó×Ó´°¿Ú
+ * @param parent ¸¸´°¿Ú
+ * @param child ×Ó´°¿Ú
+ * 
+ * Èç¸¸´°¿ÚÎª¿ÕÔò²»Ìí¼Ó 
+ */
+hbasewinAttr *addChild(hbasewinAttr *parent, hbasewinAttr *child);
+
+/**
+ * »ñÈ¡´°¿Ú¾ø¶Ô×ø±ê x
+ * @param win ´°¿Ú
+ * Í¨¹ıÀÛ¼Ó¸¸´°¿Úx×ø±ê£¬»ñÈ¡¾ø¶Ô×ø±ê
+ */
 int getAbsoluteX(hbasewinAttr *win);
+
+/**
+ * »ñÈ¡´°¿Ú¾ø¶Ô×ø±ê x
+ * @param win ´°¿Ú
+ * Í¨¹ıÀÛ¼Ó¸¸´°¿Úx×ø±ê£¬»ñÈ¡¾ø¶Ô×ø±ê
+ */
 int getAbsoluteY(hbasewinAttr *win);
 
+/**
+ * @brief ±éÀúËùÓĞ×Ó´°¿Ú£¬µ÷ÓÃonPaint´°¿Úº¯ÊıÖ¸Õë»æÖÆ´°¿Ú 
+ * @param win ÒªÉ¾³ıµÄ´°¿Ú  
+ * @return ÎŞ 
+ */
+void repaintChildren(hbasewinAttr *win);
+
+/**
+ * ¼ì²é×ø±ê ×ø±êx£¬yÊÇ·ñÔÚ´°¿ÚÖĞ
+ * 
+ * @param win Òª¼ì²éµÄ´°¿Ú
+ * @param x ¾ø¶Ô×ø±êµãx
+ * @param y ¾ø¶Ô×ø±êµãy
+ */
 int checkpointInside(hbasewinAttr *win, int x, int y);
+
+/**
+ * ¼ì²éÊó±êµã»÷ÔÚ´°¿ÚÖĞ
+ * 
+ * @param win ´°¿Ú
+ * @param mouse Êó±ê×´Ì¬
+ * 
+ * @return ·µ»Ø±»µã»÷µÄ×Ó´°¿Ú£¬ÈôÎŞ×Ó´°¿Ü±»µã»÷£¬·µ»Ø´°¿Ú
+ */
+hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse);
+
+/**
+ * ¸ù¾İ´°¿ÚID²éÕÒ×Ó´°¿Ú
+ *  win
+ */
+hbasewinAttr *FindChildWinbyID(hbasewinAttr *win, int id);
+
+/**
+ * ¸ù¾İ´°¿ÚID²éÕÒ×Ó´°¿Ú
+ *  win
+ */
+list_node_t *FindChildNodebyID(hbasewinAttr *win, int id);
 #endif

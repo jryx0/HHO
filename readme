@@ -1,5 +1,5 @@
 /**
-initUser();
+initUser();//≥ı ºªØ
 
 if(!Authentic(userinfo))
   printf("username or password error!");

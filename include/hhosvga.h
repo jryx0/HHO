@@ -3,7 +3,7 @@
 
 #include "SVGA.h"
 #include <stdio.h>
- 
+
 typedef struct _point
 {
   int x;
@@ -15,7 +15,7 @@ typedef struct _region
   hpoint left_top;
   hpoint right_bottom;
 } hregion;
- 
+
 /**
  * 字体结构
  * 
@@ -51,6 +51,14 @@ unsigned int RGB565(int r, int g, int b);
  * @param color 填充的颜色
  */
 void clearScreen(char color);
+
+/**
+ * 清除区域,使用char填充屏幕,由于64K是int,故填充的颜色是 color << 8 | color
+ * 填充0xFFFF,0x0000,等颜色速度更快
+ * @param color 填充的颜色
+ */
+void clearRegion(int x1, int y1, int x2, int y2, char color);
+
 /**
  * 设置一个矩形区域(x1, y1), (x2,y2)，使x1 < x2, y1 < y2
  * 并且使x1,x2,y1,y2在屏幕区域内  ，超出部分截断
@@ -244,14 +252,70 @@ void printASC(int x, int y, char acs, hfont *font);
 void printHZWord(int x, int y, unsigned char *buffer, hfont *font);
 
 /**
- * 在一个区域内输出字符串，字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
- * 字符串可以是中英文混合。
+ * @version v1 输出文本函数版本1
+ * @brief   在一个行内输出，不截断(回车换行符不换行，忽略)。字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
+ * 字符串可以是中英文混合。 非打印字符以空格替代。 
  * 
  * @param region  要显示的区域
  * @param text 字符串
- * @param _font 字体设置 
+ * @param _font 字体设置
+ *  @return 无
+ */
+void printTextLine(hregion *region, char *text, hfont *_font);
+
+/**
+ * @version v2 输出文本函数版本2 
+ * @author 
+ * @brief 在一个区域内输出字符串，字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
+ * 字符串可以是中英文混合。能首行空两格，根据区域高度和宽度，自动换行、截断。非打印字符以空格替代，
+ * 单个回车、换行或回车换行表示新行。
+ * 
+ * @param region  要显示的区域
+ * @param text 字符串
+ * @param _font 字体设置
+ *  @return 无
  */
 void printTextEx(hregion *region, char *text, hfont *_font);
 
+/**
+ * @version v3 输出文本函数版本3
+ * @author 
+ * @brief 读取文件，在一个区域内输出字符串，字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
+ * 字符串可以是中英文混合。能首行空两格，根据区域高度和宽度，自动换行、截断
+ * @param region  要显示的区域  
+ * @param fp 文件指针
+ * @param _font 字体设置
+ * @return 无
+ */
+void printTextFile(hregion *region, FILE *fp, hfont *_font);
 
+/**
+ * 获取默认字体信息
+ * @warning 调用完后必须hfont指针，调用freeFont
+ * @param type 在marcodef中定义 
+ * @param size 字号 16、24、32、48 
+ * @param color 颜色
+ */
+hfont *getFont(int type, int size, int color);
+/**
+ * 计算字体信息
+ * 
+ * 
+ */
+void calcFontSetting(hfont *font);
+
+/**
+ * 获取汉字字库文件
+ * @param type 在marcodef中定义 
+ * @param size 字号 16、24、32、48
+ * 
+ * @return 字库文件指针
+ */
+FILE *getFontFile(int type, int size);
+
+/**
+ * 释放font信息
+ * 
+ */
+void freeFont(hfont *_f);
 #endif

@@ -18,6 +18,14 @@
     return;                                               \
   }
 
+#define TRACE(x)  \
+  do              \
+  {               \
+    dbg_printf x; \
+  } while (0)
+
+void dbg_printf(const char *fmt, ...);
+
 //////////////////////////////////////宏定义///////////////////////////////////
 //显示模式宏定义
 #define SVGA64K
