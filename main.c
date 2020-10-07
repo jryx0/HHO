@@ -81,8 +81,8 @@ int main(void)
         _hfont->currentFontType = SIMHEI;
         _hfont->totalbytes = _hfont->byteperline * _hfont->currentFontSize;
         _hfont->fpCurrentFont = getFontFile(_hfont->currentFontType, _hfont->currentFontSize);
-        _hfont->xgap = 5;
-        _hfont->ygap = 6;
+        _hfont->xgap = 0;
+        _hfont->ygap = 3;
         _hfont->fontcolor = 0x0;
 
         //ACS setting
@@ -101,8 +101,12 @@ int main(void)
         region->left_top.y = _global->mouse.y;
         region->right_bottom.x = region->left_top.x + 150;
         region->right_bottom.y = region->left_top.y + 150;
-        rectangleEx(region->left_top.x, region->left_top.y, 150, 150, 0x0, 1, 1);
-        printTextEx(region, "华a中afA科aB技Fa大a学,", _hfont);
+        clearRegion(region->left_top.x, region->left_top.y,
+                    region->left_top.x + 150, region->left_top.y + 155, 0xff);
+        
+        rectangleEx(region->left_top.x, region->left_top.y, 150, 155, 0x0, 1, 1);
+        //printTextEx(region, "武汉大学人民医院附属口腔医院\r\na\n中\ra\rf\rA\r中国科技大学附属人民医院科\ra\rB内外妇儿肠胃眼睛骨头等等科室\r技\rFa\r大\ra学,\r\n", _hfont);
+        print(region, "武汉大学人民医院附属口腔医院\r\na\n中\ra\rf\rA\r中国科技大学附属人民医院科\ra\rB内外妇儿肠胃眼睛骨头等等科室\r技\rFa\r大\ra学,\r\n", _hfont);
 
         free(c);
         free(region);

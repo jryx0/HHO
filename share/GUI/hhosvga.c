@@ -4,16 +4,12 @@
 #include <dos.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
 #include <mem.h>
 
-unsigned int RGB565(char rVal, char gVal, char bVal)
-{
-
-  unsigned int r = (rVal >> 3) & 0x1F;
-  unsigned int g = (gVal >> 2) & 0x1F;
-  unsigned int b = (bVal >> 3) & 0x1F;
-
-  return r << 11 | g << 5 | b;
+unsigned int RGB565(int r, int g, int b)
+{ // 连接
+  return (r << 11) + (g << 5) + (b << 0);
 }
 
 /**
@@ -36,6 +32,32 @@ void clearScreen(char color)
     selectpage(i);
     memset(video_buffer, color, pagesize - 1);
     //memset(video_buffer + 0x4000, color, pagesize); // 16 << 10
+  }
+}
+/**
+ * 清除区域,使用char填充屏幕,由于64K是int,故填充的颜色是 color << 8 | color
+ * 填充0xFFFF,0x0000,等颜色速度更快
+ * @param color 填充的颜色
+ */
+void clearRegion(int x1, int y1, int x2, int y2, char color)
+{
+  int i, j, width, height;
+
+  unsigned char page;                                                     // 要切换的页面号
+  unsigned long int offest;                                               // 对应显存地址偏移量
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
+
+  setStandardRegion(&x1, &y1, &x2, &y2);
+  width = x2 - x1;
+  height = y2 - y1;
+
+  for (j = 0; j < height; j++)
+  {
+    /* 计算显存地址偏移量和对应的页面号，做换页操作 */
+    offest = ((unsigned long int)(y1 + j) << 10) + x1;
+    page = offest >> 15; /* 32k个点一换页，除以32k的替代算法 */
+    selectpage(page);
+    memset(video_buffer + offest, color, width * 2); //一个像素两个字节 width* 2
   }
 }
 
@@ -571,6 +593,9 @@ void printASC(int x, int y, char acs, hfont *font)
   int i, j, k, m;
   unsigned char buffer[16];
 
+  if (!isprint(acs)) //非打印字符，返回
+    return;
+
   TESTNULL(font, );
   TESTNULL(font->fpASC, );
 
@@ -655,6 +680,15 @@ void printHZWord(int x, int y, unsigned char *buffer, hfont *font)
   }
 }
 
+/**
+ * 在一个区域内输出字符串，字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
+ * 字符串可以是中英文混合。
+ * 
+ * @param region  要显示的区域
+ * @param text 字符串
+ * @param _font 字体设置
+ * 
+ */
 void printTextEx(hregion *region, char *text, hfont *_font)
 {
 
@@ -663,6 +697,7 @@ void printTextEx(hregion *region, char *text, hfont *_font)
   unsigned long offset;
   unsigned char *buffer;
   int linenum = 0;
+  char isNewLine = FALSE;
 
   TESTNULL(region, );
   TESTNULL(_font, );
@@ -670,19 +705,24 @@ void printTextEx(hregion *region, char *text, hfont *_font)
   buffer = (unsigned char *)malloc(_font->totalbytes);
   TESTNULL(buffer, );
 
+  //判断高度和宽度是否足够
+  if ((region->left_top.x + _font->currentFontSize) > region->right_bottom.x ||
+      (region->left_top.y + _font->currentFontSize) > region->right_bottom.y)
+  {
+    return;
+  }
+
   x0 = region->left_top.x;
   while (*text)
   {
+
     if ((x0 + _font->currentFontSize) < region->right_bottom.x)                 //计算x0 + 字符宽度 是否大于右边界
     {                                                                           //在同一行内输出
       y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
 
-      if ((y0 + _font->currentFontSize) > region->right_bottom.y) //判断是否超高度
-        break;
-
       if (((unsigned char)text[0] >= 0xa0) &&
           ((unsigned char)text[1] >= 0xa0))
-      {                                                            //汉字
+      {                                                            //打印中文                                                            //汉字
         quma = text[0] - 0xa1;                                     //求出区码
         weima = text[1] - 0xa1;                                    //求出位码
         offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
@@ -695,31 +735,148 @@ void printTextEx(hregion *region, char *text, hfont *_font)
         text += 2;                                  //下一个汉字
       }
       else
-      {                                               //字符
-        printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
-        x0 += _font->ascSize + _font->xgap;           //偏移一个字符宽度+字间距
-        text++;                                       //下一个字符
+      { //打印字符
+
+        if (*text == '\r' || *text == '\n')
+        {                              //换行
+          x0 = region->right_bottom.x; //强行设置x0换行
+          if (*(text + 1) != 0)        //不是最后一个字符
+            if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
+              text += 2; //处理\r\n情况
+            else
+              text++; //只有一个\r或\n
+        }
+        else
+        {                                               //字符
+          printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
+          x0 += _font->ascSize + _font->xgap;           //偏移一个字符宽度+字间距
+          text++;                                       //下一个字符
+        }
       }
     }
     else
     { //换行
+
       if ((unsigned char)text[0] < 0xa0)
       { //最后一个是字符
         if ((x0 + _font->ascSize) < region->right_bottom.x)
         {
-          printASC(x0, y0 - _font->ascy, *text, _font);
-          x0 += _font->ascSize + _font->xgap;
-          text++;
+          printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
+          x0 += _font->ascSize + _font->xgap;           //偏移一个字符 +　字间距
+          text++;                                       //下一个字符
         }
       }
-      x0 = region->left_top.x;
+
       linenum++;
+
+      if ((region->left_top.y + (linenum + 1) * _font->currentFontSize + _font->ygap) > region->right_bottom.y)
+      { //判断是否超高度，退出 高度截断
+        int clearwidth = _font->currentFontSize;
+        int clearheight = _font->currentFontSize;
+
+        if (*(text - 1) < 0xa0)
+          clearwidth = _font->ascSize;
+
+        clearRegion(x0 - clearwidth, y0, x0, y0 + clearheight, 0xff);
+        printASC(x0 - clearwidth, y0 - _font->ascy, '.', _font);
+        break;
+      }
+
+      x0 = region->left_top.x;
     }
   }
 
   free(buffer);
 }
 
+void print(hregion *region, char *text, hfont *_font)
+{
+  int x0, y0;                //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  int linenum = 0;
+  char isNewLine = FALSE;
+  int lasetwordstartx = 0;
+
+  TESTNULL(region, );
+  TESTNULL(_font, );
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULL(buffer, );
+
+  //判断高度和宽度是否足够
+  if ((region->left_top.x + _font->currentFontSize) > region->right_bottom.x ||
+      (region->left_top.y + _font->currentFontSize) > region->right_bottom.y)
+  {
+    return;
+  }
+
+  x0 = region->left_top.x;
+  while (*text)
+  {
+    y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
+    if (((unsigned char)text[0] >= 0xa0) &&
+        ((unsigned char)text[1] >= 0xa0))
+    {                                                            //打印中文
+      quma = text[0] - 0xa1;                                     //求出区码
+      weima = text[1] - 0xa1;                                    //求出位码
+      offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+      fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+      fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+      printHZWord(x0, y0, buffer, _font); //输出单个汉字
+      lasetwordstartx = x0;
+
+      x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+      text += 2;                                  //下一个汉字
+    }
+    else
+    { //打印字符
+      if (*text == '\r' || *text == '\n')
+      {                       //换行处理
+        if (*(text + 1) != 0) //不是最后一个字符
+          if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
+            text += 2; //处理\r\n情况
+          else
+            text++; //只有一个\r或\n
+        isNewLine = TRUE;
+      }
+      else
+      {                                               //字符
+        printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
+        lasetwordstartx = x0;
+        x0 += _font->ascSize + _font->xgap; //偏移一个字符宽度+字间距
+        text++;                             //下一个字符
+      }
+    }
+
+    if (text[0] < 0xa0)
+    {
+      if (x0 + _font->ascSize > region->right_bottom.x)
+        isNewLine = TRUE;
+    }
+    else
+    {
+      if (x0 + _font->currentFontSize > region->right_bottom.x)
+        isNewLine = TRUE;
+    }
+
+    if (isNewLine)
+    {
+      linenum++;
+      isNewLine = FALSE;
+
+      if ((region->left_top.y + (linenum + 1) * _font->currentFontSize + _font->ygap) > region->right_bottom.y)
+      { //判断是否超高度，退出 高度截断         
+        break;
+      }
+
+      x0 = region->left_top.x;
+    }
+  }
+  free(buffer);
+}
 void hsvgatest()
 {
   unsigned int *buffer, i;

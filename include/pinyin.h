@@ -49,19 +49,4 @@ void ClosePY(pyInput *hzIdx);
  * @return 1 合法拼音 0 非合法拼音
  */
 int checkvalidatepy(char *py);
-
-
-/**
- * 打印一行文本，可以中英文混合
- * 
- * @param x
- * @param y 坐标
- * @param text 文本串
- * @param fonttype 字体-宏定义 宋体(SIMSUN)黑体(SIMHEI)楷体(SIMKAI)
- * @param fontsize 字号 16、24、32、48
- * @param gap 字和字之间的间距，像素为单位
- * @param color 颜色
- */
-void printText(int x, int y, char *text, int fonttype, int fontsize, int gap, int color);
-
 #endif
