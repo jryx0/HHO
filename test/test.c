@@ -5,12 +5,6 @@
 #include "userinfo.h"
 #include "test.h"
 
-#ifdef GUI
-#include "hhogui.h"
-#include "mouse.h"
-#include "SVGA.h"
-#endif
-
 #include <conio.h>
 #include <string.h>
 #include <memory.h>
@@ -105,25 +99,10 @@ void console_test()
   TEST_REPORT();
 }
 
-// borland GUI test
-void borland_c_GUI_test()
-{
-
-#ifdef GUI
-  
-
-#endif
-}
-
 /* test runner */
 int main()
 {
-#ifdef GUI
-  borland_c_GUI_test();
-#else
   console_test();
-#endif
-
   getch();
   return 0;
 }
