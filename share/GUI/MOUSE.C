@@ -9,24 +9,24 @@
 #include <memory.h>
 
 /**
- * åˆå§‹åŒ–é¼ æ ‡ 
+ * ³õÊ¼»¯Êó±ê 
  */
 int MouseInit(void)
 {
   union REGS mouse;
 
-  /*è®¾ç½®é¼ æ ‡çš„åŠŸèƒ½å·*/
+  /*ÉèÖÃÊó±êµÄ¹¦ÄÜºÅ*/
   mouse.x.ax = 0;
   int86(0x33, &mouse, &mouse);
   return mouse.x.ax;
 }
 
 /**
- * è®¾ç½®é¼ æ ‡æ˜¾ç¤ºèŒƒå›´ 
+ * ÉèÖÃÊó±êÏÔÊ¾·¶Î§ 
  * @param Xmin 
  * @param Ymin 
  * @param Xmax
- * @param Ymax  å³ä¸‹åæ ‡
+ * @param Ymax  ÓÒÏÂ×ø±ê
  */
 void SetMouseRange(int Xmin, int Ymin, int Xmax, int Ymax)
 {
@@ -56,8 +56,8 @@ void ResetMouse(mousestatus *mouse) //7
 }
 
 /**
- * æ›´æ–°é¼ æ ‡çŠ¶æ€
- * @param status é¼ æ ‡
+ * ¸üĞÂÊó±ê×´Ì¬
+ * @param status Êó±ê
  * 
  */
 void UpdateMouseStatus(mousestatus *status)
@@ -101,7 +101,7 @@ void UpdateMouseStatus(mousestatus *status)
     break;
   }
 
-  //æ£€æµ‹é¼ æ ‡çŠ¶æ€
+  //¼ì²âÊó±ê×´Ì¬
   if ((status->leftDown == 1) && (status->oldLeftDown == 0))
     status->leftClickState = MOUSE_BUTTON_DOWN;
   if ((status->leftDown == 0) && (status->oldLeftDown == 1))
@@ -163,14 +163,14 @@ void MouseDraw(mousestatus *mouse) //8
         putpixel64k(i + mouse->x, j + mouse->y, 0x0);
       }
 }
-
+ 
 /**
- * è¯»å–é¼ æ ‡å½¢çŠ¶æ–‡ä»¶ï¼Œå­˜å‚¨åœ¨bufä¸­
+ * ¶ÁÈ¡Êó±êĞÎ×´ÎÄ¼ş£¬´æ´¢ÔÚbufÖĞ
  * 
- * @param buf ä¿å­˜ç¼“å­˜
- * @param width é¼ æ ‡å®½åº¦
- * @param height é¼ æ ‡é«˜åº¦
- * @param filename é¼ æ ‡æ–‡ä»¶ 
+ * @param buf ±£´æ»º´æ
+ * @param width Êó±ê¿í¶È
+ * @param height Êó±ê¸ß¶È
+ * @param filename Êó±êÎÄ¼ş 
  * 
  * @return 1 success 0 failure
  */

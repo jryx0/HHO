@@ -2,9 +2,9 @@
 #include "hhosvga.h"
 #include "hglobal.h"
 #include "pinyin.h"
-
 #include "HBaseWin.h"
 #include "hlabel.h"
+#include "mouse.h"
 
 #include <memory.h>
 #include <errno.h>
@@ -23,6 +23,8 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
   label->onPaint = OnPaint_Label;
   label->onDestroy = OnDestoy_Lable;
 
+  label->EventHandler = EventHandler_Label;
+
   return label;
 }
 
@@ -36,7 +38,7 @@ void OnDestoy_Lable(hbasewinAttr *label, void *value)
   TESTNULLVOID(label);
   destoryChildren(label);
 
-  OnDestory(label, value);  
+  OnDestory(label, value);
 
   free(label);
   label = NULL;
@@ -54,6 +56,7 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   FILE *fptemp;
   hregion _region;
   char str[30];
+
   // int x, y, type = 3, len, linemax, line, i, maxline;
   // char *temp, *content;
   // if (label == NULL)
@@ -64,21 +67,22 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   TESTNULLVOID(label);
   TESTNULLVOID(label->title);
 
+  if (value == NULL)
+    fptemp = fopen(label->title, "r");
+  else
+    fptemp = fopen((char *)value, "r");
+
+  if (fptemp == NULL)
+  {     
+    return;
+  }
+
   fpFont = getFont(SIMSUN, 16, 0x00);
 
   _region.left_top.x = getAbsoluteX(label);
   _region.left_top.y = getAbsoluteY(label);
   _region.right_bottom.x = _region.left_top.x + label->nWidth;
   _region.right_bottom.y = _region.left_top.y + label->nHeight;
-
-  fptemp = fopen(label->title, "r");
-  if (fptemp == NULL)
-  {
-    errNum = errno;
-    sprintf(str, "open fail errno = %d reason = %s \n", errNum, sys_errlist[errNum]);
-    //fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, "fptemp");
-    return;
-  }
 
   printTextFile(&_region, fptemp, fpFont);
   freeFont(fpFont);
@@ -142,4 +146,36 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   // memcpy(temp, label->title + i * linemax * 2, (len - linemax * (line - 1)) * 2);
   // //printtextxy(fpFont, x, y + 16 * i, temp, 0 /*color*/, 16);
   // printText(x, y + 16 * i, temp, SIMSUN, 16, 0, 0x0 /*color*/);
+}
+
+void EventHandler_Label(hbasewinAttr *win, int type, void *value)
+{
+  globaldef *_g;
+
+  TESTNULLVOID(win);
+  TESTNULLVOID(value);
+  _g = (globaldef *)value;
+  switch (type)
+  {
+  case MOUSE_EVENT: //改变鼠标形状
+    if (_g->mouse.currentCur != _g->cursor_hand)
+      _g->mouse.currentCur = _g->cursor_hand;
+
+    switch (_g->mouse.leftClickState)
+    {
+    case MOUSE_BUTTON_UP:
+      //鼠标左键value
+      //删除自身 跳转页面
+      if (win->parent && win->parent->EventHandler)
+        win->parent->EventHandler(win, MOUSE_BUTTON_UP, value);
+      break;
+    default:
+      break;
+    }
+
+    break;
+
+  default:
+    break;
+  }
 }

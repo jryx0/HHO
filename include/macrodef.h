@@ -34,6 +34,15 @@ void dbg_printf(const char *fmt, ...);
 #define SCR_WIDTH 1024
 #define SCR_HEIGHT 768
 
+#define HEADER_HEIGHT 80
+#define FOOTER_HEIGHT 44
+
+#define EPAGE_MARGIN 5
+#define PAGE_X 5
+#define PAGE_Y HEADER_HEIGHT + 5
+#define PAGE_W SCR_WIDTH - 10
+#define PAGE_H SCR_HEIGHT - (HEADER_HEIGHT + FOOTER_HEIGHT + 10)
+
 // #define SVGA32K
 // #define SVGA800x600
 
@@ -75,6 +84,9 @@ void dbg_printf(const char *fmt, ...);
 #define MOUSE_BUTTON_UP 32
 #define MOUSE_BUTTON_STILL_DOWN 64
 #define MOUSE_BUTTON_STILL_UP 128
+
+#define MOUSE_EVENT 1000
+#define KEYBORAD_EVENT 2000
 
 //处理borlandc在vscode中的兼容性
 #ifndef __BORLANDC__

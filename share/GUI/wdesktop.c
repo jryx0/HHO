@@ -4,6 +4,9 @@
 #include "wdesktop.h"
 #include "HBaseWin.h"
 #include "wResource.h"
+#include "hglobal.h"
+
+#include "homepage.h"
 
 /**
  * 窗口绘制程序
@@ -11,14 +14,24 @@
  */
 void OnPaint_Desktop(hbasewinAttr *win, void *value)
 {
+  hfont *_font;
+
   if (win == NULL)
     return;
 
   clearScreen(COLOR_white);
+  //draw header
   Putbmp64k(0, 0, "c:\\hho\\data\\bmp\\hhologo.bmp");
-  linexEx(0, 80, SCR_WIDTH, RGB565(100, 100, 100));
+  linex_styleEx(0, HEADER_HEIGHT, SCR_WIDTH, 0x2104, 2, 1);
 
   repaintChildren(win);
+
+  //draw footer
+  linex_styleEx(0, SCR_HEIGHT - FOOTER_HEIGHT, SCR_WIDTH, 0x2104, 2, 1);
+  _font = getFont(SIMSUN, 16, 0x00);
+  _font->fontcolor = 0x4228;
+  printTextLineXY(215, SCR_HEIGHT - FOOTER_HEIGHT + 15  , "地址：湖北省武汉市洪山区珞喻路1037号      咨询电话:027-87543469", _font);
+  freeFont(_font);
 }
 
 /**
@@ -47,7 +60,15 @@ void OnDestory_Desktop(hbasewinAttr *win, void *value)
 
       if (node->val)
       {
+        int x1, y1, x2, y2;
         child = (hbasewinAttr *)node->val;
+        x1 = getAbsoluteX(child);
+        y1 = getAbsoluteY(child);
+        x2 = x1 + child->nWidth;
+        y2 = y1 + child->nHeight;
+
+        clearRegion(x1, y1, x2, y2, COLOR_white);
+
         if (child->onDestroy)
           child->onDestroy(child, NULL);
       }
@@ -70,39 +91,28 @@ hbasewinAttr *CreateDesktop()
   desktop->onDestroy = OnDestory_Desktop;
   desktop->onPaint = OnPaint_Desktop;
 
+  //创建首页
+  CreateHomepage(desktop, ID_HOMEPAGE);
+
   desktop->EventHandler = eventhandlerdesktop;
   return desktop;
 }
 
 void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
 {
-  // mousestatus *mouse;
-  // if (win == NULL)
-  //   return;
+  globaldef *_g;
 
-  // switch (type) {
-  // case EVENT_MOUSE:
-  //   mouse = (mousestatus *)value;
+  TESTNULLVOID(win);
+  TESTNULLVOID(value);
+  _g = (globaldef *)value;
+  switch (type)
+  {
+  case MOUSE_EVENT:
+    if (_g->mouse.currentCur != _g->cursor_arrow)
+      _g->mouse.currentCur = _g->cursor_arrow;
+    break;
 
-  //   if (mouse->leftClickState == MOUSE_BUTTON_DOWN && win->onLeftDown) {
-  //     win->onLeftDown(win, NULL);
-  //     if (win->onPaint) {
-  //       HideMouse();
-  //       win->onPaint(win, NULL);
-  //       ShowMouse();
-  //     }
-  //   } else if (mouse->leftClickState == MOUSE_BUTTON_UP && win->onLeftUp) {
-  //     win->onLeftUp(win, NULL);
-  //     if (win->onPaint) {
-  //       HideMouse();
-  //       win->onPaint(win, NULL);
-  //       ShowMouse();
-  //     }
-  //   }
-
-  //   break;
-
-  // default:
-  //   break;
-  // }
+  default:
+    break;
+  }
 }

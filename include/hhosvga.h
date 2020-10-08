@@ -253,15 +253,16 @@ void printHZWord(int x, int y, unsigned char *buffer, hfont *font);
 
 /**
  * @version v1 输出文本函数版本1
- * @brief   在一个行内输出，不截断(回车换行符不换行，忽略)。字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
- * 字符串可以是中英文混合。 非打印字符以空格替代。 
+ * @brief  在一个行内输出，不截断(回车换行符也不换行，忽略)。字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
+ * 字符串可以是中英文混合。 非打印字符以空格替代
  * 
- * @param region  要显示的区域
+ * @param x
+ * @param y  要显示起始坐标
  * @param text 字符串
  * @param _font 字体设置
- *  @return 无
+ * @return 无
  */
-void printTextLine(hregion *region, char *text, hfont *_font);
+void printTextLineXY(int x, int y, char *text, hfont *_font);
 
 /**
  * @version v2 输出文本函数版本2 

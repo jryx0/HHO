@@ -2,8 +2,13 @@
 #define __RESOUCE_H__
 #include "macrodef.h"
 
+ 
+
+
+
+
 ///////////////////////////ÑÕÉ«¶¨Òå//////////////////////////////////////////////
-#define COLOR_white 0XFF
+#define COLOR_white 0XFFFF
 #define COLOR_ligtgray 0xEF7D //0xAD55
 #define COLOR_darkgray 0x52AA
 
@@ -17,6 +22,18 @@
 #define ID_DESKTOP 0
 #define ID_WIN_LOG_PANEL 1
 #define ID_WIN_LOGIN 2
+
+////////////////////////////homepage//////////////////////////////////////////////
+#define ID_HOMEPAGE 10
+
+#define ID_LABEL_1  11
+#define ID_LABEL_2  12
+
+
+
+
+
+
 
 //////////////////////Login windows defined////////////////////////////////
 #define ID_LOGIN_REGISTER 1001

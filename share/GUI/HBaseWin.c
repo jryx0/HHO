@@ -4,6 +4,7 @@
 #include "wResource.h"
 #include "HBaseWin.h"
 #include "list.h"
+#include "hglobal.h"
 
 #include <memory.h>
 #include <string.h>
@@ -120,6 +121,7 @@ void destoryChildren(hbasewinAttr *win)
         childwin->onDestroy(childwin, NULL);
     }
     list_remove(win->children, node);
+    node = NULL;
   }
   list_iterator_destroy(it);
 }
@@ -300,8 +302,8 @@ hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse)
   list_node_t *node;
   hbasewinAttr *temp;
 
-  TESTNULLVOID(win);
-  TESTNULLVOID(mouse);
+  TESTNULL(mouse, win);
+  TESTNULL(win, NULL);
 
   it = list_iterator_new(win->children, LIST_HEAD);
   while (node = list_iterator_next(it))
@@ -312,10 +314,18 @@ hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse)
     temp = (hbasewinAttr *)(node->val);
     if (checkpointInside(temp, mouse->x, mouse->y))
     {
+      if (temp->children)
+        temp = checkmousewin(temp, mouse);
+
       list_iterator_destroy(it);
       return temp;
     }
   }
   list_iterator_destroy(it);
   return win;
+}
+
+void CreateMouseEvent(hbasewinAttr *win, globaldef *_g)
+{
+  TESTNULLVOID(win);
 }

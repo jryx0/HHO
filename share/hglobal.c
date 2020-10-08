@@ -28,7 +28,7 @@ globaldef *initGlobalSetting(void)
 
   _global->fpLog = fopen("hho.log", "w"); //日志文件
   TESTNULL(_global->fpLog, NULL);
- 
+
   memset(_global, 0, sizeof(globaldef));
 
   ///////////加载资源//////////////////
@@ -40,7 +40,7 @@ globaldef *initGlobalSetting(void)
   ReadCursor((unsigned char *)_global->cursor_arrow, FILE_CURSOR_ARROW);
   ReadCursor((unsigned char *)_global->cursor_hand, FILE_CURSOR_HAND);
 
-  _global->mouse.currentCur = _global->cursor_hand;
+  _global->mouse.currentCur = _global->cursor_arrow;
 
   return _global;
 }

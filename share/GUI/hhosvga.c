@@ -26,12 +26,12 @@ void clearScreen(char color)
   unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L;
 
   pages = 24; //1024x768 = 24, 800*600 = 14
-  pagesize = 1024 * 32 * 2;
-  for (i = 0; i <= pages; i++)
+  pagesize = 1024 * 32;
+  for (i = 0; i < pages; i++)
   {
     selectpage(i);
-    memset(video_buffer, color, pagesize - 1);
-    //memset(video_buffer + 0x4000, color, pagesize); // 16 << 10
+    memset(video_buffer, color, pagesize);
+    memset(video_buffer + 0x4000, color, pagesize); // 16 << 10
   }
 }
 /**
@@ -649,7 +649,7 @@ void printHZWord(int x, int y, unsigned char *buffer, hfont *font)
  * @param text 字符串
  * @param _font 字体设置
  * @return 无
- */
+ 
 void printTextLine(hregion *region, char *text, hfont *_font)
 {
 
@@ -670,7 +670,63 @@ void printTextLine(hregion *region, char *text, hfont *_font)
   while (*text)
   {
 
-    y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
+    y0 = region->left_top.y;
+
+    if (((unsigned char)text[0] >= 0xa0) &&
+        ((unsigned char)text[1] >= 0xa0))
+    {                                                            //打印中文                                                            //汉字
+      quma = text[0] - 0xa1;                                     //求出区码
+      weima = text[1] - 0xa1;                                    //求出位码
+      offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+      fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+      fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+      printHZWord(x0, y0, buffer, _font); //输出单个汉字
+
+      x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+      text += 2;                                  //下一个汉字
+    }
+    else
+    {                                               //打印字符
+      printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符,非打印字符用空格替代
+      x0 += _font->ascSize + _font->xgap;           //偏移一个字符宽度+字间距
+      text++;                                       //下一个字符
+    }
+  }
+  free(buffer);
+}
+*/
+
+/**
+ * @version v1 输出文本函数版本1
+ * @brief  在一个行内输出，不截断(回车换行符也不换行，忽略)。字符显示格式包括字体、字号、字间距、行间距等等在_font中设置，
+ * 字符串可以是中英文混合。 非打印字符以空格替代
+ * 
+ * @param x
+ * @param y  要显示起始坐标
+ * @param text 字符串
+ * @param _font 字体设置
+ * @return 无
+ */
+void printTextLineXY(int x, int y, char *text, hfont *_font)
+{
+
+  int x0, y0;                //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  int linenum = 0;
+  //char isNewLine = FALSE;
+
+  TESTNULLVOID(_font);
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULL(buffer, );
+
+  x0 = x;
+  while (*text)
+  {
+    y0 = y;
 
     if (((unsigned char)text[0] >= 0xa0) &&
         ((unsigned char)text[1] >= 0xa0))
@@ -1003,7 +1059,7 @@ void calcFontSetting(hfont *font)
   }
 }
 /**
- * 获取默认字体信息
+ * 获取默认字体信息,调用者必须负责释放hfont指针 freefont
  * @warning 调用者必须负责释放hfont指针
  * @param type 在marcodef中定义 
  * @param size 字号 16、24、32、48 
