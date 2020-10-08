@@ -23,8 +23,6 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
   label->onPaint = OnPaint_Label;
   label->onDestroy = OnDestoy_Lable;
 
-  label->EventHandler = EventHandler_Label;
-
   return label;
 }
 
@@ -36,12 +34,8 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
 void OnDestoy_Lable(hbasewinAttr *label, void *value)
 {
   TESTNULLVOID(label);
-  destoryChildren(label);
-
   OnDestory(label, value);
 
-  free(label);
-  label = NULL;
 }
 
 /**
@@ -73,7 +67,7 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
     fptemp = fopen((char *)value, "r");
 
   if (fptemp == NULL)
-  {     
+  {
     return;
   }
 
@@ -148,34 +142,4 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   // printText(x, y + 16 * i, temp, SIMSUN, 16, 0, 0x0 /*color*/);
 }
 
-void EventHandler_Label(hbasewinAttr *win, int type, void *value)
-{
-  globaldef *_g;
-
-  TESTNULLVOID(win);
-  TESTNULLVOID(value);
-  _g = (globaldef *)value;
-  switch (type)
-  {
-  case MOUSE_EVENT: //改变鼠标形状
-    if (_g->mouse.currentCur != _g->cursor_hand)
-      _g->mouse.currentCur = _g->cursor_hand;
-
-    switch (_g->mouse.leftClickState)
-    {
-    case MOUSE_BUTTON_UP:
-      //鼠标左键value
-      //删除自身 跳转页面
-      if (win->parent && win->parent->EventHandler)
-        win->parent->EventHandler(win, MOUSE_BUTTON_UP, value);
-      break;
-    default:
-      break;
-    }
-
-    break;
-
-  default:
-    break;
-  }
-}
+ 

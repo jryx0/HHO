@@ -4,27 +4,39 @@
 #define TRUE 1
 #define FALSE 0
 //////////////////////////////错误处理宏////////////////////////////////////////////
-#define TESTNULL(X, Y)                                    \
-  if (X == NULL)                                          \
-  {                                                       \
-    fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
-    return Y;                                             \
+// #define TESTNULL(X, Y)                                    \
+//   if (X == NULL)                                          \
+//   {                                                       \
+//     fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
+//     return Y;                                             \
+//   }
+
+// #define TESTNULLVOID(X)                                   \
+//   if (X == NULL)                                          \
+//   {                                                       \
+//     fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
+//     return;                                               \
+//   }
+
+// #define TRACE(x)  \
+//   do              \
+//   {               \
+//     dbg_printf x; \
+//   } while (0)
+
+// void dbg_printf(const char *fmt, ...);
+
+#define TESTNULL(X, Y) \
+  if (X == NULL)       \
+  {                    \
+    return Y;          \
   }
 
-#define TESTNULLVOID(X)                                   \
-  if (X == NULL)                                          \
-  {                                                       \
-    fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
-    return;                                               \
+#define TESTNULLVOID(X) \
+  if (X == NULL)        \
+  {                     \
+    return;             \
   }
-
-#define TRACE(x)  \
-  do              \
-  {               \
-    dbg_printf x; \
-  } while (0)
-
-void dbg_printf(const char *fmt, ...);
 
 //////////////////////////////////////宏定义///////////////////////////////////
 //显示模式宏定义
@@ -84,9 +96,6 @@ void dbg_printf(const char *fmt, ...);
 #define MOUSE_BUTTON_UP 32
 #define MOUSE_BUTTON_STILL_DOWN 64
 #define MOUSE_BUTTON_STILL_UP 128
-
-#define MOUSE_EVENT 1000
-#define KEYBORAD_EVENT 2000
 
 //处理borlandc在vscode中的兼容性
 #ifndef __BORLANDC__

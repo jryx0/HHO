@@ -30,7 +30,7 @@ void OnPaint_Desktop(hbasewinAttr *win, void *value)
   linex_styleEx(0, SCR_HEIGHT - FOOTER_HEIGHT, SCR_WIDTH, 0x2104, 2, 1);
   _font = getFont(SIMSUN, 16, 0x00);
   _font->fontcolor = 0x4228;
-  printTextLineXY(215, SCR_HEIGHT - FOOTER_HEIGHT + 15  , "地址：湖北省武汉市洪山区珞喻路1037号      咨询电话:027-87543469", _font);
+  printTextLineXY(215, SCR_HEIGHT - FOOTER_HEIGHT + 15, "地址：湖北省武汉市洪山区珞喻路1037号      咨询电话:027-87543469", _font);
   freeFont(_font);
 }
 
@@ -87,7 +87,7 @@ hbasewinAttr *CreateDesktop()
 {
   hbasewinAttr *desktop;
 
-  desktop = CreateWindowsEx(NULL, 0, 0, SCR_WIDTH - 1, SCR_WIDTH - 1, 0, "desktop");
+  desktop = CreateWindowsEx(NULL, 0, 0, SCR_WIDTH - 1, SCR_WIDTH - 1, ID_DESKTOP, "desktop");
   desktop->onDestroy = OnDestory_Desktop;
   desktop->onPaint = OnPaint_Desktop;
 
@@ -107,7 +107,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
   _g = (globaldef *)value;
   switch (type)
   {
-  case MOUSE_EVENT:
+  case EVENT_MOUSE:
     if (_g->mouse.currentCur != _g->cursor_arrow)
       _g->mouse.currentCur = _g->cursor_arrow;
     break;

@@ -170,10 +170,10 @@ void fillRegion(int x1, int y1, int x2, int y2, int color)
 
 /**
  * 快速填充区域算法（高度宽度形式）,减少调用selectpage的次数
- * @param  x1 区域左坐标
- * @param  y1 区域上坐标
- * @param  x2 区域又坐标
- * @param  y2 区域下坐标
+ * @param  x 区域左坐标
+ * @param  y 区域上坐标
+ * @param  width 区域又坐标
+ * @param  height 区域下坐标
  */
 void fillRegionEx(int x, int y, int width, int height, int color)
 {

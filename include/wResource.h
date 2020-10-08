@@ -2,10 +2,10 @@
 #define __RESOUCE_H__
 #include "macrodef.h"
 
- 
-
-
-
+//标准事件定义
+#define EVENT_MOUSE 1000
+#define KEYBORAD_EVENT 1010
+#define EVENT_DELETEWIN 1030
 
 ///////////////////////////颜色定义//////////////////////////////////////////////
 #define COLOR_white 0XFFFF
@@ -26,14 +26,9 @@
 ////////////////////////////homepage//////////////////////////////////////////////
 #define ID_HOMEPAGE 10
 
-#define ID_LABEL_1  11
-#define ID_LABEL_2  12
-
-
-
-
-
-
+#define ID_LABEL_1 11
+#define ID_LABEL_2 12
+#define ID_LABEL_3 13
 
 //////////////////////Login windows defined////////////////////////////////
 #define ID_LOGIN_REGISTER 1001

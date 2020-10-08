@@ -7,9 +7,9 @@
 
 typedef enum winStatus
 {
-  HHOSHOW,
-  HHOHIDE,
-  HHODELETE
+  HHOSHOW = 0,
+  HHOHIDE = 10,
+  HHODELETE = 20
 };
 
 typedef enum winType

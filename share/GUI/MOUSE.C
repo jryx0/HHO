@@ -67,7 +67,7 @@ void UpdateMouseStatus(mousestatus *status)
 
   TESTNULLVOID(status);
 
-  RestoreMouseBk(status);
+  //RestoreMouseBk(status);
 
   Inr.x.ax = 3;
   int86(0x33, &Inr, &Outr);
@@ -123,8 +123,8 @@ void UpdateMouseStatus(mousestatus *status)
   status->x = xPos;
   status->y = yPos;
 
-  SaveMouseBk(status);
-  MouseDraw(status);
+  // SaveMouseBk(status);
+  // MouseDraw(status);
 }
 
 void SaveMouseBk(mousestatus *mouse) //5

@@ -63,6 +63,7 @@ void OnDestory(hbasewinAttr *win, void *val)
 {
 
   TESTNULLVOID(win);
+  destoryChildren(win);
 
   if (win->title)
     free(win->title);
@@ -73,7 +74,8 @@ void OnDestory(hbasewinAttr *win, void *val)
   if (win->bkarea)
     free(win->bkarea);
 
-  //free(win);
+  free(win);
+  
 }
 
 /**
@@ -117,7 +119,7 @@ void destoryChildren(hbasewinAttr *win)
     if (node->val != NULL)
     {
       childwin = (hbasewinAttr *)(node->val);
-      if (childwin->onPaint != NULL)
+      if (childwin->onDestroy != NULL)
         childwin->onDestroy(childwin, NULL);
     }
     list_remove(win->children, node);
@@ -197,6 +199,7 @@ void repaintChildren(hbasewinAttr *win)
       continue;
 
     childwin = (hbasewinAttr *)(node->val);
+
     if (childwin->onPaint != NULL)
       childwin->onPaint(childwin, NULL);
   }
@@ -280,6 +283,9 @@ int checkpointInside(hbasewinAttr *win, int x, int y)
   if (win == NULL)
     return 0;
 
+  if (win->status == HHOHIDE || win->status == HHODELETE)
+    return 0;
+
   x1 = getAbsoluteX(win);
   y1 = getAbsoluteY(win);
   x2 = x1 + win->nWidth;
@@ -314,18 +320,12 @@ hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse)
     temp = (hbasewinAttr *)(node->val);
     if (checkpointInside(temp, mouse->x, mouse->y))
     {
-      if (temp->children)
-        temp = checkmousewin(temp, mouse);
 
       list_iterator_destroy(it);
-      return temp;
+      return temp; //找到点击的之窗口
     }
   }
   list_iterator_destroy(it);
-  return win;
-}
 
-void CreateMouseEvent(hbasewinAttr *win, globaldef *_g)
-{
-  TESTNULLVOID(win);
+  return win; //没有点击子窗口，返回自身
 }

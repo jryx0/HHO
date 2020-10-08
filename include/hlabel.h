@@ -12,8 +12,5 @@ void OnPaint_Label(hbasewinAttr *label, void *value);
  */
 void OnDestoy_Lable(hbasewinAttr *label, void *value);
 
-/**
- * 事件处理
- */
-void EventHandler_Label(hbasewinAttr *win, int type, void *value);
+
 #endif

@@ -33,15 +33,19 @@ int main(void)
   ResetMouse(&_global->mouse);
 
   while (1)
-  { //Ñ­»·
+  {                                  //Ñ­»·
+    RestoreMouseBk(&_global->mouse); //Òþ²ØÊó±ê
+
     UpdateMouseStatus(&_global->mouse);
     child = checkmousewin(desktop, &_global->mouse);
     if (child)
       if (child->EventHandler)
-        child->EventHandler(child, MOUSE_EVENT, _global);
-
+        child->EventHandler(child, EVENT_MOUSE, _global);
       else if (desktop->EventHandler)
-        desktop->EventHandler(desktop, MOUSE_EVENT, _global);
+        desktop->EventHandler(desktop, EVENT_MOUSE, _global);
+
+    SaveMouseBk(&_global->mouse); //±£´æ±³¾°
+    MouseDraw(&_global->mouse);   //ÏÔÊ¾Êó±ê
 
     // UpdateKeyboard();
     // CreateKeyboardEvent();
@@ -61,7 +65,12 @@ int main(void)
         if (desktop)
           _global->mouse.currentCur = _global->cursor_arrow;
       }
-      if (kbchar == 'd')
+      else if (kbchar == 'r')
+      {
+        if (desktop)
+          desktop->onPaint(desktop, NULL);
+      }
+      else if (kbchar == 'd')
       {
         if (desktop)
         {
