@@ -3,4 +3,8 @@
 
 #include "HBaseWin.h"
 
+hbasewinAttr *CreateCheckBox(hbasewinAttr *parent, int x, int y, int nWidth,
+                             int nHeight, int winID, const char *title)
+
+
 #endif
