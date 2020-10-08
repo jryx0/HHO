@@ -125,7 +125,7 @@ void OnPaint(hbasewinAttr *win, void *val)
     // setfillstyle(SOLID_FILL, RealFillColor(Shade1));
     // bar(x1 + 2, y1 + 2, x2 - 2, y2 - 2);
 
-    // setfillstyle(SOLID_FILL, RealFillColor(BLUE));
+    // setfillstyle(SOLID_  FILL, RealFillColor(BLUE));
     // bar(x1, y1, x2, y1);
     fillRegion(x1, y1, x2, y2, RGB565(0xca, 0xca, 0xca));
     rectangle(x1, y1, x2, y2, RGB565(0xba, 0xba, 0xba), 1, 1);
