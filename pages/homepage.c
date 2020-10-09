@@ -74,7 +74,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
         int y = getAbsoluteY(hitwin);
         fillRegionEx(x, y, hitwin->nWidth + 1, hitwin->nHeight + 1, 0xFFFF); //Çå³ı×Ó´°¿ÚÇøÓò
 
-        TRACE(("%s(%d): É¾³ı´°¿Ú%u", __FILE__, __LINE__, hitwin->winID));
+        TRACE(("%s(%d): É¾³ı´°¿Ú%u\n", __FILE__, __LINE__, hitwin->winID));
         hitwin->onDestroy(hitwin, NULL);
       }
     }
@@ -111,11 +111,11 @@ hbasewinAttr *CreateHomepage(hbasewinAttr *parent, int winID)
   hbasewinAttr *label;
   TESTNULL(page, NULL);
 
-  // CreateLabel(page, 15, 90, 300, 150, ID_LABEL_1, "readme");
-  // CreateLabel(page, 15 + 350, 90, 300, 150, ID_LABEL_2, "c:\\hho\\data\\news\\1.txt");
-  // label = CreateLabel(page, 15 + 700, 90, 300, 150, ID_LABEL_3, NULL);
-  // label->value = malloc(10);
-  // strcpy((char *)label->value, "test");
+  CreateLabel(page, 15, 90, 300, 150, ID_LABEL_1, "readme");
+  CreateLabel(page, 15 + 350, 90, 300, 150, ID_LABEL_2, "c:\\hho\\data\\news\\1.txt");
+  label = CreateLabel(page, 15 + 700, 90, 300, 150, ID_LABEL_3, NULL);
+  label->value = malloc(10);
+  strcpy((char *)label->value, "test");
 
   page->onPaint = OnPaint_homepage;
   page->EventHandler = EventHandler_homepage;

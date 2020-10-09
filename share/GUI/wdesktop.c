@@ -95,9 +95,9 @@ hbasewinAttr *CreateDesktop(void)
   desktop = CreateWindowsEx(NULL, 0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1, ID_DESKTOP, "desktop");
 
   //创建首页
-  //CreateHomepage(desktop, ID_HOMEPAGE);
+  CreateHomepage(desktop, ID_HOMEPAGE);
   //创建test页
-  CreateTestPage(desktop, ID_TESTPAGE, "华中科技大学自动化人工智能");
+  //CreateTestPage(desktop, ID_TESTPAGE, "华中科技大学自动化人工智能");
 
   desktop->onPaint = OnPaint_Desktop;
   desktop->EventHandler = eventhandlerdesktop;
@@ -111,6 +111,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
 
   TESTNULLVOID(win);
   TESTNULLVOID(value);
+  
   _g = (globaldef *)value;
   switch (type)
   {
