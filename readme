@@ -39,6 +39,7 @@ git常用命令
 git add .
 git commit -m "   "
 git push
+git fetch //获取所有分支
 
 git init
 git clone --depth=1 https://github.com/jryx0/MyTest.git
