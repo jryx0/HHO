@@ -75,7 +75,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
 
         //´Ó¸¸´°¿ÚÖĞÉ¾³ı×Ó´°¿Ú
         if (hitwin->parent)
-        {
+        { //todo: É¾³ıÊ§°ÜµÄÔ­Òò
           n = FindChildNodebyID(hitwin->parent, hitwin->winID);
           n->val = NULL;
           //list_remove(hitwin->parent, n);
