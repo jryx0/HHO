@@ -313,7 +313,14 @@ void calcFontSetting(hfont *font);
  * @return 字库文件指针
  */
 FILE *getFontFile(int type, int size);
-
+/**
+ * @brief 获取一个字符串在屏幕上显示需要多少个像素，若含有回车换行符，
+ * 则以回车换行符为结束。
+ * 
+ * @param text 文本串
+ * @param _f 字体信息
+ */
+int calcPrintTextLenght(char *text, hfont *_f);
 /**
  * 释放font信息
  * 

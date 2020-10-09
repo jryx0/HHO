@@ -28,7 +28,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
 
       if (_g->mouse.rightClickState == MOUSE_BUTTON_UP)
       {
-        hbasewinAttr *child = CreateLabel(hitwin, 15 + 700, 90, 300, 150, ID_LABEL_3, NULL);
+        hbasewinAttr *child = CreateLabel(hitwin, random(800), random(600), 300, 150, ID_LABEL_3, NULL);
         if (child)
           child->onPaint(child, NULL);
       }
@@ -71,7 +71,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
         //删除label
         int x = getAbsoluteX(hitwin);
         int y = getAbsoluteY(hitwin);
-        fillRegionEx(x, y, hitwin->nWidth, hitwin->nHeight, 0xFFFF); //清除子窗口区域
+        fillRegionEx(x, y, hitwin->nWidth + 1, hitwin->nHeight + 1, 0xFFFF); //清除子窗口区域
 
         //从父窗口中删除子窗口
         if (hitwin->parent)

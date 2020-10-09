@@ -17,9 +17,12 @@ int main(void)
   globaldef *_global;
   hbasewinAttr *desktop;
   hbasewinAttr *child = NULL;
+  int size;
 
   //初始化系统参数
   _global = initGlobalSetting();
+
+  size = sizeof(globaldef);
 
   //初始化图形界面
   initSVGA64k();

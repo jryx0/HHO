@@ -11,21 +11,6 @@
 //     return Y;                                             \
 //   }
 
-// #define TESTNULLVOID(X)                                   \
-//   if (X == NULL)                                          \
-//   {                                                       \
-//     fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
-//     return;                                               \
-//   }
-
-// #define TRACE(x)  \
-//   do              \
-//   {               \
-//     dbg_printf x; \
-//   } while (0)
-
-// void dbg_printf(const char *fmt, ...);
-
 #define TESTNULL(X, Y) \
   if (X == NULL)       \
   {                    \
@@ -34,14 +19,21 @@
 
 #define TESTNULLVOID(X) \
   if (X == NULL)        \
-  {                     \
-    return;             \
-  }
+    return;
 
+#define TRACE(...)                                          \
+  do                                                        \
+  {                                                         \
+    db_printloc(__FILE__, __LINE__, __func__, __VA_ARGS__); \
+  } while (0)
+
+void db_printloc(const char *file, int line, const char *func, const char *fmt, ...);
 //////////////////////////////////////宏定义///////////////////////////////////
 //显示模式宏定义
 #define SVGA64K
 #define SVGA1024x768
+
+#define MAXWINDOWS 100
 
 #define SCR_WIDTH 1024
 #define SCR_HEIGHT 768

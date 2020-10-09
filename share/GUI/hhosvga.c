@@ -1091,6 +1091,32 @@ hfont *getFont(int type, int size, int color)
 }
 
 /**
+ * @brief 获取一个字符串在屏幕上显示需要多少个像素，若含有回车换行符，
+ * 则以回车换行符为结束。
+ * 
+ * @param text 文本串
+ * @param _f 字体信息
+ */
+int calcPrintTextLenght(char *text, hfont *_f)
+{
+  int totalPixel = 0;
+
+  TESTNULL(text, 0);
+  TESTNULL(_f, 0);
+
+  while (*text)
+  {
+    if (*text > 0xa0) //汉字
+      totalPixel += _f->currentFontSize + _f->xgap;
+    else if (*text == '\r' || *text == '\n')
+      break;
+    else
+      totalPixel += _f->ascSize + _f->xgap;
+  }
+  return totalPixel - _f->xgap;
+}
+
+/**
  * 释放font信息
  * 
  */

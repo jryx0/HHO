@@ -1,6 +1,6 @@
 #include "macrodef.h"
-#include "hglobal.h"
 #include "pinyin.h"
+#include "hglobal.h"
 
 #include <memory.h>
 #include <stdarg.h>
@@ -26,8 +26,8 @@ globaldef *initGlobalSetting(void)
   globaldef *_global = malloc(sizeof(globaldef));
   TESTNULL(_global, NULL);
 
-  _global->fpLog = fopen("hho.log", "w"); //日志文件
-  TESTNULL(_global->fpLog, NULL);
+  // _global->fpLog = fopen("hho.log", "w"); //日志文件
+  // TESTNULL(_global->fpLog, NULL);
 
   memset(_global, 0, sizeof(globaldef));
 
@@ -45,7 +45,7 @@ globaldef *initGlobalSetting(void)
   return _global;
 }
 
-void destoryGlobalSettting(globaldef *_g)
+void destoryGlobalSettting(globaldef *_g)、
 {
   if (_g)
   {
@@ -59,10 +59,32 @@ void destoryGlobalSettting(globaldef *_g)
   }
 }
 
-void dbg_printf(const char *fmt, ...)
+/*
+**  Call as: db_print(level, format, ...);
+**  Print debug information if debug flag set at or above level.
+*/
+void db_print(int level, const char *fmt, ...)
 {
   va_list args;
+  FILE *fp = fopen("hho.log", "at+");
+
+  TESTNULLVOID(fp);
+
   va_start(args, fmt);
-  vfprintf(stderr, fmt, args);
+  vfprintf(fp, fmt, args);
   va_end(args);
+  fflush(fp);
+  fclose(fp);
+}
+
+void db_printloc(const char *file, int line, const char *func, const char *fmt, ...)
+{
+  va_list args;
+  FILE *fp = open("hho.log", "at+");
+
+  fprintf(fp, "%s:%d:%s(): ", file, line, func);
+  va_start(args, fmt);
+  vfprintf(fp, fmt, args);
+  va_end(args);
+  fflush(fp);
 }

@@ -35,7 +35,6 @@ void OnDestoy_Lable(hbasewinAttr *label, void *value)
 {
   TESTNULLVOID(label);
   OnDestory(label, value);
-
 }
 
 /**
