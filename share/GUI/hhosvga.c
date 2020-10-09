@@ -715,7 +715,7 @@ void printTextLineXY(int x, int y, char *text, hfont *_font)
   unsigned char quma, weima; //定义汉字的区码和位码
   unsigned long offset;
   unsigned char *buffer;
-  int linenum = 0;
+  //int linenum = 0;
   //char isNewLine = FALSE;
 
   TESTNULLVOID(_font);
@@ -1060,7 +1060,7 @@ void calcFontSetting(hfont *font)
 }
 /**
  * 获取默认字体信息,调用者必须负责释放hfont指针 freefont
- * @warning 调用者必须负责释放hfont指针
+ * 调用者必须负责释放hfont指针
  * @param type 在marcodef中定义 
  * @param size 字号 16、24、32、48 
  */
@@ -1097,7 +1097,7 @@ hfont *getFont(int type, int size, int color)
  * @param text 文本串
  * @param _f 字体信息
  */
-int calcPrintTextLenght(char *text, hfont *_f)
+int calcPrintTextLenght(unsigned char *text, hfont *_f)
 {
   int totalPixel = 0;
 

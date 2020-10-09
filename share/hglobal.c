@@ -40,12 +40,12 @@ globaldef *initGlobalSetting(void)
   ReadCursor((unsigned char *)_global->cursor_arrow, FILE_CURSOR_ARROW);
   ReadCursor((unsigned char *)_global->cursor_hand, FILE_CURSOR_HAND);
 
-  _global->mouse.currentCur = _global->cursor_arrow;
+  _global->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_global->cursor_arrow;
 
   return _global;
 }
 
-void destoryGlobalSettting(globaldef *_g)¡¢
+void destoryGlobalSettting(globaldef *_g)
 {
   if (_g)
   {
@@ -63,28 +63,16 @@ void destoryGlobalSettting(globaldef *_g)¡¢
 **  Call as: db_print(level, format, ...);
 **  Print debug information if debug flag set at or above level.
 */
-void db_print(int level, const char *fmt, ...)
+void dbg_printf(const char *fmt, ...)
 {
   va_list args;
   FILE *fp = fopen("hho.log", "at+");
 
   TESTNULLVOID(fp);
-
+  //fprintf("[%s]", time(&t));
   va_start(args, fmt);
   vfprintf(fp, fmt, args);
   va_end(args);
   fflush(fp);
   fclose(fp);
-}
-
-void db_printloc(const char *file, int line, const char *func, const char *fmt, ...)
-{
-  va_list args;
-  FILE *fp = open("hho.log", "at+");
-
-  fprintf(fp, "%s:%d:%s(): ", file, line, func);
-  va_start(args, fmt);
-  vfprintf(fp, fmt, args);
-  va_end(args);
-  fflush(fp);
 }

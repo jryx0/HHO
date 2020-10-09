@@ -20,14 +20,22 @@
 #define TESTNULLVOID(X) \
   if (X == NULL)        \
     return;
-
-#define TRACE(...)                                          \
-  do                                                        \
-  {                                                         \
-    db_printloc(__FILE__, __LINE__, __func__, __VA_ARGS__); \
+ 
+#define TRACE(x)  \
+  do              \
+  {               \
+    dbg_printf x; \
   } while (0)
+ 
+#define TRACELOC(x) \
+  do                \
+  {                 \
+    db_printloc(x)  \
+  } while (0)
+ 
+void dbg_printf(const char *fmt, ...);
+void db_printloc(const char *file, int line, const char *fmt, ...);
 
-void db_printloc(const char *file, int line, const char *func, const char *fmt, ...);
 //////////////////////////////////////宏定义///////////////////////////////////
 //显示模式宏定义
 #define SVGA64K

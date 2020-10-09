@@ -126,6 +126,12 @@ void OnPaint(hbasewinAttr *win, void *val);
 void destoryChildren(hbasewinAttr *win);
 
 /**
+ * 释放窗口
+ * @param win 要删除的窗口  
+ */
+void freeWin(hbasewinAttr *win);
+
+/**
  * 添加子窗口
  * @param parent 父窗口
  * @param child 子窗口
@@ -178,11 +184,11 @@ hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse);
  * 根据窗口ID查找子窗口
  *  win
  */
-hbasewinAttr *FindChildWinbyID(hbasewinAttr *win, int id);
+// hbasewinAttr *FindChildWinbyID(hbasewinAttr *win, int id);
 
 /**
  * 根据窗口ID查找子窗口
  *  win
  */
-list_node_t *FindChildNodebyID(hbasewinAttr *win, int id);
+// list_node_t *FindChildNodebyID(hbasewinAttr *win, int id);
 #endif

@@ -5,7 +5,11 @@
 #include "HBaseWin.h"
 #include "mouse.h"
 
-hbasewinAttr *CreateDesktop();
+/**
+ * 创建主窗口
+ * 
+ */
+hbasewinAttr *CreateDesktop(void);
 void eventhandlerdesktop(hbasewinAttr *win, int type, void *value);
 hbasewinAttr *creatmouseevent(hbasewinAttr *win, mousestatus *mouse);
 hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse);

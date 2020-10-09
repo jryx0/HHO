@@ -21,20 +21,8 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
 
   label = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
   label->onPaint = OnPaint_Label;
-  label->onDestroy = OnDestoy_Lable;
 
   return label;
-}
-
-/**
- * É¾³ý×ÔÉí
- * 
- * 
- */
-void OnDestoy_Lable(hbasewinAttr *label, void *value)
-{
-  TESTNULLVOID(label);
-  OnDestory(label, value);
 }
 
 /**
@@ -43,9 +31,8 @@ void OnDestoy_Lable(hbasewinAttr *label, void *value)
  * 
  */
 void OnPaint_Label(hbasewinAttr *label, void *value)
-{
-  int errNum = 0;
-  FILE *fpFont;
+{  
+  hfont *fpFont;
   FILE *fptemp;
   hregion _region;
   char str[30];
@@ -78,6 +65,7 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   _region.right_bottom.y = _region.left_top.y + label->nHeight;
 
   printTextFile(&_region, fptemp, fpFont);
+  
   freeFont(fpFont);
   fclose(fptemp);
 
@@ -140,5 +128,3 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   // //printtextxy(fpFont, x, y + 16 * i, temp, 0 /*color*/, 16);
   // printText(x, y + 16 * i, temp, SIMSUN, 16, 0, 0x0 /*color*/);
 }
-
- 

@@ -292,7 +292,7 @@ void printTextFile(hregion *region, FILE *fp, hfont *_font);
 
 /**
  * 获取默认字体信息
- * @warning 调用完后必须hfont指针，调用freeFont
+ * 调用完后必须hfont指针，调用freeFont
  * @param type 在marcodef中定义 
  * @param size 字号 16、24、32、48 
  * @param color 颜色
@@ -320,7 +320,7 @@ FILE *getFontFile(int type, int size);
  * @param text 文本串
  * @param _f 字体信息
  */
-int calcPrintTextLenght(char *text, hfont *_f);
+int calcPrintTextLenght(unsigned char *text, hfont *_f);
 /**
  * 释放font信息
  * 

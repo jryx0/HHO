@@ -7,6 +7,7 @@
 #include "wdesktop.h"
 #include "hlabel.h"
 
+#include <dos.h>
 #include <conio.h>
 #include <stdlib.h>
 #include <mem.h>
@@ -21,8 +22,6 @@ int main(void)
 
   //初始化系统参数
   _global = initGlobalSetting();
-
-  size = sizeof(globaldef);
 
   //初始化图形界面
   initSVGA64k();
@@ -66,7 +65,7 @@ int main(void)
         SaveMouseBk(&_global->mouse);
 
         if (desktop)
-          _global->mouse.currentCur = _global->cursor_arrow;
+          _global->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_global->cursor_arrow;
       }
       else if (kbchar == 'r')
       {
@@ -87,8 +86,8 @@ int main(void)
             desktop->onDestroy(desktop, &winID);
             SaveMouseBk(&_global->mouse);
 
-            sprintf(t, "len = %d", desktop->children->len);
-            printTextLineXY(100, 100, t, _hfont);
+            // sprintf(t, "len = %d", desktop->children->len);
+            // printTextLineXY(100, 100, t, _hfont);
           }
         }
       }
