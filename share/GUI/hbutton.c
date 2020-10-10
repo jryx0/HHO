@@ -1,6 +1,5 @@
 #include "HBaseWin.h"
 #include "hbutton.h"
-#include <graphics.h>
 #include <string.h>
 
 hbasewinAttr *CreateButton(hbasewinAttr *parent, int x, int y, int nWidth,

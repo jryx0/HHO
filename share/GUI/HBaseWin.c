@@ -108,7 +108,9 @@ void OnPaint(hbasewinAttr *win, void *val)
 }
 
 /**
- * @brief 遍历所有子窗口，调用OnDestory窗口函数指针，删除子窗口 * 
+ * @brief 递归子窗口，在OnDestory时调用，删除子窗口的所有子窗口
+ * win本身由调用函数删除。
+ *  
  * @param win 要删除的窗口  
  * @return 无 
  */
@@ -154,12 +156,11 @@ void destoryChildren(hbasewinAttr *win)
  * 清除窗口所在的区域
  * 
  */
-void clearWinRegion(hbasewinAttr *win,int color)
+void clearWinRegion(hbasewinAttr *win, int color)
 {
   TESTNULLVOID(win);
-  fillRegionEx(win ->x, win ->y, win ->nWidth, win ->nHeight, color);
+  fillRegionEx(win->x, win->y, win->nWidth, win->nHeight, color);
 }
-
 
 /**
  * 比较两个窗口是否是同一个
@@ -289,14 +290,17 @@ int compareWin(hbasewinAttr *w1, hbasewinAttr *w2)
   return 0;
 }
 
-void SetDefaultPage(hbasewinAttr *win, int winID, globaldef *_global)
+/**
+ * 在win中查找winID的子窗口
+ * 
+ */
+hbasewinAttr *findWinByID(hbasewinAttr *win, int winID)
 {
+  hbasewinAttr *child = NULL;
   TESTNULLVOID(win);
-  TESTNULLVOID(_global);
 
-  _global->activePage = NULL;
   if (win->winID == winID)
-    _global->activePage = win;
+    return win;
 
   if (win->children)
   {
@@ -305,17 +309,17 @@ void SetDefaultPage(hbasewinAttr *win, int winID, globaldef *_global)
     while ((node = list_iterator_next(it)))
       if (node->val)
       {
-        hbasewinAttr *child = (hbasewinAttr *)node->val;
+        child = (hbasewinAttr *)node->val;
         if (child->winID == winID)
-        {
-          _global->activePage = child;
-          list_iterator_destroy(it);
-          return;
-        }
-      }
+          break;
 
+        if (child->children)
+          findWinByID(child, winID);
+      }
     list_iterator_destroy(it);
   }
+
+  return child;
 }
 
 /**
