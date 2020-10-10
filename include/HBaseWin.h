@@ -124,7 +124,11 @@ void OnPaint(hbasewinAttr *win, void *val);
  * @return 无 
  */
 void destoryChildren(hbasewinAttr *win);
-
+/**
+ * 清除窗口所在的区域
+ * 
+ */
+void clearWinRegion(hbasewinAttr *win, int color);
 /**
  * 释放窗口
  * @param win 要删除的窗口  

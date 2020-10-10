@@ -27,6 +27,8 @@ int main(void)
   initSVGA64k();
 
   desktop = CreateDesktop();
+  //设置当前缺省页面
+  SetDefaultPage(desktop,ID_HOMEPAGE, _global);  
 
   if (desktop && desktop->onPaint)
     desktop->onPaint(desktop, NULL);
@@ -41,10 +43,17 @@ int main(void)
     UpdateMouseStatus(&_global->mouse);
     child = checkmousewin(desktop, &_global->mouse);
     if (child)
-      if (child->EventHandler)
-        child->EventHandler(child, EVENT_MOUSE, _global);
-      else if (desktop->EventHandler)
-        desktop->EventHandler(desktop, EVENT_MOUSE, _global);
+      if (child->winID < ID_DESKTOP_MAX)
+      { //点击到desktop， desktop有页面、控件。点击到控件由desktop处理
+        //desktop控件->菜单，切换页面、登录等等       
+        if (desktop->EventHandler)
+          desktop->EventHandler(child, EVENT_MOUSE, _global);
+      }
+      else
+      { //点击到页面区域,由页面处理事件
+        if (child->EventHandler)
+          child->EventHandler(child, EVENT_MOUSE, _global);
+      }
 
     SaveMouseBk(&_global->mouse); //保存背景
     MouseDraw(&_global->mouse);   //显示鼠标
@@ -74,22 +83,25 @@ int main(void)
       }
       else if (kbchar == 'd')
       {
-        if (desktop)
-        {
-          if (desktop && desktop->onDestroy)
-          {
-            char t[20];
-            hfont *_hfont = getFont(SIMKAI, 16, 0x0000);
-            int winID = ID_HOMEPAGE;
+        // if (desktop)
+        // {
+        //   if (desktop && desktop->onDestroy)
+        //   {
+        //     char t[20];
+        //     hfont *_hfont = getFont(SIMKAI, 16, 0x0000);
+        //     int winID = ID_HOMEPAGE;
 
-            RestoreMouseBk(&_global->mouse);
-            desktop->onDestroy(desktop, &winID);
-            SaveMouseBk(&_global->mouse);
+        //     RestoreMouseBk(&_global->mouse);
 
-            // sprintf(t, "len = %d", desktop->children->len);
-            // printTextLineXY(100, 100, t, _hfont);
-          }
-        }
+        //     desktop->onDestroy(desktop, &winID);
+        //     desktop = NULL;
+        //     SaveMouseBk(&_global->mouse);
+
+        //     // sprintf(t, "len = %d", desktop->children->len);
+        //     // printTextLineXY(100, 100, t, _hfont);
+        //     freeFont(_hfont);
+        //   }
+        // }
       }
       else if (kbchar == ' ' || kbchar == 27)
       { //当按下ESC或空格退出时循环，ESC键的键值时27

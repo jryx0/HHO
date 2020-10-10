@@ -23,6 +23,7 @@ typedef struct _globaldef
 
   pyInput *pingyin;
   hbasewinAttr *foucswin;
+  hbasewinAttr *activePage;
 } globaldef;
 
 globaldef *initGlobalSetting(void);
