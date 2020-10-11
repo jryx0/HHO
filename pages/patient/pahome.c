@@ -1,0 +1,6 @@
+#include "macrodef.h"
+#include "hhosvga.h"
+#include "HBaseWin.h"
+#include "hlabel.h"
+#include "hglobal.h"
+#include "wResource.h"
