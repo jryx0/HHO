@@ -773,7 +773,7 @@ void printTextEx(hregion *region, char *text, hfont *_font)
   int linenum = 0;
   char isNewLine = FALSE;
 
-  char isFirstLine = TRUE; //是否是段落首行，首行空两个字宽度
+  char isFirstLine = _font->firstline; //是否是段落首行，首行空两个字宽度
 
   TESTNULLVOID(region);
   TESTNULLVOID(_font);
@@ -1104,10 +1104,10 @@ int calcPrintTextLenght(unsigned char *text, hfont *_f)
   TESTNULL(text, 0);
   TESTNULL(_f, 0);
 
-  while (*text)
+  while (*text++)
   {
-    if (*text > 0xa0) //汉字
-      totalPixel += _f->currentFontSize + _f->xgap;
+    if (*text > 0xa0)                                   //汉字
+      totalPixel += _f->currentFontSize / 2 + _f->xgap; //半个汉字
     else if (*text == '\r' || *text == '\n')
       break;
     else
@@ -1127,10 +1127,9 @@ void freeFont(hfont *_f)
     fclose(_f->fpCurrentFont);
     fclose(_f->fpASC);
 
-	free(_f);
+    free(_f);
     _f = NULL;
   }
-
 }
 
 void hsvgatest()

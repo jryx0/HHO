@@ -4,23 +4,26 @@
 #include "hhosvga.h"
 #include "HBaseWin.h"
 
-enum button_type
-{
-  b_standard = 0,  //标准按钮
-  b_list = 3,      //下拉按钮
-  b_img = 4,       //图片按钮
-};
+//////////////////////////////按钮状态宏定义//////////////////////////////////////////////
+#define BUTTON_UP 0 //正常状态
+#define BUTTON_DOWN 1
+#define BUTTON_HOVE 2 //在button上面
 
-typedef struct _buttonstyle
-{
-  enum button_type;
-  char *text;
-  char *imgfile;
-  char textalign;
-  hfont *_font;
-  int bkcolor1;
-  int bkcolor2;
-} buttonStyle;
+//文字对齐
+#define TEXT_CENTER 0
+
+//IMG button 使用
+#define TEXT_LEFT 1
+#define TEXT_DOWN 2
+#define TEXT_RIGHT 3
+
+//////////////////////////////按钮样式宏定义//////////////////////////////////////////////////
+
+#define STANDARD 1   //标准按钮
+#define LISTBUTTON 2 //下拉按钮
+#define IMGBUTTON 3  //图片按钮
+
+
 
 /**
  * 按钮创建
@@ -34,24 +37,11 @@ hbasewinAttr *CreateButton(hbasewinAttr *parent, int x, int y, int nWidth,
  */
 void OnPaint_button(hbasewinAttr *btn, void *value);
 
+void OnClick_button(hbasewinAttr *btn, void *value);
+void OnLeave_button(hbasewinAttr *btn, void *value);
 /**
- * 标准按钮绘制 
+ * 构造缺省按钮参数
+ * 默认标准按钮
  */
-void OnPaint_button_S(hbasewinAttr *btn, void *value);
-
-/**
- * 超链接按钮绘制 
- */
-void OnPaint_button_H(hbasewinAttr *btn, void *value);
-
-/**
- * 文本按钮绘制 
- */
-void OnPaint_button_T(hbasewinAttr *btn, void *value);
-
-/**
- * 
- */
-void OnPaint_button_L(hbasewinAttr *btn, void *value);
-void OnPaint_button_I(hbasewinAttr *btn, void *value);
+WinStyle *getbtnStyle(void);
 #endif

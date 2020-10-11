@@ -20,19 +20,19 @@
 #define TESTNULLVOID(X) \
   if (X == NULL)        \
     return;
- 
+
 #define TRACE(x)  \
   do              \
   {               \
     dbg_printf x; \
   } while (0)
- 
+
 #define TRACELOC(x) \
   do                \
   {                 \
     db_printloc(x)  \
   } while (0)
- 
+
 void dbg_printf(const char *fmt, ...);
 void db_printloc(const char *file, int line, const char *fmt, ...);
 
@@ -46,7 +46,7 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #define SCR_WIDTH 1024
 #define SCR_HEIGHT 768
 
-#define HEADER_HEIGHT 80
+#define HEADER_HEIGHT 126
 #define FOOTER_HEIGHT 44
 
 #define EPAGE_MARGIN 5
@@ -88,6 +88,7 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #define FILE_CURSOR_HAND DATAPATH "cursor\\handbg.cur"
 //#define FILE_CURSOR_ARROW DATAPATH "cursor\\arrowbg.cur"
 
+//Êó±êÒÆ¶¯×´Ì¬
 #define MOUSE_ENTERED 1
 #define MOUSE_LEFT 2
 #define MOUSE_OUTSIDE 4

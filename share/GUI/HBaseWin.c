@@ -33,7 +33,7 @@ hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
   memset(HHOwin, 0, sizeof(hbasewinAttr));
 
   HHOwin->parent = parent;
-  HHOwin->hhowintype = WIN;
+  HHOwin->wintype = WIN;
   HHOwin->winID = winID;
   HHOwin->x = x;
   HHOwin->y = y;
@@ -187,10 +187,7 @@ void freeWin(hbasewinAttr *win)
 
   if (win->value)
     free(win->value);
-
-  if (win->bkarea)
-    free(win->bkarea);
-
+    
   free(win);
   win = NULL;
 }
@@ -297,7 +294,7 @@ int compareWin(hbasewinAttr *w1, hbasewinAttr *w2)
 hbasewinAttr *findWinByID(hbasewinAttr *win, int winID)
 {
   hbasewinAttr *child = NULL;
-  TESTNULLVOID(win);
+  TESTNULL(win, NULL);
 
   if (win->winID == winID)
     return win;

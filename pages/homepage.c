@@ -128,7 +128,7 @@ void OnPaint_homepage(hbasewinAttr *win, void *value)
   TESTNULLVOID(win);
 
   //²âÊÔÓÃ
-  rectangleEx(win->x, win->y, win->nWidth, win->nHeight, 0xF801, 1, 3);
+  //rectangleEx(win->x, win->y, win->nWidth, win->nHeight, 0xF801, 1, 3);
 
   repaintChildren(win);
 
