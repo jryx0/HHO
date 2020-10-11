@@ -42,6 +42,9 @@ typedef struct __font
   unsigned char ascy;    //英文位置偏移量 y方向
   unsigned char ascSize; //英文宽度
 
+  unsigned char firstline;
+  //unsigned char underline;
+
 } hfont;
 
 unsigned int RGB565(int r, int g, int b);

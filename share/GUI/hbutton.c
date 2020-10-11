@@ -1,59 +1,89 @@
 #include "HBaseWin.h"
 #include "hbutton.h"
-#include <string.h>
+
 
 hbasewinAttr *CreateButton(hbasewinAttr *parent, int x, int y, int nWidth,
                            int nHeight, int winID, const char *title)
 {
-  hbasewinAttr *button;
+  hbasewinAttr *button = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
 
-  button = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
-  button->onPaint = OnPaintButtonUp;
-  button->onLeftUp = OnLeftUpButton;
-  button->onLeftDown = OnLeftDownButton;
+  button->onPaint = OnPaint_button;
+  button->onClick = OnClick_button;
+  button->onLeave = OnLeave_button;
+
+  button->value = getbtnStyle();
   return button;
 }
-void OnPaintButtonUp(hbasewinAttr *btn, void *value)
+
+void OnClick_button(hbasewinAttr *btn, void *value)
 {
-  int x, y, type = 1, len;
-  if (btn == NULL)
-    return;
-  OnPaint(btn, &type);
-  if (btn->title == NULL)
-    return;
-  len = strlen(btn->title) * 8;
-  x = getAbsoluteX(btn);
-  y = getAbsoluteY(btn);
-  if (len < btn->nWidth)
-    outtextxy((btn->nWidth - len) / 2 + x, (btn->nHeight - 8) / 2 + y, btn->title); //8个像素点一个字符
-  else
-    outtextxy(x, (btn->nHeight - 8) / 2 + y, btn->title);
+  WinStyle *btnStyle = NULL;
+  TESTNULLVOID(btn);
+  TESTNULLVOID(btn->value);
+  btnStyle = (WinStyle *)btn->value;
+  btnStyle->bkcolor = 0x003F; //颜色变深
+
+  OnPaint_button(btn, value);
 }
-void OnPaintButtonDown(hbasewinAttr *btn, void *value)
+
+void OnLeave_button(hbasewinAttr *btn, void *value)
 {
-  int x, y, type = 2, len;
-  if (btn == NULL)
-    return;
-  OnPaint(btn, &type);
-  if (btn->title == NULL)
-    return;
-  len = strlen(btn->title) * 8;
-  x = getAbsoluteX(btn);
-  y = getAbsoluteY(btn);
-  if (len < btn->nWidth)
-    outtextxy((btn->nWidth - len) / 2 + x, (btn->nHeight - 8) / 2 + y, btn->title); //8个像素点一个字符
-  else
-    outtextxy(x, (btn->nHeight - 8) / 2 + y, btn->title);
+  WinStyle *btnStyle = NULL;
+  TESTNULLVOID(btn);
+  TESTNULLVOID(btn->value);
+  btnStyle = (WinStyle *)btn->value;
+  btnStyle->bkcolor = 0x03DF; //颜色变深
+
+  OnPaint_button(btn, value);
 }
-void OnLeftUpButton(hbasewinAttr *btn, void *value)
+
+void OnPaint_button(hbasewinAttr *btn, void *value)
 {
-  if (btn == NULL)
-    return;
-  btn->onPaint=OnPaintButtonUp;
+  int x = 0, y = 0;
+  WinStyle *btnStyle = NULL;
+  hfont *_font;
+
+  TESTNULLVOID(btn);
+  TESTNULLVOID(btn->value);
+
+  btnStyle = (WinStyle *)btn->value;
+  fillRegionEx(btn->x, btn->y, btn->nWidth, btn->nHeight, btnStyle->bkcolor);
+  //rectangleEx(btn->x, btn->y, btn->nWidth, btn->nHeight, 0x05FF, 1, 1);
+
+  if (btn->title != NULL)
+  {
+    _font = getFont(btnStyle->fonttype, btnStyle->fontsize, btnStyle->fontcolor);
+    y = getAbsoluteY(btn);
+    x = getAbsoluteX(btn);
+    if (btnStyle->textalign == TEXT_CENTER)
+    {
+      int len = calcPrintTextLenght(btn->title, _font);
+      y += (btn->nHeight - _font->currentFontSize) / 2;
+      x += (btn->nWidth - len) / 2;
+    }
+    printTextLineXY(x, y, btn->title, _font);
+    freeFont(_font);
+  }
 }
-void OnLeftDownButton(hbasewinAttr *btn, void *value)
+
+/**
+ * 构造缺省按钮参数
+ * 默认标准按钮
+ * 删除button时由 freeWin释放内存
+ */
+WinStyle *getbtnStyle(void)
 {
-  if (btn == NULL)
-    return;
-  btn->onPaint=OnPaintButtonDown;
+  WinStyle *btnStyle = malloc(sizeof(WinStyle));
+  TESTNULL(btnStyle, NULL);
+
+  btnStyle->bkcolor = 0x03DF;
+
+  btnStyle->type = STANDARD;
+  btnStyle->textalign = TEXT_CENTER;
+
+  btnStyle->fontcolor = 0xFFFF;
+  btnStyle->fontsize = 24;
+  btnStyle->fonttype = SIMSUN;
+
+  return btnStyle;
 }

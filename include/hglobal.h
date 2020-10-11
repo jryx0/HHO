@@ -9,7 +9,7 @@
 #include <stdio.h>
 
 //--------------------------------------------------------------------
- 
+
 //全局变量结构
 //Dos 打开文件数量<15
 typedef struct _globaldef
@@ -22,8 +22,9 @@ typedef struct _globaldef
   mousestatus mouse;
 
   pyInput *pingyin;
-  hbasewinAttr *foucswin;
+  hbasewinAttr *activeCtrl;
   hbasewinAttr *activePage;
+  int activePageID;
 } globaldef;
 
 globaldef *initGlobalSetting(void);

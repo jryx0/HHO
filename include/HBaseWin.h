@@ -16,6 +16,7 @@ typedef enum winType
 {
   WIN,
   BUTTON,
+
   TEXTBOX,
   LIST,
   CHECKBOX,
@@ -27,22 +28,23 @@ typedef enum winType
 typedef void (*hhoevent)(struct winstruct *win, void *value);
 typedef void (*hhoeventhandler)(struct winstruct *win, int type, void *value);
 
-typedef struct
+typedef struct _style
 {
-  int standardShade[4];
-  int capColour;
-  int fontColour;
-  int desktopColour;
-  int capFontColour;
+  char type;
+  char textalign;
 
-  //屏幕最大显示颜色 256 32k 64k颜色
-  int maxcolors;
-} win_colors;
+  char fontsize;
+  char fonttype;
+  int fontcolor;
+
+  int bkcolor;
+  int bkcolor1;
+} WinStyle;
 
 typedef struct winstruct
 {
-  //窗口类型：按钮、文本输入框、多选框
-  int hhowintype;
+  //窗口类型
+  enum winType wintype;
   //窗口唯一ID
   int winID;
 
@@ -57,17 +59,11 @@ typedef struct winstruct
   //窗口状态
   int status; // winStatus
 
-  //窗口颜色
-  // win_colors *colors;
-
   //显示标题
   char *title;
 
   //存储的数据，如文本输入框的字符串
   void *value;
-
-  //背景
-  int *bkarea;
 
   //响应鼠标事件函数指针单击,左键按下，左键按起，鼠标离开，鼠标进入
   hhoevent onClick, onLeftUp, onLeftDown, onLeave, onEnter;
@@ -88,7 +84,7 @@ typedef struct winstruct
   list_t *children;
   //父窗口
   struct winstruct *parent;
-  struct winstruct *desktop;
+  //struct winstruct *desktop;
 } hbasewinAttr;
 
 /**

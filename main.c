@@ -76,7 +76,7 @@ int main(void)
       {
         if (desktop)
           desktop->onPaint(desktop, NULL);
-      }      
+      }
       else if (kbchar == ' ' || kbchar == 27)
       { //当按下ESC或空格退出时循环，ESC键的键值时27
 
