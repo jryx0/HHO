@@ -11,7 +11,7 @@ hbasewinAttr *CreateCheckBox(hbasewinAttr *parent, int x, int y, int nWidth,
   if (nHeight < 16 || nWidth < 32)
     return NULL;
   checkbox = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
-  checkbox->onPaint = OnPaintCheckBoxNone;
+  checkbox->onPaint = OnPaintCheckBox;
 }
 
 void OnPaintCheckBoxNone(hbasewinAttr *checkbox, void *value)
@@ -66,3 +66,20 @@ void OnPaintCheckBoxCross(hbasewinAttr *checkbox, void *value)
   line(x1, y2, x2, y1, 0);
 }
 
+void OnPaintCheckBox(hbasewinAttr *checkbox, void *value)
+{
+  int judge;
+  judge = *(checkbox->value);
+  switch (judge)
+  {
+  case 1:
+    OnPaintCheckBoxRight(hbasewinAttr *checkbox, void *value);
+    break;
+  case 2:
+    OnPaintCheckBoxCross(hbasewinAttr *checkbox, void *value);
+    break;
+  default:
+    OnPaintCheckBoxNone(hbasewinAttr *checkbox, void *value);
+    break;
+  }
+}
