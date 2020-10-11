@@ -74,7 +74,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
         int y = getAbsoluteY(hitwin);
         fillRegionEx(x, y, hitwin->nWidth + 1, hitwin->nHeight + 1, 0xFFFF); //Çå³ý×Ó´°¿ÚÇøÓò
 
-        TRACE(("%s(%d): É¾³ý´°¿Ú%u\n", __FILE__, __LINE__, hitwin->winID));
+        TRACE(("%s(%d): É¾³ýlabel%u\n", __FILE__, __LINE__, hitwin->winID));
         hitwin->onDestroy(hitwin, NULL);
       }
     }

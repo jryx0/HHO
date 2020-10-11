@@ -1127,8 +1127,10 @@ void freeFont(hfont *_f)
     fclose(_f->fpCurrentFont);
     fclose(_f->fpASC);
 
-    free(_f);
+	free(_f);
+    _f = NULL;
   }
+
 }
 
 void hsvgatest()

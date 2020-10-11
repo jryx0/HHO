@@ -1,6 +1,6 @@
 #include "list.h"
 #include "macrodef.h"
-#include "pinyin.h"
+//#include "pinyin.h"
 #include "tinytest.h"
 #include "userinfo.h"
 #include "test.h"
@@ -43,46 +43,65 @@ void test_userinfo_read()
   // UserInfo *user = (UserInfo *)malloc(sizeof(UserInfo));
   list_t *userinfolist;
   list_node_t *ptest;
+  list_iterator_t *it;
+  list_node_t *node;
+  UserInfo *ui;
+
+
 
   userinfolist = list_new();
 
   userinfolist = ReadFileToList(USERINFOFILE, userinfolist, sizeof(UserInfo));
   if (userinfolist)
   {
-    ptest = list_at(userinfolist, 0);
+    ptest = list_at(userinfolist, LIST_HEAD);
     ASSERT_EQUALS(12, ((UserInfo *)ptest->val)->id);
+    list_remove(userinfolist, ptest);
+
+    it = list_iterator_new(userinfolist, 0);
+    while(node = list_iterator_next(it))
+    {
+      ui = (UserInfo *)node ->val;
+      printf("id = %d, pw = %s, type =%c, name=%s\n", ui->id, ui->password, ui->type, ui->username);
+    }
   }
   else
     ASSERT_EQUALS(1, 0);
 }
 
-void test_pinyin()
+// void test_pinyin()
+// {
+//   char *candidateHanzi;
+//   pyInput *idx = initPYHZIndex();
+
+//   candidateHanzi = getCandidateHZbyPY(idx, "a");
+//   ASSERT_STRING_EQUALS(candidateHanzi, "°¡°¢ß¹àÄëçï¹");
+//   free(candidateHanzi);
+
+//   candidateHanzi = getCandidateHZbyPY(idx, "z");
+//   ASSERT_STRING_EQUALS(candidateHanzi, "ÔÑÔÒÔÓßÆ");
+//   free(candidateHanzi);
+
+//   candidateHanzi = getCandidateHZbyPY(idx, "za");
+//   ASSERT_STRING_EQUALS(candidateHanzi, "ÔÑÔÒÔÓßÆ");
+//   free(candidateHanzi);
+
+//   candidateHanzi = getCandidateHZbyPY(idx, "zuo");
+//   ASSERT_STRING_EQUALS(candidateHanzi, "×ò´é×ó×ô×õ×ö×÷×ø×ùÚèßòâôëÑìñóĞÚâ");
+//   free(candidateHanzi);
+
+//   candidateHanzi = getCandidateHZbyPY(idx, "1");
+//   ASSERT_EQUALS(candidateHanzi, NULL);
+//   free(candidateHanzi);
+
+//   ClosePY(idx);
+// }
+
+void test_list()
 {
-  char *candidateHanzi;
-  pyInput *idx = initPYHZIndex();
-
-  candidateHanzi = getCandidateHZbyPY(idx, "a");
-  ASSERT_STRING_EQUALS(candidateHanzi, "°¡°¢ß¹àÄëçï¹");
-  free(candidateHanzi);
-
-  candidateHanzi = getCandidateHZbyPY(idx, "z");
-  ASSERT_STRING_EQUALS(candidateHanzi, "ÔÑÔÒÔÓßÆ");
-  free(candidateHanzi);
-
-  candidateHanzi = getCandidateHZbyPY(idx, "za");
-  ASSERT_STRING_EQUALS(candidateHanzi, "ÔÑÔÒÔÓßÆ");
-  free(candidateHanzi);
-
-  candidateHanzi = getCandidateHZbyPY(idx, "zuo");
-  ASSERT_STRING_EQUALS(candidateHanzi, "×ò´é×ó×ô×õ×ö×÷×ø×ùÚèßòâôëÑìñóĞÚâ");
-  free(candidateHanzi);
-
-  candidateHanzi = getCandidateHZbyPY(idx, "1");
-  ASSERT_EQUALS(candidateHanzi, NULL);
-  free(candidateHanzi);
-
-  ClosePY(idx);
+  
 }
+
 
 // test in console both in vscode and borlandc
 void console_test()
@@ -94,7 +113,8 @@ void console_test()
 
   RUN(test_userinfo_save);
   RUN(test_userinfo_read);
-  RUN(test_pinyin);
+ // RUN(test_pinyin);
+
 
   TEST_REPORT();
 }

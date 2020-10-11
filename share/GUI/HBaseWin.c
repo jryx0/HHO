@@ -29,7 +29,7 @@ hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
 
   hbasewinAttr *HHOwin = malloc(sizeof(hbasewinAttr));
   TESTNULL(HHOwin, NULL);
-  
+
   memset(HHOwin, 0, sizeof(hbasewinAttr));
 
   HHOwin->parent = parent;
@@ -67,6 +67,9 @@ void OnDestory(hbasewinAttr *win, void *val)
   TESTNULLVOID(win);
   destoryChildren(win);
 
+  if (win->children)
+    list_destroy(win->children);
+
   if (win->parent && win->parent->children)
   {
     node = list_find(win->parent->children, win);
@@ -76,6 +79,7 @@ void OnDestory(hbasewinAttr *win, void *val)
   else
   {
     freeWin(win);
+    win = NULL;
   }
   (void)val;
 }
@@ -97,13 +101,16 @@ void OnPaint(hbasewinAttr *win, void *val)
   x2 = x1 + win->nWidth;
   y2 = y1 + win->nHeight;
 
-  fillRegion(x1, y1, x2, y2, COLOR_ligtgray); //);
+  //测试用，每个窗口填充背景，画虚框
+  fillRegion(x1, y1, x2, y2, COLOR_ligtgray);
   rectangle(x1, y1, x2, y2, COLOR_darkgray, 1, 2);
   (void)val;
 }
 
 /**
- * @brief 遍历所有子窗口，调用OnDestory窗口函数指针，删除子窗口 * 
+ * @brief 递归子窗口，在OnDestory时调用，删除子窗口的所有子窗口
+ * win本身由调用函数删除。
+ *  
  * @param win 要删除的窗口  
  * @return 无 
  */
@@ -119,16 +126,40 @@ void destoryChildren(hbasewinAttr *win)
   it = list_iterator_new(win->children, LIST_HEAD);
   while ((node = list_iterator_next(it)))
   {
+    // if (node->val != NULL)
+    // {
+    //   childwin = (hbasewinAttr *)(node->val);
+    //   if (childwin->children == NULL)
+    //   {
+    //     list_remove(win->children, node);
+    //     childwin = NULL;
+    //     if (childwin)
+    //       TRACE(("删除窗口:%d\n", childwin->winID));
+    //   }
+    //   else
+    //     destoryChildren(childwin);
+    // }
     if (node->val != NULL)
     {
       childwin = (hbasewinAttr *)(node->val);
-      if (childwin->children == NULL)
-        list_remove(win->children, node);
-      else
+      if (childwin->children != NULL)
+      {
         destoryChildren(childwin);
+        list_destroy(childwin->children);
+      }
     }
   }
   list_iterator_destroy(it);
+}
+
+/**
+ * 清除窗口所在的区域
+ * 
+ */
+void clearWinRegion(hbasewinAttr *win, int color)
+{
+  TESTNULLVOID(win);
+  fillRegionEx(win->x, win->y, win->nWidth, win->nHeight, color);
 }
 
 /**
@@ -174,6 +205,7 @@ void freeWin(hbasewinAttr *win)
 
 hbasewinAttr *addChild(hbasewinAttr *parent, hbasewinAttr *child)
 {
+  list_node_t *node = NULL;
   TESTNULL(parent, NULL);
   TESTNULL(child, NULL);
 
@@ -183,7 +215,15 @@ hbasewinAttr *addChild(hbasewinAttr *parent, hbasewinAttr *child)
     parent->children->match = matchWin;
     parent->children->free = freeWin;
   }
-  list_rpush(parent->children, list_node_new(child));
+
+  node = list_node_new(child);
+  if (node)
+    list_rpush(parent->children, node);
+  else
+  {
+    TRACE(("%s(%d): addChild 创建list_node_t失败, winID = %d。", __FILE__, __LINE__, child->winID));
+  }
+
   return parent;
 }
 
@@ -248,6 +288,38 @@ int compareWin(hbasewinAttr *w1, hbasewinAttr *w2)
     return w1->winID == w1->winID;
 
   return 0;
+}
+
+/**
+ * 在win中查找winID的子窗口
+ * 
+ */
+hbasewinAttr *findWinByID(hbasewinAttr *win, int winID)
+{
+  hbasewinAttr *child = NULL;
+  TESTNULLVOID(win);
+
+  if (win->winID == winID)
+    return win;
+
+  if (win->children)
+  {
+    list_iterator_t *it = list_iterator_new(win->children, LIST_HEAD);
+    list_node_t *node;
+    while ((node = list_iterator_next(it)))
+      if (node->val)
+      {
+        child = (hbasewinAttr *)node->val;
+        if (child->winID == winID)
+          break;
+
+        if (child->children)
+          findWinByID(child, winID);
+      }
+    list_iterator_destroy(it);
+  }
+
+  return child;
 }
 
 /**

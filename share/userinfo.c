@@ -1,6 +1,5 @@
 #include "userinfo.h"
 #include "list.h"
-#include "macrodef.h"
 #include <stdio.h>
 
 /***********Âß¼­Ä£¿é************/

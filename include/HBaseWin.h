@@ -124,7 +124,11 @@ void OnPaint(hbasewinAttr *win, void *val);
  * @return 无 
  */
 void destoryChildren(hbasewinAttr *win);
-
+/**
+ * 清除窗口所在的区域
+ * 
+ */
+void clearWinRegion(hbasewinAttr *win, int color);
 /**
  * 释放窗口
  * @param win 要删除的窗口  
@@ -179,16 +183,10 @@ int checkpointInside(hbasewinAttr *win, int x, int y);
  * @return 返回被点击的子窗口，若无子窗寇被点击，返回窗口
  */
 hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse);
-
 /**
- * 根据窗口ID查找子窗口
- *  win
+ * 在win中查找winID的窗口
+ * 
  */
-// hbasewinAttr *FindChildWinbyID(hbasewinAttr *win, int id);
+hbasewinAttr *findWinByID(hbasewinAttr *win, int winID);
 
-/**
- * 根据窗口ID查找子窗口
- *  win
- */
-// list_node_t *FindChildNodebyID(hbasewinAttr *win, int id);
 #endif

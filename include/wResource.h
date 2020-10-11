@@ -16,20 +16,26 @@
 
 //////////////////////Desktop windows defined////////////////////////////////
 #define ID_DESKTOP 0
-#define ID_WIN_LOG_PANEL 1
-#define ID_WIN_LOGIN 2
+#define ID_MENU_LOG 1       //label
+#define ID_MENU_HOMEPAGE 2  //button
+#define ID_MENU_TESTPAGE 3  //button
 
 
+//是否点击desktop本身的控件
+#define ID_DESKTOP_MAX 30 
 
 ////////////////////////////homepage//////////////////////////////////////////////
-#define ID_HOMEPAGE 10
+#define ID_HOMEPAGE 30
 
-#define ID_LABEL_1 11
-#define ID_LABEL_2 12
-#define ID_LABEL_3 13
+#define ID_LABEL_1 31
+#define ID_LABEL_2 32
+#define ID_LABEL_3 33
 
 ////////////////////test page///////////////////////////////////////////////////
-#define ID_TESTPAGE 20
+#define ID_TESTPAGE 10000
+
+
+
 
 //////////////////////Login windows defined////////////////////////////////
 #define ID_LOGIN_REGISTER 1001
