@@ -102,6 +102,7 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #ifndef __BORLANDC__
 #define huge
 #define far
+#define _interrupt
 
 #ifndef _REG_DEFS
 #define _REG_DEFS

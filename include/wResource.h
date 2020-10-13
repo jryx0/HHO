@@ -38,6 +38,9 @@
 ////////////////////test page///////////////////////////////////////////////////
 #define ID_TESTPAGE 10000
 #define ID_TEST_HYPERLINK 10001
+#define ID_TEST_CHECKBOX 10002
+#define ID_TEST_TEXTBOX 10003
+#define ID_TEST_TEXTBOX2 10004
 
 //////////////////////Login windows defined////////////////////////////////
 #define ID_LOGIN_REGISTER 1001

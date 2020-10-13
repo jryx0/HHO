@@ -102,9 +102,13 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, hbasewinAttr *activeP
   if (activePage && activePage->winID != pageID)
   { //当前活动page不是pageID页面，则删除其他页面
     clearWinRegion(activePage, 0xFFFF);
-    if (activePage->onDestroy)
-      activePage->onDestroy(activePage, NULL);
 
+    _g->activeTextBox = NULL;
+    _g->activeTextboxID = -1;
+    if (activePage->onDestroy)
+    {
+      activePage->onDestroy(activePage, NULL);
+    }
     activePage = NULL;
   }
 
@@ -113,7 +117,7 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, hbasewinAttr *activeP
     activePage = pageFactory(desktop, pageID);
     if (activePage == NULL)
     {
-      TRACE(("%s(%d):Desktop_changePage(), 创建窗口失败！\n"));
+      TRACE(("%s(%d):Desktop_changePage(), 创建窗口失败！\n", __FILE__, __LINE__));
       return;
     }
     if (activePage->onPaint)
@@ -161,9 +165,9 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标弹起
         //切换页面
-        Desktop_changePage(win->parent, ID_TESTPAGE, _g->activePage); //使用win->parent
         if (win->onLeave)
           win->onLeave(win, NULL);
+        Desktop_changePage(win->parent, ID_TESTPAGE, _g->activePage); //使用win->parent
       }
 
       break;
@@ -181,9 +185,9 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标弹起
         //切换页面
-        Desktop_changePage(win->parent, ID_HOMEPAGE, _g->activePage);
         if (win->onLeave)
           win->onLeave(win, NULL);
+        Desktop_changePage(win->parent, ID_HOMEPAGE, _g->activePage);
       }
       break;
 

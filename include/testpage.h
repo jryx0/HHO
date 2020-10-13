@@ -7,5 +7,5 @@
 
 hbasewinAttr *CreateTestPage(hbasewinAttr *parent, int winID, char *title);
 void OnPaint_TestPage(hbasewinAttr *win, void *value);
-
+void OnDestroy_TestPage(hbasewinAttr *win, void *value);
 #endif

@@ -22,9 +22,11 @@ typedef struct _globaldef
   mousestatus mouse;
 
   pyInput *pingyin;
-  hbasewinAttr *activeCtrl;
+   
   hbasewinAttr *activePage;
   int activePageID;
+  int activeTextboxID;
+  hbasewinAttr *activeTextBox;
 } globaldef;
 
 globaldef *initGlobalSetting(void);

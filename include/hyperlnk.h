@@ -24,7 +24,7 @@ void OnClick_hyperlink(hbasewinAttr *link, void *value);
  * 设置超链接点击完时的屏幕显示
  * 
  */
-void OnLeave_hyperlink(hbasewinAttr *btn, void *value);
+void OnLeave_hyperlink(hbasewinAttr *link, void *value);
 /**
  * 设置超链接屏幕输出显示
  * 

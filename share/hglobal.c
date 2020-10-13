@@ -36,6 +36,10 @@ globaldef *initGlobalSetting(void)
   _global->pingyin = initPYHZIndex();
   TESTNULL(_global->pingyin, NULL);
 
+  _global->activePageID = -1;
+  _global->activeTextboxID = -1;
+  _global->activeTextBox = NULL;
+
   //¼ÓÔØÊó±êÐÎ×´
   ReadCursor((unsigned char *)_global->cursor_arrow, FILE_CURSOR_ARROW);
   ReadCursor((unsigned char *)_global->cursor_hand, FILE_CURSOR_HAND);

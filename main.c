@@ -57,6 +57,8 @@ int main(void)
     SaveMouseBk(&_global->mouse); //保存背景
     MouseDraw(&_global->mouse);   //显示鼠标
 
+    
+
     delay(30);
 
     //键盘处理

@@ -147,6 +147,7 @@ void destoryChildren(hbasewinAttr *win)
         destoryChildren(childwin);
         list_destroy(childwin->children);
       }
+      childwin->onDestroy(childwin, NULL);
     }
   }
   list_iterator_destroy(it);
@@ -182,12 +183,14 @@ int matchWin(hbasewinAttr *w1, hbasewinAttr *w2)
  */
 void freeWin(hbasewinAttr *win)
 {
+  TRACE(("freeWin:%d\n", win->winID));
+
   if (win->title)
     free(win->title);
 
   if (win->value)
     free(win->value);
-    
+
   free(win);
   win = NULL;
 }
@@ -288,6 +291,25 @@ int compareWin(hbasewinAttr *w1, hbasewinAttr *w2)
 }
 
 /**
+ * 找到顶级窗口，所有窗口的根窗口
+ */
+hbasewinAttr *getRootWin(hbasewinAttr *win)
+{
+  TESTNULL(win, win);
+  if (win->parent == NULL)
+    return win;
+
+  return getRootWin(win->parent);
+}
+
+void ActiveWin(hbasewinAttr *win, globaldef *_g)
+{
+  
+}
+
+
+
+/**
  * 在win中查找winID的子窗口
  * 
  */
@@ -311,7 +333,12 @@ hbasewinAttr *findWinByID(hbasewinAttr *win, int winID)
           break;
 
         if (child->children)
-          findWinByID(child, winID);
+        {
+          if (child = findWinByID(child, winID))
+            break;
+        }
+        else
+          child = NULL;
       }
     list_iterator_destroy(it);
   }

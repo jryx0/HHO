@@ -31,7 +31,7 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
  * 
  */
 void OnPaint_Label(hbasewinAttr *label, void *value)
-{  
+{
   hfont *fpFont;
   FILE *fptemp;
   hregion _region;
@@ -47,10 +47,10 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   TESTNULLVOID(label);
   TESTNULLVOID(label->title);
 
-  if (value == NULL)
-    fptemp = fopen(label->title, "r");
-  else
-    fptemp = fopen((char *)value, "r");
+  //if (value == NULL)
+  fptemp = fopen(label->title, "r");
+  // else
+  //   fptemp = fopen((char *)value, "r");
 
   if (fptemp == NULL)
   {
@@ -65,7 +65,7 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   _region.right_bottom.y = _region.left_top.y + label->nHeight;
 
   printTextFile(&_region, fptemp, fpFont);
-  
+
   freeFont(fpFont);
   fclose(fptemp);
 
