@@ -16,7 +16,6 @@ typedef enum winType
 {
   WIN,
   BUTTON,
-
   TEXTBOX,
   LIST,
   CHECKBOX,

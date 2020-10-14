@@ -30,4 +30,12 @@ void  OnDestory_TextBox(hbasewinAttr *tb, void *value);
  * 
  */
 void OnActive_TextBox(hbasewinAttr *tb, void *value);
+
+/**
+ * 绘制文本框光标
+ * @param textbox 要绘制的textbox
+ * @param blink 闪烁标志
+ */
+void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink);
+
 #endif

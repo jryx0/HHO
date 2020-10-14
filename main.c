@@ -2,7 +2,7 @@
 #include "hhosvga.h"
 #include "mouse.h"
 #include "hglobal.h"
-
+#include "htextbox.h"
 #include "HBaseWin.h"
 #include "wdesktop.h"
 #include "hlabel.h"
@@ -18,7 +18,8 @@ int main(void)
   globaldef *_global;
   hbasewinAttr *desktop;
   hbasewinAttr *child = NULL;
-  int size;
+  int blink = 0;
+  //int size;
 
   //初始化系统参数
   _global = initGlobalSetting();
@@ -57,7 +58,8 @@ int main(void)
     SaveMouseBk(&_global->mouse); //保存背景
     MouseDraw(&_global->mouse);   //显示鼠标
 
-    
+    if (_global->foucsedTextBox)
+      DrawTextCursor(_global->foucsedTextBox, blink++);
 
     delay(30);
 

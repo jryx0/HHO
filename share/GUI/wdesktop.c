@@ -97,14 +97,23 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID)
 void Desktop_changePage(hbasewinAttr *desktop, int pageID, hbasewinAttr *activePage)
 {
   globaldef *_g;
+  list_node_t *node;
 
   TESTNULLVOID(desktop);
   if (activePage && activePage->winID != pageID)
   { //当前活动page不是pageID页面，则删除其他页面
     clearWinRegion(activePage, 0xFFFF);
-
-    _g->activeTextBox = NULL;
-    _g->activeTextboxID = -1;
+    // TRACE(("textbox ID in changepage:%d\n", _g->activeTextboxID));
+    // node = list_find(activePage->children, _g->foucsedTextBox);
+    // TRACE(("=============%u===========\n",_g->foucsedTextBox));
+    // if (_g->foucsedTextBox)
+    //   TRACE(("+++++++%d+++++\n", _g->foucsedTextBox->winID));
+    // if (node)
+    //   TRACE(("--------------%u----------------", node->val));
+    if (_g->foucsedTextBox && _g->foucsedTextBox->onActivate)
+      _g->foucsedTextBox->onActivate(NULL, _g);
+    //_g->foucsedTextBox = NULL;
+    //_g->activeTextboxID = -1;
     if (activePage->onDestroy)
     {
       activePage->onDestroy(activePage, NULL);
@@ -152,13 +161,13 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
     switch (win->winID)
     {
     case ID_MENU_TESTPAGE:
+
       /* 改变鼠标形状、改变背景颜色 */
-      //.....
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
 
       if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
-      { //鼠标按下
+      { //鼠标按下,改变按钮样式
         if (win->onClick)
           win->onClick(win, NULL);
       }

@@ -35,7 +35,6 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
       }
     }
     break;
-
   case ID_LABEL_1: //label1
     if (type == EVENT_MOUSE)
     {                                                                             //label1 处理鼠标移动理鼠标移动
@@ -75,7 +74,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
         fillRegionEx(x, y, hitwin->nWidth + 1, hitwin->nHeight + 1, 0xFFFF); //清除子窗口区域
 
         TRACE(("%s(%d): 删除label%u\n", __FILE__, __LINE__, hitwin->winID));
-        hitwin->onDestroy(hitwin, NULL);
+        hitwin->onDestroy(hitwin, NULL);        
       }
     }
     break;

@@ -183,8 +183,6 @@ int matchWin(hbasewinAttr *w1, hbasewinAttr *w2)
  */
 void freeWin(hbasewinAttr *win)
 {
-  TRACE(("freeWin:%d\n", win->winID));
-
   if (win->title)
     free(win->title);
 
@@ -300,11 +298,6 @@ hbasewinAttr *getRootWin(hbasewinAttr *win)
     return win;
 
   return getRootWin(win->parent);
-}
-
-void ActiveWin(hbasewinAttr *win, globaldef *_g)
-{
-  
 }
 
 

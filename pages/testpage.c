@@ -30,8 +30,10 @@ hbasewinAttr *CreateTestPage(hbasewinAttr *parent, int winID, char *title)
 
 void OnDestroy_TestPage(hbasewinAttr *win, void *value)
 {
-  TRACE(("%s(%d):OnDestroy_TestPage, %d\n", __FILE__, __LINE__, win->winID));
+  //TRACE(("%s(%d):OnDestroy_TestPage, %d\n", __FILE__, __LINE__, win->winID));
+
   OnDestory(win, NULL);
+  (void)value;
 }
 
 void OnPaint_TestPage(hbasewinAttr *win, void *value)
@@ -44,6 +46,7 @@ void OnPaint_TestPage(hbasewinAttr *win, void *value)
   }
 
   repaintChildren(win);
+  (void)value;
 }
 
 void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
@@ -71,16 +74,9 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
 
       if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       {
-        hbasewinAttr *prevTextbox = findWinByID(win, _g->activeTextboxID);
-        // if (prevTextbox && prevTextbox->wintype == TEXTBOX) //textbox 离开
-        // {
-        //   prevTextbox->onLeave(prevTextbox, NULL);
-        //   prevTextbox->onPaint(prevTextbox, NULL);
-        // }
         //无激活窗口，原有textbox inactive
-        prevTextbox ->onActivate(NULL, prevTextbox);
-        _g->activeTextboxID = -1;
-        _g->activeTextBox = NULL;
+        if (_g->foucsedTextBox && _g->foucsedTextBox->onActivate)
+          _g->foucsedTextBox->onActivate(NULL, _g);
       }
     }
     break;
@@ -95,7 +91,7 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
           hitwin->onClick(hitwin, NULL);
       }
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-      { //鼠标弹起
+      { //鼠标释放
         if (hitwin->onLeave)
           hitwin->onLeave(hitwin, NULL);
 
@@ -111,25 +107,24 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
     case ID_TEST_TEXTBOX:
     case ID_TEST_TEXTBOX2:
     {
-      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP && _g->activeTextboxID != hitwin->winID)
-      { //鼠标按下
-        // _g->activeTextboxID
-        hbasewinAttr *prevTextbox = findWinByID(win, _g->activeTextboxID);
-        // if (prevTextbox && prevTextbox->onLeave) //上一个textbox 离开
-        // {
-        //   prevTextbox->onLeave(prevTextbox, NULL);
-        //   prevTextbox->onPaint(prevTextbox, NULL);
-        // }
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标释放
 
-        // if (hitwin->onClick) //现有textbox
+        if (_g->foucsedTextBox == NULL)
+          TRACE(("%s(%d)ID_TEST_TEXTBOX.......\n", __FILE__, __LINE__));
+        else
+        {
+          TRACE(("%s(%d)type= %d, id = %u.......\n", __FILE__, __LINE__,
+                 _g->foucsedTextBox->wintype, _g->foucsedTextBox->winID));
+        }
+
+        // if (_g->foucsedTextBox == NULL //首次激活
+        //     || _g->foucsedTextBox->winID != hitwin->winID)
         // {
-        //   hitwin->onClick(hitwin, NULL);
-        //   hitwin->onPaint(hitwin, NULL);
-        // }
+
         if (hitwin->onActivate)
-          hitwin->onActivate(hitwin, prevTextbox);
-        _g->activeTextboxID = hitwin->winID;
-        _g->activeTextBox = hitwin;
+          hitwin->onActivate(hitwin, _g);
+        // }
       }
     }
     break;

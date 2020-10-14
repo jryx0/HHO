@@ -25,8 +25,7 @@ typedef struct _globaldef
    
   hbasewinAttr *activePage;
   int activePageID;
-  int activeTextboxID;
-  hbasewinAttr *activeTextBox;
+  hbasewinAttr *foucsedTextBox;
 } globaldef;
 
 globaldef *initGlobalSetting(void);

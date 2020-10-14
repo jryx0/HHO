@@ -37,8 +37,8 @@ globaldef *initGlobalSetting(void)
   TESTNULL(_global->pingyin, NULL);
 
   _global->activePageID = -1;
-  _global->activeTextboxID = -1;
-  _global->activeTextBox = NULL;
+  //_global->activeTextboxID = -1;
+  _global->foucsedTextBox = NULL;
 
   //¼ÓÔØÊó±êÐÎ×´
   ReadCursor((unsigned char *)_global->cursor_arrow, FILE_CURSOR_ARROW);
