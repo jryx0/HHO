@@ -4,6 +4,18 @@
 #include "hhosvga.h"
 #include "HBaseWin.h"
 
+typedef struct _textinfo
+{
+  hregion r;
+  int x;
+  int y;
+  int width;
+  int height;
+  int curx;
+  int cury;
+  int active;
+} textInfo;
+
 hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
                             int nHeight, int winID, const char *title);
 
@@ -24,7 +36,7 @@ void OnLeave_TextBox(hbasewinAttr *tb, void *value);
  * 点击时,设置当前textbox为活动控件
  * 
  */
-void  OnDestory_TextBox(hbasewinAttr *tb, void *value);
+void OnDestory_TextBox(hbasewinAttr *tb, void *value);
 /**
  * textbox 激活时处理 
  * 

@@ -1,4 +1,4 @@
-#include "macrodef.h"
+//#include "macrodef.h"
 #include "hhosvga.h"
 #include "HBaseWin.h"
 #include "htextbox.h"
@@ -11,6 +11,7 @@
 hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
                             int nHeight, int winID, const char *title)
 {
+  textInfo *ti;
   hbasewinAttr *tb = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
   TESTNULL(tb, NULL);
   tb->onPaint = OnPaint_TextBox;
@@ -18,10 +19,22 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   tb->onLeave = OnLeave_TextBox;
   tb->onDestroy = OnDestory_TextBox;
   tb->onActivate = OnActive_TextBox;
-
-  tb->value = malloc(2); //int 控制活动状态时的绘制
   tb->wintype = TEXTBOX;
 
+  ti = malloc(sizeof(textInfo));
+  ti->x = getAbsoluteX(tb) + 6;
+  ti->y = getAbsoluteY(tb) + 6;
+  ti->width = nWidth - 10;
+  ti->height = nHeight;
+
+  ti->r.left_top.x = getAbsoluteX(tb) + 6;
+  ti->r.left_top.y = getAbsoluteY(tb) + 6;
+  ti->r.right_bottom.x = ti->r.left_top.x + ti->width;
+  ti->r.right_bottom.y = ti->r.left_top.y + ti->height;
+
+  ti->active = INACTIVE;
+
+  tb->value = ti; // malloc(2); //int 控制活动状态时的绘制
   return tb;
 }
 
@@ -40,8 +53,14 @@ void OnDestory_TextBox(hbasewinAttr *tb, void *value)
  */
 void OnClick_TextBox(hbasewinAttr *tb, void *value)
 {
+  textInfo *ti;
   TESTNULLVOID(tb);
-  *(int *)(tb->value) = ACTIVE; //set textbox active
+  ti = tb->value;
+
+  if (ti)
+    ti->active = ACTIVE;
+
+  // *(int *)(tb->value) = ACTIVE; //set textbox active
   (void)value;
 }
 
@@ -51,30 +70,49 @@ void OnClick_TextBox(hbasewinAttr *tb, void *value)
  */
 void OnLeave_TextBox(hbasewinAttr *tb, void *value)
 {
+  textInfo *ti;
   TESTNULLVOID(tb);
-  *(int *)(tb->value) = INACTIVE; //set textbox inactive
+  ti = tb->value;
+
+  if (ti)
+    ti->active = INACTIVE;
+  //*(int *)(tb->value) = INACTIVE; //set textbox inactive
   DrawTextCursor(tb, 1);
   (void)value;
 }
 
 void OnPaint_TextBox(hbasewinAttr *tb, void *value)
 {
-  globaldef *_g;
+  textInfo *ti;
   int x = 0, y = 0;
 
   TESTNULLVOID(tb);
+  ti = tb->value;
 
   x = getAbsoluteX(tb);
   y = getAbsoluteY(tb);
 
-  if (*(int *)(tb->value) == ACTIVE)
+  if (ti)
   {
-    rectangle(x, y, x + tb->nWidth, y + tb->nHeight, 0x03DF, 2, 1);
-  }
-  else
-  {
-    rectangle(x, y, x + tb->nWidth, y + tb->nHeight, 0xFFFF, 2, 1);
-    rectangle(x, y, x + tb->nWidth, y + tb->nHeight, 0x6BAF, 1, 1);
+    hfont *_font = getFont(SIMSUN, 24, 0x0000);
+    if (ti->active == ACTIVE)
+    // if (*(int *)(tb->value) == ACTIVE)
+    {
+      rectangle(x, y, x + tb->nWidth, y + tb->nHeight, 0x03DF, 2, 1);
+    }
+    else
+    {
+      rectangle(x, y, x + tb->nWidth, y + tb->nHeight, 0xFFFF, 2, 1);
+      rectangle(x, y, x + tb->nWidth, y + tb->nHeight, 0x6BAF, 1, 1);
+    }
+    if (tb->title)
+    {
+      //printTextEx(&(ti->r), tb->title, _font);
+      printTextEx4(&ti->r, tb->title, _font, &ti->curx, &ti->cury);
+      // ti->curx = ti->x + calcPrintTextLenght(tb->title, _font);
+    }
+
+    freeFont(_font);
   }
   (void)value;
 }
@@ -119,8 +157,12 @@ void OnActive_TextBox(hbasewinAttr *tb, void *value)
  */
 void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink)
 {
+  textInfo *ti;
   static unsigned int color = 0xFFFF;
   TESTNULLVOID(textbox);
+
+  ti = (textInfo *)textbox->value;
+  TESTNULLVOID(ti);
 
   if (blink % FREQ < FREQ / 2 + 3)
   {
@@ -135,6 +177,12 @@ void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink)
     color = 0x0000; //隐藏
   }
 
-  liney_styleEx(getAbsoluteX(textbox) + 10, getAbsoluteY(textbox) + 6,
-                23, color, 2, 1);
+  if (textbox->title)
+    liney_styleEx(ti->curx, ti->cury,
+                  23, color, 2, 1);
+  // liney_styleEx(getAbsoluteX(textbox) + 10 + strlen(textbox->title) * 12, getAbsoluteY(textbox) + 6,
+  //               23, color, 2, 1);
+  else
+    liney_styleEx(getAbsoluteX(textbox) + 10, getAbsoluteY(textbox) + 6,
+                  23, color, 2, 1);
 }

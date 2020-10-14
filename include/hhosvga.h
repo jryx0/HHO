@@ -324,6 +324,8 @@ FILE *getFontFile(int type, int size);
  * @param _f 字体信息
  */
 int calcPrintTextLenght(unsigned char *text, hfont *_f);
+
+void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y);
 /**
  * 释放font信息
  * 

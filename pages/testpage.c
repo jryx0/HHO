@@ -20,8 +20,8 @@ hbasewinAttr *CreateTestPage(hbasewinAttr *parent, int winID, char *title)
   testPage->onDestroy = OnDestroy_TestPage;
 
   Createhyperlink(testPage, 500, 20, 350, 30, ID_TEST_HYPERLINK, "≥¨¡¥Ω”£¨◊™Ã¯--->Hompage!");
-  CreateTextBox(testPage, 500, 100, 240, 35, ID_TEST_TEXTBOX, NULL);
-  CreateTextBox(testPage, 500, 140, 240, 35, ID_TEST_TEXTBOX2, NULL);
+  CreateTextBox(testPage, 500, 100, 240, 35, ID_TEST_TEXTBOX, "≤‚a ‘ƒ„∫√¬");
+  CreateTextBox(testPage, 500, 140, 240, 100, ID_TEST_TEXTBOX2, "∞°∞°∞°aaaaaaaa∞°∞°∞°a∞°∞°∞°∞°∞°∞°∞°∞°∞°∞°");
 
   //CreateCheckBox(testPage, 500, 50, 100,100, ID_TEST_CHECKBOX, NULL);
 
@@ -88,7 +88,7 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
       if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
       { // Û±Í∞¥œ¬
         if (hitwin->onClick)
-          hitwin->onClick(hitwin, NULL);
+          hitwin->onClick(hitwin, NULL);        
       }
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { // Û±Í Õ∑≈

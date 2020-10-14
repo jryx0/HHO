@@ -986,6 +986,120 @@ void printTextFile(hregion *region, FILE *fp, hfont *_font)
 }
 
 /**
+ * @version v4 输出文本函数版本4 
+ * @author 
+ * @brief 同V3版本在一个区域内输出字符串，返回最后结束x, y值。
+ * @param region  要显示的区域
+ * @param text 字符串
+ * @param _font 字体设置
+ * @return 字符串结尾的坐标
+ */
+void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y)
+{
+  int x0, y0;                //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  int linenum = 0;
+  char isNewLine = FALSE;
+
+  char isFirstLine = _font->firstline; //是否是段落首行，首行空两个字宽度
+
+  TESTNULLVOID(region);
+  TESTNULLVOID(_font);
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULLVOID(buffer);
+
+  //判断高度和宽度是否足够
+  // if ((region->left_top.x + _font->currentFontSize) > region->right_bottom.x ||
+  //     (region->left_top.y + _font->currentFontSize) > region->right_bottom.y)
+  // {
+  //   return;
+  // }
+
+  x0 = region->left_top.x;
+  while (*text)
+  {
+    if (isFirstLine)
+    { //段落首行空两个字。
+      x0 += _font->currentFontSize * 2;
+      isFirstLine = FALSE;
+    }
+
+    y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
+    if (((unsigned char)text[0] >= 0xa0) &&
+        ((unsigned char)text[1] >= 0xa0))
+    {                                                            //打印中文
+      quma = text[0] - 0xa1;                                     //求出区码
+      weima = text[1] - 0xa1;                                    //求出位码
+      offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+      fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+      fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+      printHZWord(x0, y0, buffer, _font); //输出单个汉字
+
+      x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+      text += 2;                                  //下一个汉字
+    }
+    else
+    { //打印字符
+      if (*text == '\r' || *text == '\n')
+      {                     //换行处理
+        isFirstLine = TRUE; //有回车换行符说明是新的一段
+
+        // if (*(text + 1) != 0) //不是最后一个字符
+        //   if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
+        //     text += 2; //处理\r\n情况
+        //   else
+        //     text++; //只有一个\r或\n
+        if (*(text + 1) != 0) //不是最后一个字符
+          if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
+            text++; //处理\r\n情况
+
+        text++; //只有一个\r或\n
+        isNewLine = TRUE;
+      }
+      else
+      {                                               //字符
+        printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
+
+        x0 += _font->ascSize + _font->xgap; //偏移一个字符宽度+字间距
+        text++;                             //下一个字符
+      }
+    }
+
+    if ((unsigned char)text[0] < 0xa0)
+    { //字符用字符宽度判断
+      if (x0 + _font->ascSize > region->right_bottom.x)
+        isNewLine = TRUE;
+    }
+    else
+    { //汉字用汉字宽度判断
+      if (x0 + _font->currentFontSize > region->right_bottom.x)
+        isNewLine = TRUE;
+    }
+
+    if (isNewLine)
+    {
+      linenum++;
+      isNewLine = FALSE;
+
+      if ((region->left_top.y + (linenum + 1) * _font->currentFontSize + _font->ygap) > region->right_bottom.y)
+      { //判断是否超高度，退出 高度截断
+        break;
+      }
+
+      x0 = region->left_top.x;
+    }
+  }
+  free(buffer);
+
+  *x = x0;
+  *y = y0;
+}
+
+/**
  * 获取汉字字库文件
  * @param type 在marcodef中定义 
  * @param size 字号 16、24、32、48
