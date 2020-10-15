@@ -1,6 +1,6 @@
 #include "HBaseWin.h"
 #include "hhosvga.h"
-#include "checkbox.h"
+#include "hchkbox.h"
 #include <graphics.h>
 #include <string.h>
 

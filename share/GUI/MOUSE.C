@@ -178,7 +178,7 @@ int ReadCursor(unsigned char *buf, char *filename)
 {
   int i;
   FILE *fpcur;
-  char line[MOUSE_WIDTH + 1];
+  char line[MOUSE_WIDTH + 2];
 
   if (buf == NULL || filename == NULL)
   {
