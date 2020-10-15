@@ -17,6 +17,9 @@ typedef enum winType
   WIN,
   BUTTON,
   TEXTBOX,
+  TEXTBOX_PASSWORD,
+  TEXTBOX_NUMBER,
+  HYPERLINK,
   LIST,
   CHECKBOX,
   RADIOBOX,
@@ -65,9 +68,9 @@ typedef struct winstruct
   void *value;
 
   //响应鼠标事件函数指针单击,左键按下，左键按起，鼠标离开，鼠标进入
-  hhoevent onClick, onLeftUp, onLeftDown, onLeave, onEnter;
+  hhoevent onClick, onLeave; //, onLeftUp, onLeftDown, onEnter;
   //响应键盘事件函数指针单击键盘
-  hhoevent onKeyPress;
+  hhoevent onKeyPress, onKey;
   //响应绘制事件，绘制自身窗口
   hhoevent onPaint;
   //响应激活事件，窗口激活
@@ -85,6 +88,9 @@ typedef struct winstruct
   struct winstruct *parent;
   //struct winstruct *desktop;
 } hbasewinAttr;
+
+
+
 
 /**
  * @brief 初始化窗口基本信息。

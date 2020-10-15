@@ -1230,6 +1230,14 @@ int calcPrintTextLenght(unsigned char *text, hfont *_f)
   return totalPixel - _f->xgap;
 }
 
+int calcPrintTextPos(hregion *region, unsigned char *text, int len, hfont *_f, int *row, int *col)
+{
+
+
+
+}
+
+
 /**
  *  Õ∑≈font–≈œ¢
  * 

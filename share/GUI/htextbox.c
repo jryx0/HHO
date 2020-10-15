@@ -4,6 +4,7 @@
 #include "htextbox.h"
 #include "hglobal.h"
 #include <memory.h>
+#include <string.h>
 
 #define ACTIVE 1
 #define INACTIVE 0
@@ -21,6 +22,7 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   tb->onDestroy = OnDestory_TextBox;
   tb->onActivate = OnActive_TextBox;
   tb->onKeyPress = OnKeyPress_Textbox;
+  tb->onKey = OnKey_Textbox;
   tb->wintype = TEXTBOX;
 
   ti = malloc(sizeof(textInfo));
@@ -31,8 +33,10 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   ti->r.right_bottom.y = ti->r.left_top.y + tb->nHeight;
   ti->active = INACTIVE;
   if (title)
+  {
     ti->textMaxlen = strlen(title);
-
+    ti->curTextindex = ti->textMaxlen;
+  }
   tb->value = ti; // malloc(2); //int 控制活动状态时的绘制
   return tb;
 }
@@ -108,7 +112,21 @@ void OnPaint_TextBox(hbasewinAttr *tb, void *value)
     if (tb->title)
     {
       //printTextEx(&(ti->r), tb->title, _font);
-      printTextEx4(&ti->r, tb->title, _font, &ti->curx, &ti->cury);
+      if (tb->wintype == TEXTBOX_PASSWORD)
+      { //打印****
+        char *password = malloc(strlen(tb->title) + 1);
+        memset(password, 0, strlen(tb->title) + 1);
+        memset(password, '*', strlen(tb->title));
+
+        printTextEx4(&ti->r, password, _font, &ti->curx, &ti->cury);
+
+        free(password);
+      }
+      else
+      { //正常打印
+        printTextEx4(&ti->r, tb->title, _font, &ti->curx, &ti->cury);
+      }
+
       // ti->curx = ti->x + calcPrintTextLenght(tb->title, _font);
     }
 
@@ -190,22 +208,93 @@ void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink)
                   23, color, 2, 1);
 }
 
+void OnKey_Textbox(hbasewinAttr *textbox, void *key)
+{
+  int len;
+  textInfo *ti;
+  unsigned char ch;
+  TESTNULLVOID(textbox);
+  TESTNULLVOID(key);
+  TESTNULLVOID(textbox->value);
+
+  len = strlen(textbox->title);
+  ti = (textInfo *)textbox->value;
+  if (ti->curTextindex > len)
+  {
+    ti->curTextindex = len;
+  }
+
+  switch (*(int *)key)
+  {
+  case 0x0e08:
+    /*删除*/
+    if (ti->curTextindex > 0)
+    {
+      ch = textbox->title[ti->curTextindex - 1];
+      if (ch > 0xa0) //汉字
+        ti->curTextindex--;
+
+      ti->curTextindex--;
+    }
+
+    break;
+  case 0x4800:
+    /* 上 */
+
+    break;
+  case 0x5000:
+    /* 下 */
+    break;
+    
+  case 0x4b00:
+    /* 左 */
+
+    ch = textbox->title[ti->curTextindex - 1];
+    if (ch > 0xa0) //汉字
+      ti->curTextindex--;
+
+    ti->curTextindex--;
+    break;
+  case 0x4d00:
+    /* 右 */
+    break;
+  default:
+    break;
+  }
+}
+
 void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
 {
-
+  textInfo *ti = NULL;
+  int newLen = 0;
+  int len = 0;
   TESTNULLVOID(textbox);
   TESTNULLVOID(str);
+  TESTNULLVOID(textbox->value);
 
-  if (textbox->value)
+  //隐藏光标
+  DrawTextCursor(textbox, 1);
+
+  ti = (textInfo *)textbox->value;
+  if (ti->active == INACTIVE)
+    return;
+  len = strlen(str);
+  newLen = strlen(textbox->title) + len + 1;
+  if (newLen + 32 > 1024) //最大允许值1024个字符
   {
-    textInfo *ti = (textInfo *)textbox->value;
-
-    int newLen = strlen(textbox->title) + strlen(str) + 1;
-    if (newLen > ti->textMaxlen)
-    { //扩展字符串大小
-      textbox->title = realloc(textbox->title, newLen + 32);
-      ti->textMaxlen = newLen + 32;
-    }
-    strcpy(textbox->title + strlen(textbox->title), str);
+    TRACE(("%s(%c):textbox(%d)字符长度(%d)超过最大值1024!\n",
+           __FILE__, __LINE__, textbox->winID, newLen));
+    return;
   }
+
+  if (newLen > ti->textMaxlen)
+  { //扩展字符串大小
+    textbox->title = realloc(textbox->title, newLen + 32);
+    ti->textMaxlen = newLen + 32;
+  }
+
+  strcpy(textbox->title + strlen(textbox->title), str);
+
+  ti->curTextindex += len;
+  textbox->onPaint(textbox, NULL);
 }

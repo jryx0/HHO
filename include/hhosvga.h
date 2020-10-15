@@ -326,7 +326,11 @@ FILE *getFontFile(int type, int size);
 int calcPrintTextLenght(unsigned char *text, hfont *_f);
 
 void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y);
-/**
+ 
+ int calcPrintTextPos(hregion *region, unsigned char *text, int len, hfont *_f, int *row, int *col);
+ 
+ 
+ /**
  *  Õ∑≈font–≈œ¢
  * 
  */

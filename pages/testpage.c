@@ -13,7 +13,7 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value);
 hbasewinAttr *CreateTestPage(hbasewinAttr *parent, int winID, char *title)
 {
   hbasewinAttr *testPage = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, title);
-
+  hbasewinAttr *pwd;
   TESTNULL(testPage, NULL);
   testPage->onPaint = OnPaint_TestPage;
   testPage->EventHandler = EventHandler_testpage;
@@ -22,6 +22,9 @@ hbasewinAttr *CreateTestPage(hbasewinAttr *parent, int winID, char *title)
   Createhyperlink(testPage, 500, 20, 350, 30, ID_TEST_HYPERLINK, "³¬Á´½Ó£¬×ªÌø--->Hompage!");
   CreateTextBox(testPage, 500, 100, 240, 35, ID_TEST_TEXTBOX, "²âaÊÔÄãºÃÂð");
   CreateTextBox(testPage, 500, 140, 240, 100, ID_TEST_TEXTBOX2, "°¡°¡°¡aaaaaaaa°¡°¡°¡a°¡°¡°¡°¡°¡°¡°¡°¡°¡°¡");
+
+  pwd = CreateTextBox(testPage, 500, 290, 240, 100, ID_TEST_TEXTBOX2, "password");
+  pwd ->wintype = TEXTBOX_PASSWORD;
 
   //CreateCheckBox(testPage, 500, 50, 100,100, ID_TEST_CHECKBOX, NULL);
 

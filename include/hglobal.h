@@ -8,6 +8,9 @@
 
 #include <stdio.h>
 
+#define CHINESE 1
+#define ENGLISH 0
+
 //--------------------------------------------------------------------
 
 //全局变量结构
@@ -29,7 +32,7 @@ typedef struct _globaldef
   unsigned int userid;     //用户ID
   unsigned char usertype;  //用户类型
   unsigned char isExit;    //是否退出程序
-  unsigned char isChinese; //是否中文输入char
+  unsigned char InputMode; //输入模式
 } globaldef;
 
 globaldef *initGlobalSetting(void);

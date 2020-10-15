@@ -163,7 +163,7 @@ void MouseDraw(mousestatus *mouse) //8
         putpixel64k(i + mouse->x, j + mouse->y, 0x0);
       }
 }
- 
+
 /**
  * 读取鼠标形状文件，存储在buf中
  * 
@@ -178,7 +178,7 @@ int ReadCursor(unsigned char *buf, char *filename)
 {
   int i;
   FILE *fpcur;
-  char line[MOUSE_WIDTH + 1];
+  char line[MOUSE_WIDTH + 2];
 
   if (buf == NULL || filename == NULL)
   {

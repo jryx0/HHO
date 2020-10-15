@@ -19,6 +19,7 @@ hbasewinAttr *Createhyperlink(hbasewinAttr *parent, int x, int y, int nWidth,
   hyperlink->onLeave = OnLeave_hyperlink;
 
   hyperlink->value = getlinkStyle();
+  hyperlink->wintype = HYPERLINK;
   return hyperlink;
 }
 
