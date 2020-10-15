@@ -7,13 +7,20 @@
 typedef struct _textinfo
 {
   hregion r;
-  int x;
-  int y;
-  int width;
-  int height;
+
+  //当前光标起始坐标
   int curx;
   int cury;
+
+  //当前光标所处文字位置
+  int curTextindex;
+
+  //是否激活状态
   int active;
+
+  //当前文字最大缓存空间(可扩展)
+  int textMaxlen;
+
 } textInfo;
 
 hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
@@ -49,5 +56,7 @@ void OnActive_TextBox(hbasewinAttr *tb, void *value);
  * @param blink 闪烁标志
  */
 void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink);
+
+void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str);
 
 #endif

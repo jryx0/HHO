@@ -14,18 +14,22 @@
 //Dos 打开文件数量<15
 typedef struct _globaldef
 {
-  FILE *fpBK;  //背景存放的文件
-  FILE *fpLog; //日志文件指针
+  //FILE *fpBK;  //背景存放的文件
+  //FILE *fpLog; //日志文件指针
 
   unsigned char cursor_arrow[MOUSE_WIDTH][MOUSE_HEIGHT]; //保存鼠标图形地址-箭头
   unsigned char cursor_hand[MOUSE_WIDTH][MOUSE_HEIGHT];  //保存鼠标图形地址-手
   mousestatus mouse;
 
   pyInput *pingyin;
-   
+  hbasewinAttr *foucsedTextBox;
+
   hbasewinAttr *activePage;
   int activePageID;
-  hbasewinAttr *foucsedTextBox;
+  unsigned int userid;     //用户ID
+  unsigned char usertype;  //用户类型
+  unsigned char isExit;    //是否退出程序
+  unsigned char isChinese; //是否中文输入char
 } globaldef;
 
 globaldef *initGlobalSetting(void);

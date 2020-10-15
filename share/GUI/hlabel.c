@@ -127,4 +127,6 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   // memcpy(temp, label->title + i * linemax * 2, (len - linemax * (line - 1)) * 2);
   // //printtextxy(fpFont, x, y + 16 * i, temp, 0 /*color*/, 16);
   // printText(x, y + 16 * i, temp, SIMSUN, 16, 0, 0x0 /*color*/);
+
+  (void)value;
 }

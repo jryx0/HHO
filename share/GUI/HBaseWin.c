@@ -167,14 +167,20 @@ void clearWinRegion(hbasewinAttr *win, int color)
  * 比较两个窗口是否是同一个
  * 
  */
-int matchWin(hbasewinAttr *w1, hbasewinAttr *w2)
+// int matchWin(hbasewinAttr *w1, hbasewinAttr *w2)
+// {
+//   if (w1 == NULL)
+//     return 0;
+//   if (w2 == NULL)
+//     return 0;
+//   //return ((hbasewinAttr *)w1)->winID == ((hbasewinAttr *)w2)->winID;
+//   return w1->winID == w2->winID;
+// }
+int matchWin(void *w1, void *w2)
 {
-  if (w1 == NULL)
-    return 0;
-  if (w2 == NULL)
-    return 0;
-  //return ((hbasewinAttr *)w1)->winID == ((hbasewinAttr *)w2)->winID;
-  return w1->winID == w2->winID;
+  if (w1 && w2)
+    return ((hbasewinAttr *)w1)->winID == ((hbasewinAttr *)w2)->winID;
+  return 0;
 }
 
 /**
@@ -280,14 +286,6 @@ void repaintChildren(hbasewinAttr *win)
   list_iterator_destroy(it);
 }
 
-int compareWin(hbasewinAttr *w1, hbasewinAttr *w2)
-{
-  if (w1 && w2)
-    return w1->winID == w1->winID;
-
-  return 0;
-}
-
 /**
  * 找到顶级窗口，所有窗口的根窗口
  */
@@ -299,8 +297,6 @@ hbasewinAttr *getRootWin(hbasewinAttr *win)
 
   return getRootWin(win->parent);
 }
-
-
 
 /**
  * 在win中查找winID的子窗口

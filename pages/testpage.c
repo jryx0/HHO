@@ -88,7 +88,7 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
       if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
       { //鼠标按下
         if (hitwin->onClick)
-          hitwin->onClick(hitwin, NULL);        
+          hitwin->onClick(hitwin, NULL);
       }
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标释放
@@ -110,18 +110,17 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
       if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标释放
 
-        if (_g->foucsedTextBox == NULL)
-          TRACE(("%s(%d)ID_TEST_TEXTBOX.......\n", __FILE__, __LINE__));
-        else
-        {
-          TRACE(("%s(%d)type= %d, id = %u.......\n", __FILE__, __LINE__,
-                 _g->foucsedTextBox->wintype, _g->foucsedTextBox->winID));
-        }
+        // if (_g->foucsedTextBox == NULL)
+        //   TRACE(("%s(%d)ID_TEST_TEXTBOX.......\n", __FILE__, __LINE__));
+        // else
+        // {
+        //   TRACE(("%s(%d)type= %d, id = %u.......\n", __FILE__, __LINE__,
+        //          _g->foucsedTextBox->wintype, _g->foucsedTextBox->winID));
+        // }
 
         // if (_g->foucsedTextBox == NULL //首次激活
         //     || _g->foucsedTextBox->winID != hitwin->winID)
         // {
-
         if (hitwin->onActivate)
           hitwin->onActivate(hitwin, _g);
         // }

@@ -11,7 +11,6 @@
 
 #define EVENT_PAGE_CHANGE 2000
 
-
 ///////////////////////////颜色定义//////////////////////////////////////////////
 #define COLOR_white 0XFFFF
 #define COLOR_ligtgray 0xEF7D //0xAD55
@@ -23,7 +22,7 @@
 #define ID_MENU_LOG 1      //label
 #define ID_MENU_HOMEPAGE 2 //button
 #define ID_MENU_TESTPAGE 3 //button
-
+#define ID_MENU_EXIT  20 // 退出
 //是否点击desktop控件最大值，用于判断是否点击desktop控件
 #define ID_DESKTOP_MAX 30
 

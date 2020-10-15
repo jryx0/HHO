@@ -53,6 +53,7 @@ hbasewinAttr *CreateDesktop(void)
   //创建菜单,切换页面,临时使用
   CreateButton(desktop, 450, HEADER_HEIGHT - 46, 120, 44, ID_MENU_HOMEPAGE, "首页");
   CreateButton(desktop, 600, HEADER_HEIGHT - 46, 150, 44, ID_MENU_TESTPAGE, "测试页");
+  CreateButton(desktop, 850, HEADER_HEIGHT - 46, 150, 44, ID_MENU_EXIT, "退出");
 
   //创建首页
   CreateHomepage(desktop, ID_HOMEPAGE);
@@ -102,18 +103,10 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, hbasewinAttr *activeP
   TESTNULLVOID(desktop);
   if (activePage && activePage->winID != pageID)
   { //当前活动page不是pageID页面，则删除其他页面
-    clearWinRegion(activePage, 0xFFFF);
-    // TRACE(("textbox ID in changepage:%d\n", _g->activeTextboxID));
-    // node = list_find(activePage->children, _g->foucsedTextBox);
-    // TRACE(("=============%u===========\n",_g->foucsedTextBox));
-    // if (_g->foucsedTextBox)
-    //   TRACE(("+++++++%d+++++\n", _g->foucsedTextBox->winID));
-    // if (node)
-    //   TRACE(("--------------%u----------------", node->val));
+    clearWinRegion(activePage, 0xFFFF); 
     if (_g->foucsedTextBox && _g->foucsedTextBox->onActivate)
       _g->foucsedTextBox->onActivate(NULL, _g);
-    //_g->foucsedTextBox = NULL;
-    //_g->activeTextboxID = -1;
+ 
     if (activePage->onDestroy)
     {
       activePage->onDestroy(activePage, NULL);
@@ -199,7 +192,21 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
         Desktop_changePage(win->parent, ID_HOMEPAGE, _g->activePage);
       }
       break;
+    case ID_MENU_EXIT:
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
 
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (win->onClick)
+          win->onClick(win, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标弹起
+        //切换页面
+         _g->isExit = TRUE;
+      }
+      break;
     default:
       break;
     }

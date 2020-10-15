@@ -22,12 +22,8 @@
  */
 globaldef *initGlobalSetting(void)
 {
-
   globaldef *_global = malloc(sizeof(globaldef));
   TESTNULL(_global, NULL);
-
-  // _global->fpLog = fopen("hho.log", "w"); //日志文件
-  // TESTNULL(_global->fpLog, NULL);
 
   memset(_global, 0, sizeof(globaldef));
 
@@ -35,15 +31,11 @@ globaldef *initGlobalSetting(void)
   //加载拼音索引文件
   _global->pingyin = initPYHZIndex();
   TESTNULL(_global->pingyin, NULL);
-
-  _global->activePageID = -1;
-  //_global->activeTextboxID = -1;
-  _global->foucsedTextBox = NULL;
+  _global->activePageID = -1;    
 
   //加载鼠标形状
   ReadCursor((unsigned char *)_global->cursor_arrow, FILE_CURSOR_ARROW);
   ReadCursor((unsigned char *)_global->cursor_hand, FILE_CURSOR_HAND);
-
   _global->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_global->cursor_arrow;
 
   return _global;
@@ -56,7 +48,7 @@ void destoryGlobalSettting(globaldef *_g)
     ClosePY(_g->pingyin);
     // fclose(_g->fpBK);
 
-    fclose(_g->fpLog);
+    //fclose(_g->fpLog);
     free(_g);
 
     _g = NULL;

@@ -3,6 +3,7 @@
 #include "HBaseWin.h"
 #include "htextbox.h"
 #include "hglobal.h"
+#include <memory.h>
 
 #define ACTIVE 1
 #define INACTIVE 0
@@ -19,20 +20,18 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   tb->onLeave = OnLeave_TextBox;
   tb->onDestroy = OnDestory_TextBox;
   tb->onActivate = OnActive_TextBox;
+  tb->onKeyPress = OnKeyPress_Textbox;
   tb->wintype = TEXTBOX;
 
   ti = malloc(sizeof(textInfo));
-  ti->x = getAbsoluteX(tb) + 6;
-  ti->y = getAbsoluteY(tb) + 6;
-  ti->width = nWidth - 10;
-  ti->height = nHeight;
 
   ti->r.left_top.x = getAbsoluteX(tb) + 6;
   ti->r.left_top.y = getAbsoluteY(tb) + 6;
-  ti->r.right_bottom.x = ti->r.left_top.x + ti->width;
-  ti->r.right_bottom.y = ti->r.left_top.y + ti->height;
-
+  ti->r.right_bottom.x = ti->r.left_top.x + tb->nWidth - 6;
+  ti->r.right_bottom.y = ti->r.left_top.y + tb->nHeight;
   ti->active = INACTIVE;
+  if (title)
+    ti->textMaxlen = strlen(title);
 
   tb->value = ti; // malloc(2); //int 控制活动状态时的绘制
   return tb;
@@ -87,6 +86,7 @@ void OnPaint_TextBox(hbasewinAttr *tb, void *value)
   int x = 0, y = 0;
 
   TESTNULLVOID(tb);
+
   ti = tb->value;
 
   x = getAbsoluteX(tb);
@@ -164,6 +164,9 @@ void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink)
   ti = (textInfo *)textbox->value;
   TESTNULLVOID(ti);
 
+  if (ti->active == INACTIVE && color == 0xFFFF) //非激活状态
+    return;
+
   if (blink % FREQ < FREQ / 2 + 3)
   {
     if (color == 0xFFFF) //减少闪烁频次
@@ -185,4 +188,24 @@ void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink)
   else
     liney_styleEx(getAbsoluteX(textbox) + 10, getAbsoluteY(textbox) + 6,
                   23, color, 2, 1);
+}
+
+void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
+{
+
+  TESTNULLVOID(textbox);
+  TESTNULLVOID(str);
+
+  if (textbox->value)
+  {
+    textInfo *ti = (textInfo *)textbox->value;
+
+    int newLen = strlen(textbox->title) + strlen(str) + 1;
+    if (newLen > ti->textMaxlen)
+    { //扩展字符串大小
+      textbox->title = realloc(textbox->title, newLen + 32);
+      ti->textMaxlen = newLen + 32;
+    }
+    strcpy(textbox->title + strlen(textbox->title), str);
+  }
 }
