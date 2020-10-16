@@ -6,11 +6,13 @@
 #include "HBaseWin.h"
 #include "wdesktop.h"
 #include "hlabel.h"
+#include "hinput.h"
 
 #include <dos.h>
 #include <conio.h>
 #include <stdio.h>
 #include <mem.h>
+#include <string.h>
 #include <bios.h>
 
 int main(void)
@@ -20,6 +22,7 @@ int main(void)
 
   globaldef *_global;
   hbasewinAttr *desktop;
+  hbasewinAttr *winInput = NULL;
   hbasewinAttr *child = NULL;
   int blink = 0;
   //int size;
@@ -36,6 +39,9 @@ int main(void)
   if (desktop && desktop->onPaint)                         //刷新页面
     desktop->onPaint(desktop, NULL);
 
+  //初始化拼音输入法
+  //winInput = CreatePYInput(NULL, 0, 0, ID_MENU_PY, "Hide");
+  
   //初始化鼠标
   ResetMouse(&_global->mouse);
 
@@ -67,6 +73,9 @@ int main(void)
     else
       blink = 0;
 
+    // if (_global->InputMode == ENGLISH)
+    //   hidePYInput(pyInput);
+
     //键盘事件处理
     if (_bios_keybrd(_KEYBRD_READY))
     {
@@ -94,9 +103,13 @@ int main(void)
             str[1] = 0;
             str[0] = kbchar;
             _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
+            //hidePYInput(pyInput);
           }
           else
           { //中文输入
+            //确定输入法窗口位置为当前光标位置，并显示
+            // textInfo *ti = (textInfo *)(_global->foucsedTextBox->value);
+            // showPYInput(pyInput, ti->curx, ti->cury + ti->fontsize + 5);
           }
         }
         else

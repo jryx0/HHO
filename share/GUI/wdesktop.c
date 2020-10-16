@@ -8,6 +8,7 @@
 #include "hlabel.h"
 #include "hyperlnk.h"
 #include "hbutton.h"
+#include "hinput.h"
 
 #include "testpage.h"
 #include "homepage.h"
@@ -55,6 +56,8 @@ hbasewinAttr *CreateDesktop(void)
   CreateButton(desktop, 600, HEADER_HEIGHT - 46, 150, 44, ID_MENU_TESTPAGE, "测试页");
   CreateButton(desktop, 850, HEADER_HEIGHT - 46, 150, 44, ID_MENU_EXIT, "退出");
 
+  Createhyperlink(desktop, 900, SCR_HEIGHT - FOOTER_HEIGHT / 2, 100, 30, ID_MENU_PY, "中文");
+
   //创建首页
   CreateHomepage(desktop, ID_HOMEPAGE);
 
@@ -99,14 +102,15 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, hbasewinAttr *activeP
 {
   globaldef *_g;
   list_node_t *node;
+  hbasewinAttr *py;
 
   TESTNULLVOID(desktop);
   if (activePage && activePage->winID != pageID)
   { //当前活动page不是pageID页面，则删除其他页面
-    clearWinRegion(activePage, 0xFFFF); 
+    clearWinRegion(activePage, 0xFFFF);
     if (_g->foucsedTextBox && _g->foucsedTextBox->onActivate)
       _g->foucsedTextBox->onActivate(NULL, _g);
- 
+
     if (activePage->onDestroy)
     {
       activePage->onDestroy(activePage, NULL);
@@ -125,6 +129,10 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, hbasewinAttr *activeP
     if (activePage->onPaint)
       activePage->onPaint(activePage, NULL);
   }
+
+  // py = findWinByID(desktop, ID_MENU_PY);
+  // if(py)
+  //   hidePYInput(py);
 }
 
 /**
@@ -182,7 +190,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
       { //鼠标按下
         if (win->onClick)
-          win->onClick(win, NULL);
+          win->onClick(win, NULL);       
       }
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标弹起
@@ -204,7 +212,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标弹起
         //切换页面
-         _g->isExit = TRUE;
+        _g->isExit = TRUE;
       }
       break;
     default:

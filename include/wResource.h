@@ -22,6 +22,8 @@
 #define ID_MENU_LOG 1      //label
 #define ID_MENU_HOMEPAGE 2 //button
 #define ID_MENU_TESTPAGE 3 //button
+
+#define ID_MENU_PY 19
 #define ID_MENU_EXIT  20 // 退出
 //是否点击desktop控件最大值，用于判断是否点击desktop控件
 #define ID_DESKTOP_MAX 30

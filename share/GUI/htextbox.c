@@ -36,6 +36,7 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   ti->r.right_bottom.x = ti->r.left_top.x + tb->nWidth - 6 - 2;
   ti->r.right_bottom.y = ti->r.left_top.y + tb->nHeight - 6 - 2;
   ti->active = INACTIVE;
+  ti->fontsize = DEFAULT_FONTSIZE;
   if (title)
   {
     ti->textMaxlen = strlen(title);
@@ -242,8 +243,44 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
 
   switch (*(int *)key)
   {
+  case 0x5300:
+  { //delÉ¾³ý
+    // if (0 < ti->curTextindex && ti->curTextindex < len - 1)
+    // {
+    //   //hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+    //   ch = textbox->title[ti->curTextindex + 1];
+    //   DelPosChar(textbox->title, ti->curTextindex);
+    //   if (ch > 0xa0) //ºº×Ö
+    //   {
+    //     DelPosChar(textbox->title, ti->curTextindex);
+    //     ti->curTextindex--;
+    //   }
+    //   ti->curTextindex--;
+
+    //   //printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
+    //   OnPaint_TextBox(textbox, NULL);
+    //   //freeFont(_font);
+    // }
+
+    if (0 <= ti->curTextindex && ti->curTextindex < len)
+    {
+      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      ch = textbox->title[ti->curTextindex];
+      if (ch > 0xa0) //ºº×Ö
+      {
+        DelPosChar(textbox->title, ti->curTextindex + 1);
+        //ti->curTextindex++;
+      }
+      DelPosChar(textbox->title, ti->curTextindex+1);
+      //ti->curTextindex++;
+      printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
+      OnPaint_TextBox(textbox, NULL);
+      freeFont(_font);
+    }
+  }
+  break;
   case 0x0e08:
-    /*É¾³ý*/
+    /* <---É¾³ý*/
     if (0 < ti->curTextindex && ti->curTextindex <= len)
     {
       //hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);

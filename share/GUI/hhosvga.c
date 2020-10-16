@@ -577,7 +577,7 @@ void rectangleEx(int x, int y, int width, int height, int color, char line_width
   //setStandardRegionEx(x, y, width, height);
   linex_styleEx(x, y, width, color, line_width, dot_style);
   liney_styleEx(x + width, y, height, color, line_width, dot_style);
-  linex_styleEx(x, y + height, width, color, line_width, dot_style);
+  linex_styleEx(x, y + height, width + 1, color, line_width, dot_style);
   liney_styleEx(x, y, height, color, line_width, dot_style);
 }
 

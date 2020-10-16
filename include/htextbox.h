@@ -20,6 +20,9 @@ typedef struct _textinfo
   //是否激活状态
   int active;
 
+  //字体大小
+  int fontsize;
+  
   //当前文字最大缓存空间(可扩展)
   int textMaxlen;
 } textInfo;

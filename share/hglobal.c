@@ -30,8 +30,8 @@ globaldef *initGlobalSetting(void)
 
   ///////////加载资源//////////////////
   //加载拼音索引文件
-  _global->pingyin = initPYHZIndex();
-  TESTNULL(_global->pingyin, NULL);
+  _global->pinyin = initPYHZIndex();
+  TESTNULL(_global->pinyin, NULL);
   _global->activePageID = -1;
 
   //加载鼠标形状
@@ -46,7 +46,7 @@ void destoryGlobalSettting(globaldef *_g)
 {
   if (_g)
   {
-    ClosePY(_g->pingyin);
+    ClosePY(_g->pinyin);
     // fclose(_g->fpBK);
 
     //fclose(_g->fpLog);
