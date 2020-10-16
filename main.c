@@ -64,6 +64,8 @@ int main(void)
     //光标处理
     if (_global->foucsedTextBox)
       DrawTextCursor(_global->foucsedTextBox, blink++);
+    else
+      blink = 0;
 
     //键盘事件处理
     if (_bios_keybrd(_KEYBRD_READY))
@@ -99,8 +101,8 @@ int main(void)
         }
         else
         {
-          if(_global->foucsedTextBox->onKey)
-            _global->foucsedTextBox->onKey(_global->foucsedTextBox, &key);         
+          if (_global->foucsedTextBox->onKey)
+            _global->foucsedTextBox->onKey(_global->foucsedTextBox, &key);
         }
       }
       TRACE(("key = %x, %x, %c, modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));

@@ -49,4 +49,9 @@ void loadMouse(globaldef *_g);
  */
 FILE *getFontFile(int type, int size);
 
+/**
+ * 删除字符串中指定位置的字符
+ */
+int DelPosChar(char *str, int pos);
+
 #endif

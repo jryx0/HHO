@@ -20,8 +20,8 @@ hbasewinAttr *CreateTestPage(hbasewinAttr *parent, int winID, char *title)
   testPage->onDestroy = OnDestroy_TestPage;
 
   Createhyperlink(testPage, 500, 20, 350, 30, ID_TEST_HYPERLINK, "³¬Á´½Ó£¬×ªÌø--->Hompage!");
-  CreateTextBox(testPage, 500, 100, 240, 35, ID_TEST_TEXTBOX, "²âaÊÔÄãºÃÂð");
-  CreateTextBox(testPage, 500, 140, 240, 100, ID_TEST_TEXTBOX2, "°¡°¡°¡aaaaaaaa°¡°¡°¡a°¡°¡°¡°¡°¡°¡°¡°¡°¡°¡");
+  CreateTextBox(testPage, 500, 100, 240, 35, ID_TEST_TEXTBOX, "²âaÊÔ");
+  CreateTextBox(testPage, 500, 140, 240, 150, ID_TEST_TEXTBOX2, "³¬a½ÓaÁ´a³¬a½ÓaÁ´a³¬a½ÓaÁ´a³¬a½ÓaÁ´a³¬a½ÓaÁ´a³¬a½ÓaÁ´a³¬a½ÓaÁ´a³¬a½ÓaÁ´a³¬a½ÓaÁ´a");
 
   pwd = CreateTextBox(testPage, 500, 290, 240, 100, ID_TEST_TEXTBOX2, "password");
   pwd ->wintype = TEXTBOX_PASSWORD;

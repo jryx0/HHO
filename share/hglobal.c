@@ -5,6 +5,7 @@
 #include <memory.h>
 #include <stdarg.h>
 #include <stdio.h>
+#include <string.h>
 
 #define TESTGLOBAL(X, Y)                                  \
   if (X == NULL)                                          \
@@ -31,7 +32,7 @@ globaldef *initGlobalSetting(void)
   //加载拼音索引文件
   _global->pingyin = initPYHZIndex();
   TESTNULL(_global->pingyin, NULL);
-  _global->activePageID = -1;    
+  _global->activePageID = -1;
 
   //加载鼠标形状
   ReadCursor((unsigned char *)_global->cursor_arrow, FILE_CURSOR_ARROW);
@@ -53,6 +54,25 @@ void destoryGlobalSettting(globaldef *_g)
 
     _g = NULL;
   }
+}
+
+/**
+ * 删除字符串中指定位置的字符
+ */
+int DelPosChar(char *str, int pos)
+{
+  int len = 0, i = 0;
+  if (str == NULL)
+  {
+    return -1;
+  }
+  len = strlen(str);
+  for (i = pos; i < len; i++)
+  {
+    str[i - 1] = str[i];
+  }
+  str[len - 1] = '\0';
+  return 0;
 }
 
 /*

@@ -324,13 +324,34 @@ FILE *getFontFile(int type, int size);
  * @param _f 字体信息
  */
 int calcPrintTextLenght(unsigned char *text, hfont *_f);
-
+/**
+ * @version v4 输出文本函数版本4 
+ * @author 
+ * @brief 同V3版本在一个区域内输出字符串，返回最后结束x, y值。
+ * @param region  要显示的区域
+ * @param text 字符串
+ * @param _font 字体设置
+ * @return @param x 返回字符右坐标
+ * @return @param y 返回字符上坐标 
+ */
 void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y);
- 
- int calcPrintTextPos(hregion *region, unsigned char *text, int len, hfont *_f, int *row, int *col);
- 
- 
- /**
+
+/**
+ * @version v5 输出文本函数版本5 
+ * @author 
+ * @brief 同V3版本在一个区域内输出字符串，返回字符串中指定位置结束的x, y像素坐标值。
+ * @param region  要显示的区域
+ * @param text 字符串
+ * @param _font 字体设置
+ * @param index 字符串索引,字符模式及汉字算两个
+ * @param isprint 是否输出文字
+ * @return @param x 返回字符右坐标
+ * @return @param y 返回字符上坐标 
+ * @return @param 返回宽度列数
+ */
+int printTextEx5(hregion *region, char *text, hfont *_font, int *index, int *x, int *y, char isprint);
+
+/**
  * 释放font信息
  * 
  */

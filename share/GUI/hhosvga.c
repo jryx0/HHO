@@ -978,7 +978,6 @@ void printTextFile(hregion *region, FILE *fp, hfont *_font)
         x0 = region->left_top.x;
       }
     }
-
     //printf("%s", Line);
   }
 
@@ -992,7 +991,8 @@ void printTextFile(hregion *region, FILE *fp, hfont *_font)
  * @param region  要显示的区域
  * @param text 字符串
  * @param _font 字体设置
- * @return 字符串结尾的坐标
+ * @return @param x 返回字符右坐标
+ * @return @param y 返回字符上坐标 
  */
 void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y)
 {
@@ -1069,16 +1069,16 @@ void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y)
       }
     }
 
-    if ((unsigned char)text[0] < 0xa0)
-    { //字符用字符宽度判断
-      if (x0 + _font->ascSize > region->right_bottom.x)
-        isNewLine = TRUE;
-    }
-    else
-    { //汉字用汉字宽度判断
-      if (x0 + _font->currentFontSize > region->right_bottom.x)
-        isNewLine = TRUE;
-    }
+    // if ((unsigned char)text[0] < 0xa0)
+    // { //字符用字符宽度判断
+    //   if (x0 + _font->ascSize > region->right_bottom.x)
+    //     isNewLine = TRUE;
+    // }
+    // else
+    // { //汉字用汉字宽度判断
+    if (x0 + _font->currentFontSize > region->right_bottom.x)
+      isNewLine = TRUE;
+    //}
 
     if (isNewLine)
     {
@@ -1097,6 +1097,157 @@ void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y)
 
   *x = x0;
   *y = y0;
+}
+
+/**
+ * @version v5 输出文本函数版本5 
+ * @author 
+ * @brief 同V3版本在一个区域内输出字符串，返回字符串中指定位置结束的x, y像素坐标值。
+ * @param region  要显示的区域
+ * @param text 字符串
+ * @param _font 字体设置
+ * @param index 字符串索引,字符模式及汉字算两个
+ * @param isprint 是否输出文字
+ * @return @param x 返回字符右坐标
+ * @return @param y 返回字符上坐标 
+ * @return @param 返回宽度列数
+ */
+int printTextEx5(hregion *region, char *text, hfont *_font, int *index, int *x, int *y, char isprint)
+{
+  int x0, y0;                //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  int linenum = 0;
+  char isNewLine = FALSE;
+  int maxCol = 0; //最大列宽 以字符为单位,汉字占两列
+  int curCol = 0; //当前列宽
+  int curindex = *index;
+
+  char isFirstLine = _font->firstline; //是否是段落首行，首行空两个字宽度
+
+  if (curindex == 0)
+  {
+    *x = region->left_top.x;
+    *y = region->left_top.y;
+    return 0;
+  }
+
+  TESTNULL(region, 0);
+  TESTNULL(_font, 0);
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULL(buffer, 0);
+
+  //判断高度和宽度是否足够
+  // if ((region->left_top.x + _font->currentFontSize) > region->right_bottom.x ||
+  //     (region->left_top.y + _font->currentFontSize) > region->right_bottom.y)
+  // {
+  //   return;
+  // }
+
+  x0 = region->left_top.x;
+  while (*text)
+  {
+    if (isFirstLine)
+    { //段落首行空两个字。
+      x0 += _font->currentFontSize * 2;
+      isFirstLine = FALSE;
+    }
+
+    y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
+    if (((unsigned char)text[0] >= 0xa0) &&
+        ((unsigned char)text[1] >= 0xa0))
+    {
+
+      if (isprint)
+      {                                                            //打印中文
+        quma = text[0] - 0xa1;                                     //求出区码
+        weima = text[1] - 0xa1;                                    //求出位码
+        offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+        fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+        fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+        printHZWord(x0, y0, buffer, _font); //输出单个汉字
+      }
+      x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+      text += 2;
+      curindex -= 2; //下一个汉字
+      curCol += 2;
+    }
+    else
+    { //打印字符
+      if (*text == '\r' || *text == '\n')
+      {                     //换行处理
+        isFirstLine = TRUE; //有回车换行符说明是新的一段
+
+        // if (*(text + 1) != 0) //不是最后一个字符
+        //   if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
+        //     text += 2; //处理\r\n情况
+        //   else
+        //     text++; //只有一个\r或\n
+        if (*(text + 1) != 0) //不是最后一个字符
+          if (*(text + 1) == '\r' || (*(text + 1) == '\n'))
+          {
+            text++; //处理\r\n情况
+            --curindex;
+          }
+
+        text++; //只有一个\r或\n
+        isNewLine = TRUE;
+        --curindex;
+      }
+      else
+      {
+        if (isprint)                                    //字符
+          printASC(x0, y0 - _font->ascy, *text, _font); //输出单个字符
+
+        x0 += _font->ascSize + _font->xgap; //偏移一个字符宽度+字间距
+        text++;
+        --curindex; //下一个字符
+        curCol++;
+      }
+    }
+
+    // if ((unsigned char)text[0] < 0xa0)
+    // { //字符用字符宽度判断
+    //   if (x0 + _font->ascSize > region->right_bottom.x)
+    //     isNewLine = TRUE;
+    // }
+    // else
+    // { //汉字用汉字宽度判断
+    if (x0 + _font->currentFontSize > region->right_bottom.x)
+    {
+      isNewLine = TRUE;
+      if (curCol > maxCol)
+        maxCol = curCol;
+      curCol = 0;
+    }
+    //}
+    *x = x0;
+    *y = y0;
+
+    if (isNewLine)
+    {
+      linenum++;
+      isNewLine = FALSE;
+
+      if ((region->left_top.y + (linenum + 1) * _font->currentFontSize + _font->ygap) > region->right_bottom.y)
+      { //判断是否超高度，退出 高度截断
+        //index = showlen - index;
+        *index = *index - curindex;
+        break;
+      }
+
+      x0 = region->left_top.x;
+    }
+
+    if (curindex <= 0)
+      break;
+  }
+  free(buffer);
+
+  return maxCol;
 }
 
 /**
@@ -1229,14 +1380,6 @@ int calcPrintTextLenght(unsigned char *text, hfont *_f)
   }
   return totalPixel - _f->xgap;
 }
-
-int calcPrintTextPos(hregion *region, unsigned char *text, int len, hfont *_f, int *row, int *col)
-{
-
-
-
-}
-
 
 /**
  * 释放font信息

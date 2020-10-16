@@ -13,7 +13,9 @@ typedef struct _textinfo
   int cury;
 
   //当前光标所处文字位置
-  int curTextindex;  
+  int curTextindex;  //字符宽度,汉字两位
+  //最大列宽 
+  int maxCol;//字符宽度,汉字两列
 
   //是否激活状态
   int active;

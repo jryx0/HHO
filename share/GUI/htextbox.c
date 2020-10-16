@@ -8,7 +8,11 @@
 
 #define ACTIVE 1
 #define INACTIVE 0
-#define FREQ 40
+#define FREQ 30
+
+#define DEFAULT_FONTNAME SIMSUN
+#define DEFAULT_FONTSIZE 24
+#define DEFAULT_FONTCOLOR 0x0000
 
 hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
                             int nHeight, int winID, const char *title)
@@ -29,14 +33,17 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
 
   ti->r.left_top.x = getAbsoluteX(tb) + 6;
   ti->r.left_top.y = getAbsoluteY(tb) + 6;
-  ti->r.right_bottom.x = ti->r.left_top.x + tb->nWidth - 6;
-  ti->r.right_bottom.y = ti->r.left_top.y + tb->nHeight;
+  ti->r.right_bottom.x = ti->r.left_top.x + tb->nWidth - 6 - 2;
+  ti->r.right_bottom.y = ti->r.left_top.y + tb->nHeight - 6 - 2;
   ti->active = INACTIVE;
   if (title)
   {
     ti->textMaxlen = strlen(title);
     ti->curTextindex = ti->textMaxlen;
   }
+  else
+    ti->curTextindex = 0;
+
   tb->value = ti; // malloc(2); //int 控制活动状态时的绘制
   return tb;
 }
@@ -80,7 +87,7 @@ void OnLeave_TextBox(hbasewinAttr *tb, void *value)
   if (ti)
     ti->active = INACTIVE;
   //*(int *)(tb->value) = INACTIVE; //set textbox inactive
-  DrawTextCursor(tb, 1);
+  DrawTextCursor(tb, FREQ - 1);
   (void)value;
 }
 
@@ -98,7 +105,7 @@ void OnPaint_TextBox(hbasewinAttr *tb, void *value)
 
   if (ti)
   {
-    hfont *_font = getFont(SIMSUN, 24, 0x0000);
+    hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
     if (ti->active == ACTIVE)
     // if (*(int *)(tb->value) == ACTIVE)
     {
@@ -109,6 +116,9 @@ void OnPaint_TextBox(hbasewinAttr *tb, void *value)
       rectangle(x, y, x + tb->nWidth, y + tb->nHeight, 0xFFFF, 2, 1);
       rectangle(x, y, x + tb->nWidth, y + tb->nHeight, 0x6BAF, 1, 1);
     }
+
+    fillRegion(ti->r.left_top.x, ti->r.left_top.y, ti->r.right_bottom.x, ti->r.right_bottom.y, 0xFFFF);
+
     if (tb->title)
     {
       //printTextEx(&(ti->r), tb->title, _font);
@@ -119,12 +129,14 @@ void OnPaint_TextBox(hbasewinAttr *tb, void *value)
         memset(password, '*', strlen(tb->title));
 
         printTextEx4(&ti->r, password, _font, &ti->curx, &ti->cury);
+        ti->maxCol = printTextEx5(&ti->r, password, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
 
         free(password);
       }
       else
       { //正常打印
         printTextEx4(&ti->r, tb->title, _font, &ti->curx, &ti->cury);
+        ti->maxCol = printTextEx5(&ti->r, tb->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
       }
 
       // ti->curx = ti->x + calcPrintTextLenght(tb->title, _font);
@@ -185,7 +197,7 @@ void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink)
   if (ti->active == INACTIVE && color == 0xFFFF) //非激活状态
     return;
 
-  if (blink % FREQ < FREQ / 2 + 3)
+  if (blink % FREQ > FREQ / 2 + 3)
   {
     if (color == 0xFFFF) //减少闪烁频次
       return;
@@ -220,43 +232,96 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
   len = strlen(textbox->title);
   ti = (textInfo *)textbox->value;
   if (ti->curTextindex > len)
-  {
     ti->curTextindex = len;
-  }
+
+  if (ti->curTextindex < 0)
+    ti->curTextindex = 0;
+
+  //隐藏光标
+  DrawTextCursor(textbox, FREQ - 1);
 
   switch (*(int *)key)
   {
   case 0x0e08:
     /*删除*/
-    if (ti->curTextindex > 0)
+    if (0 < ti->curTextindex && ti->curTextindex <= len)
     {
+      //hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
       ch = textbox->title[ti->curTextindex - 1];
       if (ch > 0xa0) //汉字
+      {
+        DelPosChar(textbox->title, ti->curTextindex);
         ti->curTextindex--;
-
+      }
+      DelPosChar(textbox->title, ti->curTextindex);
       ti->curTextindex--;
+      //printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
+      OnPaint_TextBox(textbox, NULL);
+      //freeFont(_font);
     }
-
     break;
   case 0x4800:
     /* 上 */
+    //if (ti->curTextindex - ti->maxCol >= 0)
+    {
+      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      ti->curTextindex = ti->curTextindex - ti->maxCol - 1;
+      if (ti->curTextindex <= 0)
+        ti->curTextindex = 0;
 
+      ch = textbox->title[ti->curTextindex];
+      // if (ch > 0xa0)
+      //   ti->curTextindex++;
+      ti->curTextindex++;
+      printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
+      freeFont(_font);
+    }
     break;
   case 0x5000:
     /* 下 */
+    //  if (ti->curTextindex + ti->maxCol <= len)
+    {
+      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      ti->curTextindex = ti->curTextindex + ti->maxCol - 1;
+      if (ti->curTextindex >= len)
+        ti->curTextindex = len - 1;
+      ch = textbox->title[ti->curTextindex];
+      // if (ch > 0xa0)
+      //   ti->curTextindex++;
+      ti->curTextindex++;
+
+      printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
+      freeFont(_font);
+    }
     break;
-    
+
   case 0x4b00:
-    /* 左 */
-
-    ch = textbox->title[ti->curTextindex - 1];
-    if (ch > 0xa0) //汉字
+    /*左*/
+    if (0 < ti->curTextindex && ti->curTextindex <= len)
+    {
+      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      ch = textbox->title[ti->curTextindex - 1];
+      if (ch > 0xa0) //汉字
+        ti->curTextindex--;
       ti->curTextindex--;
+      printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
 
-    ti->curTextindex--;
+      freeFont(_font);
+    }
     break;
   case 0x4d00:
     /* 右 */
+    if (0 <= ti->curTextindex && ti->curTextindex < len)
+    {
+      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      ch = textbox->title[ti->curTextindex];
+      if (ch > 0xa0) //汉字
+        ti->curTextindex++;
+      ti->curTextindex++;
+      printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
+
+      freeFont(_font);
+    }
     break;
   default:
     break;
@@ -273,7 +338,7 @@ void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
   TESTNULLVOID(textbox->value);
 
   //隐藏光标
-  DrawTextCursor(textbox, 1);
+  DrawTextCursor(textbox, FREQ - 1);
 
   ti = (textInfo *)textbox->value;
   if (ti->active == INACTIVE)
