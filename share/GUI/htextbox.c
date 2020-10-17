@@ -322,7 +322,7 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     /* ÏÂ */
     //  if (ti->curTextindex + ti->maxCol <= len)
     {
-      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);       
+      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
       ti->curTextindex = ti->curTextindex + ti->maxCol - 1;
       if (ti->curTextindex >= len)
         ti->curTextindex = len - 1;
@@ -421,4 +421,5 @@ void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
 
   ti->curTextindex += len;
   textbox->onPaint(textbox, NULL);
+  TRACE(("%s(%c):²åÈë×Ö·û%s\n", __FILE__, __LINE__, str));
 }

@@ -20,6 +20,7 @@ int main(void)
 {
   char kbchar = 0;
   int key, modifiers;
+  char candiateHZString[256] = {0};
 
   globaldef *_global;
   hbasewinAttr *desktop;
@@ -107,22 +108,46 @@ int main(void)
         { //可打印字符和回车
           if (_global->InputMode == ENGLISH ||
               _global->foucsedTextBox->wintype == TEXTBOX_PASSWORD)
-          { //字符/密码输入模式
+          { //字符/密码输入模式, 字符模式/密码模式/当前无拼音
             char str[2];
             str[1] = 0;
             str[0] = kbchar;
             if (_global->foucsedTextBox->onKeyPress)
               _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
             // hidePYInput(_global->pyWin);
-            TRACE(("%s(%d): 字符模式:key = %x, %x, %c, modifiers= %x\n", __FILE__, __LINE__, key, key & 0xFF, key & 0xFF, modifiers));
+            //TRACE(("%s(%d): 字符模式:key = %x, %x, %c, modifiers= %x\n", __FILE__, __LINE__, key, key & 0xFF, key & 0xFF, modifiers));
           }
           else
           { //中文输入
             //确定输入法窗口位置为当前光标位置，并显示
             // if(kbchar == 0x0D) //空格or回车
-
-            if (kbchar >= '1' && kbchar <= '9')
+            if ((kbchar >= '0' && kbchar <= '9') || kbchar == ' ')
             { //选择汉字
+              char str[3];
+              int index = kbchar - '1';
+
+              if (kbchar == ' ')
+                index = 0;
+              if (kbchar == '0')
+                index = 9;
+
+              TRACE(("选择汉字:%s\n", _global->hzstring));
+              strncpy(str, _global->hzstring + index * 2, 2);
+              // str[0] = *(_global->hzstring + index * 2);
+              // str[1] = *(_global->hzstring + index * 2);
+              str[2] = 0;
+              if (_global->foucsedTextBox->onKeyPress)
+                _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
+
+              _global->hzstring = NULL;
+              memset(_global->pystring, 0, 7);
+              _global->pyNum = 0;
+              if (desktop->onKeyPress)
+                desktop->onKeyPress(desktop, _global);
+            }
+            else if (kbchar == '+')
+            {
+
             }
             else if (isalpha(kbchar))
             {
@@ -131,23 +156,27 @@ int main(void)
                 _global->pystring[_global->pyNum++] = tolower(kbchar);
 
               candihz = getCandidateHZbyPY(_global->pinyin, _global->pystring);
+              if (candihz)
+                strcpy(candiateHZString, candihz);
+              else
+                memset(candiateHZString, 0, 256);
+              _global->hzstring = candiateHZString;
 
-              _global->hzstring = candihz;
               if (desktop->onKeyPress)
                 desktop->onKeyPress(desktop, _global);
 
               if (candihz)
                 free(candihz);
-              _global->hzstring = NULL;
-              TRACE(("%s(%d): 汉字模式:key = %x, %x, %c, modifiers= %x\n", __FILE__, __LINE__, key, key & 0xFF, key & 0xFF, modifiers));
+              //_global->hzstring = NULL;
+              //TRACE(("%s(%d): 汉字模式:key = %x, %x, %c, modifiers= %x\n", __FILE__, __LINE__, key, key & 0xFF, key & 0xFF, modifiers));
             }
           }
         }
         else
         {
-          if (_global->InputMode == ENGLISH ||
+          if (_global->InputMode == ENGLISH || _global->pystring[0] == 0 ||
               _global->foucsedTextBox->wintype == TEXTBOX_PASSWORD)
-          { //字符模式 删除
+          { //字符模式/密码模式/当前无拼音 删除
             if (_global->foucsedTextBox->onKey)
               _global->foucsedTextBox->onKey(_global->foucsedTextBox, &key);
           }
@@ -167,7 +196,7 @@ int main(void)
               if (candihz)
                 free(candihz);
               candihz = NULL;
-              _global->hzstring = NULL;
+              //_global->hzstring = NULL;
             }
           }
         }

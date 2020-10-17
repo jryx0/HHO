@@ -144,7 +144,7 @@ void printCandiateHZ(int x, int y, char *text, hfont *_font)
   unsigned char quma, weima; //定义汉字的区码和位码
   unsigned long offset;
   unsigned char *buffer;
-  char index = '0';
+  char index = '1';
   int i = 0;
   //int linenum = 0;
   //char isNewLine = FALSE;
@@ -159,20 +159,21 @@ void printCandiateHZ(int x, int y, char *text, hfont *_font)
   {
     y0 = y;
 
-    if (i < 10)
+    if (i < 9)
     {
       printASC(x0, y0 - _font->ascy, (char)(index + i), _font); //输出单个字符,非打印字符用空格替代
       x0 += _font->ascSize + _font->xgap;                       //偏移一个字符宽度+字间距
     }
+    else if( i == 9)
+    {
+      printASC(x0, y0 - _font->ascy, '0', _font); //输出单个字符,非打印字符用空格替代
+      x0 += _font->ascSize + _font->xgap;      
+    }
     else
     {
-      // index = '0';
-      // printASC(x0, y0 - _font->ascy, '1', _font); //输出单个字符,非打印字符用空格替代
-      // x0 += _font->ascSize + _font->xgap;
-      // printASC(x0, y0 - _font->ascy, (char)(index + i - 9), _font); //输出单个字符,非打印字符用空格替代
-      // x0 += _font->ascSize + _font->xgap;
       break;
     }
+    
 
     printASC(x0, y0 - _font->ascy, '.', _font); //输出单个字符,非打印字符用空格替代
     x0 += _font->ascSize + _font->xgap;
