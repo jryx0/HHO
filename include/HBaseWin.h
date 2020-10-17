@@ -24,7 +24,8 @@ typedef enum winType
   CHECKBOX,
   RADIOBOX,
   PANEL,
-  DESKTOP
+  DESKTOP,
+  DESKTOP_INPUT,
 };
 
 typedef void (*hhoevent)(struct winstruct *win, void *value);
@@ -65,7 +66,7 @@ typedef struct winstruct
   char *title;
 
   //存储的数据，如文本输入框的字符串
-  void *value;
+  void far *value;
 
   //响应鼠标事件函数指针单击,左键按下，左键按起，鼠标离开，鼠标进入
   hhoevent onClick, onLeave; //, onLeftUp, onLeftDown, onEnter;
@@ -88,7 +89,6 @@ typedef struct winstruct
   struct winstruct *parent;
   //struct winstruct *desktop;
 } hbasewinAttr;
-
 
 
 

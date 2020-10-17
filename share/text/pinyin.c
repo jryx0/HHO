@@ -79,6 +79,8 @@ char *getCandidateHZbyPY(pyInput *hzIdx, const char *py)
     return NULL;
 
   len = strlen(py); //拼音长度
+  if (len == 0)
+    return NULL;
   for (i = 0; i < MAXNUMPY; i++)
   {
     if (strncmp(hzIdx->index[i].pinying, py, len) == 0)

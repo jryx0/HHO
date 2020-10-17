@@ -3,6 +3,7 @@
 #include "HBaseWin.h"
 #include "htextbox.h"
 #include "hglobal.h"
+#include "hyperlnk.h"
 #include <memory.h>
 #include <string.h>
 
@@ -177,7 +178,8 @@ void OnActive_TextBox(hbasewinAttr *tb, void *value)
     tb->onPaint(tb, NULL);
   }
 
-  _g->foucsedTextBox = tb;
+  if (tb->wintype == TEXTBOX || tb->wintype == TEXTBOX_NUMBER || tb->wintype == TEXTBOX_PASSWORD)
+    _g->foucsedTextBox = tb;
   //TRACE(("tb=%u,_g->foucsedTextBox=%u\n", tb, _g->foucsedTextBox));
 }
 
@@ -271,7 +273,7 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
         DelPosChar(textbox->title, ti->curTextindex + 1);
         //ti->curTextindex++;
       }
-      DelPosChar(textbox->title, ti->curTextindex+1);
+      DelPosChar(textbox->title, ti->curTextindex + 1);
       //ti->curTextindex++;
       printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
       OnPaint_TextBox(textbox, NULL);
@@ -307,7 +309,9 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
         ti->curTextindex = 0;
 
       ch = textbox->title[ti->curTextindex];
-      // if (ch > 0xa0)
+      // if(ti->curTextindex > 0)
+      //   if(ch > 0xa0 && textbox->title[ti->curTextindex-1] <= 0xa0)
+      // // if (ch > 0xa0)
       //   ti->curTextindex++;
       ti->curTextindex++;
       printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
@@ -318,7 +322,7 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     /* 下 */
     //  if (ti->curTextindex + ti->maxCol <= len)
     {
-      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);       
       ti->curTextindex = ti->curTextindex + ti->maxCol - 1;
       if (ti->curTextindex >= len)
         ti->curTextindex = len - 1;
@@ -348,13 +352,16 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     break;
   case 0x4d00:
     /* 右 */
-    if (0 <= ti->curTextindex && ti->curTextindex < len)
+    if (0 <= ti->curTextindex && ti->curTextindex <= len)
     {
       hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
-      ch = textbox->title[ti->curTextindex];
-      if (ch > 0xa0) //汉字
+      if (ti->curTextindex < len)
+      {
+        ch = textbox->title[ti->curTextindex];
+        if (ch > 0xa0) //汉字
+          ti->curTextindex++;
         ti->curTextindex++;
-      ti->curTextindex++;
+      }
       printTextEx5(&ti->r, textbox->title, _font, &ti->curTextindex, &ti->curx, &ti->cury, FALSE);
 
       freeFont(_font);
@@ -368,8 +375,10 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
 void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
 {
   textInfo *ti = NULL;
+  int titlelen = 0;
   int newLen = 0;
   int len = 0;
+  int i;
   TESTNULLVOID(textbox);
   TESTNULLVOID(str);
   TESTNULLVOID(textbox->value);
@@ -380,8 +389,11 @@ void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
   ti = (textInfo *)textbox->value;
   if (ti->active == INACTIVE)
     return;
+
+  titlelen = strlen(textbox->title);
   len = strlen(str);
-  newLen = strlen(textbox->title) + len + 1;
+  //newLen = strlen(textbox->title) + len + 1;
+  newLen = titlelen + len;
   if (newLen + 32 > 1024) //最大允许值1024个字符
   {
     TRACE(("%s(%c):textbox(%d)字符长度(%d)超过最大值1024!\n",
@@ -391,11 +403,21 @@ void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
 
   if (newLen > ti->textMaxlen)
   { //扩展字符串大小
-    textbox->title = realloc(textbox->title, newLen + 32);
+    textbox->title = realloc(textbox->title, newLen + 33);
     ti->textMaxlen = newLen + 32;
   }
 
-  strcpy(textbox->title + strlen(textbox->title), str);
+  //插入字符串
+  for (i = 1; i <= (titlelen - ti->curTextindex); i++)
+  {
+    textbox->title[newLen - i] = textbox->title[titlelen - i];
+  }
+  for (i = 0; i < len; i++)
+  {
+    textbox->title[ti->curTextindex + i] = ((char *)str)[i];
+  }
+  textbox->title[newLen] = 0;
+  //strcpy(textbox->title + strlen(textbox->title), str);
 
   ti->curTextindex += len;
   textbox->onPaint(textbox, NULL);

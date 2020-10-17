@@ -13,6 +13,7 @@
 #include <stdio.h>
 #include <mem.h>
 #include <string.h>
+#include <ctype.h>
 #include <bios.h>
 
 int main(void)
@@ -22,7 +23,7 @@ int main(void)
 
   globaldef *_global;
   hbasewinAttr *desktop;
-  hbasewinAttr *winInput = NULL;
+  //hbasewinAttr *winInput = NULL;
   hbasewinAttr *child = NULL;
   int blink = 0;
   //int size;
@@ -35,13 +36,12 @@ int main(void)
 
   //初始化桌面
   desktop = CreateDesktop();
+
   _global->activePage = findWinByID(desktop, ID_HOMEPAGE); //设置缺省活动页面-homepage
-  if (desktop && desktop->onPaint)                         //刷新页面
+  //_global->pyWin = findWinByID(desktop, ID_PINYIN);
+  if (desktop && desktop->onPaint) //刷新页面
     desktop->onPaint(desktop, NULL);
 
-  //初始化拼音输入法
-  //winInput = CreatePYInput(NULL, 0, 0, ID_MENU_PY, "Hide");
-  
   //初始化鼠标
   ResetMouse(&_global->mouse);
 
@@ -84,13 +84,22 @@ int main(void)
       /* Determine if shift keys are used */
       modifiers = _bios_keybrd(_KEYBRD_SHIFTSTATUS);
 
-      if (key == 0x6100 && modifiers == 0x224)
-      { //退出 左 ctrl + F4
+      if (key == 0x6100) //&& modifiers == 0x224)
+      {                  //退出 左 ctrl + F4
         _global->isExit = TRUE;
       }
-      else if (key == 0x5E00 && modifiers == 0x224)
-      { //切换输入法 左 ctrl + F1
+      else if (key == 0x5E00) //&& modifiers == 0x224)
+      {                       //切换输入法 左 ctrl + F1
         _global->InputMode = !_global->InputMode;
+        desktop->onPaint(desktop, _global);
+
+        if (_global->InputMode == ENGLISH)
+        {
+          memset(_global->pystring, 0, 6);
+          memset(_global->hzstring, 0, 20); //9个汉字
+          _global->pyNum = 0;
+        }
+        //TRACE(("inputmode = %x\n", _global->InputMode));
       }
       else if (_global->foucsedTextBox)
       { //有激活的textbox
@@ -102,53 +111,69 @@ int main(void)
             char str[2];
             str[1] = 0;
             str[0] = kbchar;
-            _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
-            //hidePYInput(pyInput);
+            if (_global->foucsedTextBox->onKeyPress)
+              _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
+            // hidePYInput(_global->pyWin);
+            TRACE(("%s(%d): 字符模式:key = %x, %x, %c, modifiers= %x\n", __FILE__, __LINE__, key, key & 0xFF, key & 0xFF, modifiers));
           }
           else
           { //中文输入
             //确定输入法窗口位置为当前光标位置，并显示
-            // textInfo *ti = (textInfo *)(_global->foucsedTextBox->value);
-            // showPYInput(pyInput, ti->curx, ti->cury + ti->fontsize + 5);
+            // if(kbchar == 0x0D) //空格or回车
+
+            if (kbchar >= '1' && kbchar <= '9')
+            { //选择汉字
+            }
+            else if (isalpha(kbchar))
+            {
+              char *candihz;
+              if (_global->pyNum < 7)
+                _global->pystring[_global->pyNum++] = tolower(kbchar);
+
+              candihz = getCandidateHZbyPY(_global->pinyin, _global->pystring);
+
+              _global->hzstring = candihz;
+              if (desktop->onKeyPress)
+                desktop->onKeyPress(desktop, _global);
+
+              if (candihz)
+                free(candihz);
+              _global->hzstring = NULL;
+              TRACE(("%s(%d): 汉字模式:key = %x, %x, %c, modifiers= %x\n", __FILE__, __LINE__, key, key & 0xFF, key & 0xFF, modifiers));
+            }
           }
         }
         else
         {
-          if (_global->foucsedTextBox->onKey)
-            _global->foucsedTextBox->onKey(_global->foucsedTextBox, &key);
+          if (_global->InputMode == ENGLISH ||
+              _global->foucsedTextBox->wintype == TEXTBOX_PASSWORD)
+          { //字符模式 删除
+            if (_global->foucsedTextBox->onKey)
+              _global->foucsedTextBox->onKey(_global->foucsedTextBox, &key);
+          }
+          else
+          {
+            char *candihz;
+            if (key == 0x0E08)
+            { //中文backspace
+              if (_global->pyNum > 0)
+                _global->pystring[--_global->pyNum] = 0;
+
+              candihz = getCandidateHZbyPY(_global->pinyin, _global->pystring);
+              _global->hzstring = candihz;
+              if (desktop->onKeyPress)
+                desktop->onKeyPress(desktop, _global);
+
+              if (candihz)
+                free(candihz);
+              candihz = NULL;
+              _global->hzstring = NULL;
+            }
+          }
         }
       }
-      TRACE(("key = %x, %x, %c, modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
+      //TRACE(("key = %x, %x, %c, modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
     }
-
-    /*
-    if (kbhit())
-    {                   //如果有按键按下，则kbhit()函数返回真
-      kbchar = getch(); //使用getch()函数获取按下的键值
-      //kbchar = _bios_keybrd(_KEYBRD_READ);
-      if (_global->foucsedTextBox && _global->foucsedTextBox->onKeyPress)
-      {
-        char str[2];
-        str[1] = 0;
-        str[0] = kbchar;
-        _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
-      }
-
-      if (kbchar == 'c')
-      { //换鼠标
-      }
-      else if (kbchar == 'r')
-      {
-        if (desktop)
-          desktop->onPaint(desktop, NULL);
-      }
-      else if (kbchar == ' ' || kbchar == 27)
-      { //当按下ESC或空格退出时循环,ESC键的键值时27
-        break;
-      }
-      TRACE(("press key:%c,%u\n", kbchar, kbchar));
-    }
-    */
 
     if (_global->isExit)
       break;

@@ -51,7 +51,7 @@ void ResetMouse(mousestatus *mouse) //7
     printf("ERROR In MouseInit\n");
     exit(1);
   };
-  SetMouseRange(0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1);
+  SetMouseRange(0, 0, SCR_WIDTH - MOUSE_WIDTH, SCR_HEIGHT - MOUSE_HEIGHT);
   SaveMouseBk(mouse);
 }
 

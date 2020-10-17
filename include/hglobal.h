@@ -24,7 +24,6 @@ typedef struct _globaldef
   unsigned char cursor_hand[MOUSE_WIDTH][MOUSE_HEIGHT];  //保存鼠标图形地址-手
   mousestatus mouse;
 
-  pyInput *pinyin;
   hbasewinAttr *foucsedTextBox;
 
   hbasewinAttr *activePage;
@@ -33,6 +32,11 @@ typedef struct _globaldef
   unsigned char usertype;  //用户类型
   unsigned char isExit;    //是否退出程序
   unsigned char InputMode; //输入模式
+
+  pyInput *pinyin;
+  char pystring[7]; //拼音
+  char pyNum;       //输入的拼音数
+  char *hzstring;   //候选汉字
 } globaldef;
 
 globaldef *initGlobalSetting(void);

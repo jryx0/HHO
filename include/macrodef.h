@@ -1,7 +1,7 @@
 #ifndef __MACRODEF_H__
 #define __MACRODEF_H__
 
-#define TRUE 1 
+#define TRUE 1
 #define FALSE 0
 //////////////////////////////¥ÌŒÛ¥¶¿Ì∫Í////////////////////////////////////////////
 // #define TESTNULL(X, Y)                                    \
@@ -51,9 +51,9 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 
 #define EPAGE_MARGIN 5
 #define PAGE_X 5
-#define PAGE_Y HEADER_HEIGHT + 5
-#define PAGE_W SCR_WIDTH - 10
-#define PAGE_H SCR_HEIGHT - (HEADER_HEIGHT + FOOTER_HEIGHT + 10)
+#define PAGE_Y (HEADER_HEIGHT + 5)
+#define PAGE_W (SCR_WIDTH - 10)
+#define PAGE_H ((SCR_HEIGHT - (HEADER_HEIGHT + FOOTER_HEIGHT + 10)) - 38)
 
 // #define SVGA32K
 // #define SVGA800x600
@@ -87,6 +87,11 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #define FILE_CURSOR_ARROW DATAPATH "cursor\\arrowbg.cur"
 #define FILE_CURSOR_HAND DATAPATH "cursor\\handbg.cur"
 //#define FILE_CURSOR_ARROW DATAPATH "cursor\\arrowbg.cur"
+
+// #define MOUSE_WIDTH 16
+// #define MOUSE_HEIGHT 16
+// #define FILE_CURSOR_ARROW DATAPATH "cursor\\arrow.cur"
+// #define FILE_CURSOR_HAND DATAPATH "cursor\\hand.cur"
 
 // Û±Í“∆∂Ø◊¥Ã¨
 #define MOUSE_ENTERED 1

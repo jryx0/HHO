@@ -1021,11 +1021,11 @@ void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y)
   x0 = region->left_top.x;
   while (*text)
   {
-    if (isFirstLine)
-    { //段落首行空两个字。
-      x0 += _font->currentFontSize * 2;
-      isFirstLine = FALSE;
-    }
+    // if (isFirstLine)
+    // { //段落首行空两个字。
+    //   x0 += _font->currentFontSize * 2;
+    //   isFirstLine = FALSE;
+    // }
 
     y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
     if (((unsigned char)text[0] >= 0xa0) &&
@@ -1149,11 +1149,11 @@ int printTextEx5(hregion *region, char *text, hfont *_font, int *index, int *x, 
   x0 = region->left_top.x;
   while (*text)
   {
-    if (isFirstLine)
-    { //段落首行空两个字。
-      x0 += _font->currentFontSize * 2;
-      isFirstLine = FALSE;
-    }
+    // if (isFirstLine)
+    // { //段落首行空两个字。
+    //   x0 += _font->currentFontSize * 2;
+    //   isFirstLine = FALSE;
+    // }
 
     y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap; //计算高度 y + 行数*字符高度 + 行间距
     if (((unsigned char)text[0] >= 0xa0) &&
@@ -1222,11 +1222,15 @@ int printTextEx5(hregion *region, char *text, hfont *_font, int *index, int *x, 
       if (curCol > maxCol)
         maxCol = curCol;
       curCol = 0;
+      // if (curindex < 0)
+      // break;
     }
     //}
-    *x = x0;
-    *y = y0;
-
+    //   if(curindex >=0)
+    {
+      *x = x0;
+      *y = y0;
+    }
     if (isNewLine)
     {
       linenum++;
@@ -1241,7 +1245,6 @@ int printTextEx5(hregion *region, char *text, hfont *_font, int *index, int *x, 
 
       x0 = region->left_top.x;
     }
-
     if (curindex <= 0)
       break;
   }

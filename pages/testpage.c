@@ -21,7 +21,7 @@ hbasewinAttr *CreateTestPage(hbasewinAttr *parent, int winID, char *title)
 
   Createhyperlink(testPage, 500, 20, 350, 30, ID_TEST_HYPERLINK, "超链接，转跳--->Hompage!");
   CreateTextBox(testPage, 500, 100, 240, 35, ID_TEST_TEXTBOX, "测a试");
-  CreateTextBox(testPage, 500, 140, 240, 150, ID_TEST_TEXTBOX2, "123456789");
+  CreateTextBox(testPage, 500, 140, 240, 150, ID_TEST_TEXTBOX2, "超a23链35接华中科技4545454大小超链接华中科技大小超链接华中科技大小超链接华中科技大小超链接华中科技大小");
 
   pwd = CreateTextBox(testPage, 500, 290, 240, 100, ID_TEST_TEXTBOX2, "password");
   pwd ->wintype = TEXTBOX_PASSWORD;

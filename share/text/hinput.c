@@ -22,12 +22,11 @@ hbasewinAttr *CreatePYInput(hbasewinAttr *parent, int startx, int starty, int wi
   py->onKeyPress = OnkeyPress_PY;
   py->onLeave = OnLeave_PY;
 
-  // pi = malloc(sizeof(winInputInfo));
-  // memset(pi, 0, sizeof(winInputInfo));
-  // pi->status = HHOHIDE;
-  
-  //py->value = pi;
+  pi = malloc(sizeof(winInputInfo));
+  memset(pi, 0, sizeof(winInputInfo));
+  pi->status = HHOHIDE;
 
+  py->value = pi;
   return py;
 }
 

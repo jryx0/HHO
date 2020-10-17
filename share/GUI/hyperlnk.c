@@ -27,7 +27,7 @@ hbasewinAttr *Createhyperlink(hbasewinAttr *parent, int x, int y, int nWidth,
  * 设置超链接点击时的屏幕显示
  * 
  */
-void OnClick_hyperlink(hbasewinAttr *link, void *value)
+void OnClick_hyperlink(hbasewinAttr *link, void *val)
 {
   WinStyle *lnkStyle = NULL;
   TESTNULLVOID(link);
@@ -36,14 +36,14 @@ void OnClick_hyperlink(hbasewinAttr *link, void *value)
   lnkStyle = (WinStyle *)link->value;
   lnkStyle->type = UNDERLINE;
 
-  OnPaint_hyperlink(link, value);
+  OnPaint_hyperlink(link, val);
 }
 
 /**
  * 设置超链接点击完时的屏幕显示
  * 
  */
-void OnLeave_hyperlink(hbasewinAttr *btn, void *value)
+void OnLeave_hyperlink(hbasewinAttr *btn, void *val)
 {
   WinStyle *lnkStyle = NULL;
   TESTNULLVOID(btn);
@@ -51,13 +51,13 @@ void OnLeave_hyperlink(hbasewinAttr *btn, void *value)
   lnkStyle = (WinStyle *)btn->value;
   lnkStyle->type = NONE;
 
-  OnPaint_hyperlink(btn, value);
+  OnPaint_hyperlink(btn, val);
 }
 /**
  * 设置超链接屏幕输出显示
  * 
  */
-void OnPaint_hyperlink(hbasewinAttr *link, void *value)
+void OnPaint_hyperlink(hbasewinAttr *link, void *val)
 {
   int x = 0, y = 0;
   WinStyle *lnkStyle = NULL;
@@ -79,9 +79,6 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *value)
     region.left_top.y = y;
     region.right_bottom.x = x + link->nWidth;
     region.right_bottom.y = y + link->nHeight;
-    //
-    printTextEx(&region, link->title, _font);
-    freeFont(_font);
 
     if (lnkStyle->type == UNDERLINE)
     {
@@ -93,6 +90,9 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *value)
       linex_styleEx(x, y + lnkStyle->fontsize + 2, link->nWidth, lnkStyle->bkcolor, 2, 1);
       rectangle(x, y, region.right_bottom.x, region.right_bottom.y, lnkStyle->bkcolor, 1, 2);
     }
+
+    printTextEx(&region, link->title, _font);
+    freeFont(_font);
   }
 }
 

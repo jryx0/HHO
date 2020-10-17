@@ -33,6 +33,7 @@ globaldef *initGlobalSetting(void)
   _global->pinyin = initPYHZIndex();
   TESTNULL(_global->pinyin, NULL);
   _global->activePageID = -1;
+  _global->InputMode = ENGLISH;
 
   //¼ÓÔØÊó±êÐÎ×´
   ReadCursor((unsigned char *)_global->cursor_arrow, FILE_CURSOR_ARROW);

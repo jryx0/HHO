@@ -13,6 +13,22 @@
 #include "testpage.h"
 #include "homepage.h"
 
+#define INPUTWINHEIGHT 38
+
+#define PYFONTSIZE 24
+#define PYFONTTYPE SIMKAI
+#define PYFONTCOLOR 0x7A96
+#define PYZONEX 70
+#define PYZONEY (SCR_HEIGHT - PYFONTSIZE - 12)
+#define PYZONEWIDTH (PYFONTSIZE * 6 + 10)
+#define PYZONEHEIGHT (PYFONTSIZE + 6)
+
+#define HZZONEX PYZONEWIDTH + 40
+#define HZZONEY PYZONEY
+#define HZZONEWIDTH (SCR_WIDTH - HZZONEX) - 1
+#define HZZONEHEIGHT PYZONEHEIGHT
+
+void printCandiateHZ(int x, int y, char *text, hfont *_font);
 /**
  * 窗口绘制程序
  * 
@@ -20,25 +36,164 @@
 void OnPaint_Desktop(hbasewinAttr *win, void *val)
 {
   hfont *_font;
+  int footY = SCR_HEIGHT - FOOTER_HEIGHT;
 
   if (win == NULL)
     return;
 
-  clearScreen(COLOR_white);
-  //draw header
-  Putbmp64k(0, 2, "c:\\hho\\data\\bmp\\hhologo.bmp");
-  linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);
+  if (val == NULL)
+  {
+    clearScreen(COLOR_white);
+    //draw header
+    Putbmp64k(0, 2, "c:\\hho\\data\\bmp\\hhologo.bmp");
+    linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);
 
-  repaintChildren(win);
+    repaintChildren(win);
+  }
+  else
+  {
+    globaldef *_g = (globaldef *)val;
+    fillRegion(0, footY - INPUTWINHEIGHT, 1024, 768, 0xFFFF);
+    if (_g->InputMode == CHINESE)
+    {
+      footY -= INPUTWINHEIGHT; //foot 高度增加35
+
+      fillRegion(0, footY + INPUTWINHEIGHT + 3, 1024, 768, 0xCE59);
+      rectangle(0, footY + INPUTWINHEIGHT + 3, 1024, 768, 0x7A96, 2, 1);
+      linexEx(2, footY + INPUTWINHEIGHT + 3 + 2, 1023, 0xFFFF);
+      lineyEx(2, footY + INPUTWINHEIGHT + 3 + 2, INPUTWINHEIGHT, 0xFFFF);
+
+      liney_styleEx(2 + 50, footY + INPUTWINHEIGHT + 3 + 3, INPUTWINHEIGHT, 0xCE59, 1, 1);
+      liney_styleEx(2 + 51, footY + INPUTWINHEIGHT + 3 + 3, INPUTWINHEIGHT, 0x8410, 1, 1);
+      liney_styleEx(2 + 52, footY + INPUTWINHEIGHT + 3 + 3, INPUTWINHEIGHT, 0xFFFF, 1, 1);
+      liney_styleEx(2 + 53, footY + INPUTWINHEIGHT + 3 + 3, INPUTWINHEIGHT, 0xDEDB, 1, 1);
+      liney_styleEx(2 + 54, footY + INPUTWINHEIGHT + 3 + 3, INPUTWINHEIGHT, 0xCE59, 1, 1);
+
+      _font = getFont(SIMHEI, 16, 0x0000);
+      printTextLineXY(10, footY + INPUTWINHEIGHT + 3 + 1 + 12, "中文", _font);
+      freeFont(_font);
+
+      // _font = getFont(SIMKAI, 24, 0x0000);
+      // printTextLineXY(10, footY + INPUTWINHEIGHT + 5 + 1 + 12, _g->pystring, _font);
+      // freeFont(_font);
+    }
+  }
 
   //draw footer
-  linex_styleEx(0, SCR_HEIGHT - FOOTER_HEIGHT, SCR_WIDTH, 0x4A96, 3, 1);
-  _font = getFont(SIMSUN, 16, 0x00);
-  _font->fontcolor = 0x4228;
-  printTextLineXY(215, SCR_HEIGHT - FOOTER_HEIGHT + 15, "地址：湖北省武汉市洪山区珞喻路1037号      咨询电话:027-87543469", _font);
+  linex_styleEx(0, footY, SCR_WIDTH, 0x4A96, 3, 1);
+  _font = getFont(SIMSUN, 16, 0x4228);
+  //_font->fontcolor = 0x4228;
+  printTextLineXY(215, footY + 15, "地址：湖北省武汉市洪山区珞喻路1037号      咨询电话:027-87543469", _font);
   freeFont(_font);
 
   (void)val;
+}
+
+void OnKeyPress_Desktop(hbasewinAttr *win, void *val)
+{
+  globaldef *_g;
+  hfont *_font;
+  int footY = SCR_HEIGHT - FOOTER_HEIGHT;
+
+  TESTNULLVOID(win);
+  TESTNULLVOID(val);
+
+  _g = (globaldef *)val;
+
+  if (_g->InputMode == CHINESE)
+  {
+
+    fillRegionEx(PYZONEX, PYZONEY, PYZONEWIDTH, PYZONEHEIGHT, 0xCE59);
+
+    _font = getFont(PYFONTTYPE, PYFONTSIZE, PYFONTCOLOR);
+    printTextLineXY(PYZONEX, PYZONEY, _g->pystring, _font);
+
+    fillRegionEx(HZZONEX, HZZONEY, SCR_WIDTH - HZZONEX, PYZONEHEIGHT, 0xCE59);
+    if (_g->hzstring)
+      printCandiateHZ(HZZONEX, HZZONEY, _g->hzstring, _font);
+    //printTextLineXY(HZZONEX, HZZONEY, _g->hzstring, _font);
+
+    freeFont(_font);
+
+    // footY -= INPUTWINHEIGHT; //foot 高度增加35
+
+    // fillRegion(0, footY + INPUTWINHEIGHT + 5, 1024, 768, 0xCE59);
+    // rectangle(0, footY + INPUTWINHEIGHT + 5, 1024, 768, 0x7A96, 2, 1);
+    // linexEx(2, footY + INPUTWINHEIGHT + 5 + 2, 1023, 0xFFFF);
+    // lineyEx(2, footY + INPUTWINHEIGHT + 5 + 2, INPUTWINHEIGHT, 0xFFFF);
+
+    // liney_styleEx(2 + 50, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0xCE59, 1, 1);
+    // liney_styleEx(2 + 51, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0x8410, 1, 1);
+    // liney_styleEx(2 + 52, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0xFFFF, 1, 1);
+    // liney_styleEx(2 + 53, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0xDEDB, 1, 1);
+    // liney_styleEx(2 + 54, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0xCE59, 1, 1);
+
+    // _font = getFont(SIMHEI, 16, 0x0000);
+    // printTextLineXY(10, footY + INPUTWINHEIGHT + 5 + 1 + 12, "中文", _font);
+    // freeFont(_font);
+
+    // _font = getFont(SIMKAI, 24, 0x0000);
+    // printTextLineXY(10, footY + INPUTWINHEIGHT + 5 + 1 + 12, _g->pystring, _font);
+    // freeFont(_font);
+  }
+}
+
+void printCandiateHZ(int x, int y, char *text, hfont *_font)
+{
+  int x0, y0;                //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  char index = '0';
+  int i = 0;
+  //int linenum = 0;
+  //char isNewLine = FALSE;
+
+  TESTNULLVOID(_font);
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULL(buffer, );
+
+  x0 = x;
+  while (*text)
+  {
+    y0 = y;
+
+    if (i < 10)
+    {
+      printASC(x0, y0 - _font->ascy, (char)(index + i), _font); //输出单个字符,非打印字符用空格替代
+      x0 += _font->ascSize + _font->xgap;                       //偏移一个字符宽度+字间距
+    }
+    else
+    {
+      // index = '0';
+      // printASC(x0, y0 - _font->ascy, '1', _font); //输出单个字符,非打印字符用空格替代
+      // x0 += _font->ascSize + _font->xgap;
+      // printASC(x0, y0 - _font->ascy, (char)(index + i - 9), _font); //输出单个字符,非打印字符用空格替代
+      // x0 += _font->ascSize + _font->xgap;
+      break;
+    }
+
+    printASC(x0, y0 - _font->ascy, '.', _font); //输出单个字符,非打印字符用空格替代
+    x0 += _font->ascSize + _font->xgap;
+    i++;
+
+    if (((unsigned char)text[0] >= 0xa0) &&
+        ((unsigned char)text[1] >= 0xa0))
+    {                                                            //打印中文                                                            //汉字
+      quma = text[0] - 0xa1;                                     //求出区码
+      weima = text[1] - 0xa1;                                    //求出位码
+      offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+      fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+      fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+      printHZWord(x0, y0, buffer, _font);         //输出单个汉字
+      x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+      text += 2;                                  //下一个汉字
+    }
+    x0 += 5;
+  }
+  free(buffer);
 }
 
 /**
@@ -48,21 +203,23 @@ void OnPaint_Desktop(hbasewinAttr *win, void *val)
 hbasewinAttr *CreateDesktop(void)
 {
   hbasewinAttr *desktop;
+  hbasewinAttr *child;
+  WinStyle *lnkStyle;
 
   desktop = CreateWindowsEx(NULL, 0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1, ID_DESKTOP, "desktop");
+  desktop->wintype = DESKTOP;
 
   //创建菜单,切换页面,临时使用
   CreateButton(desktop, 450, HEADER_HEIGHT - 46, 120, 44, ID_MENU_HOMEPAGE, "首页");
   CreateButton(desktop, 600, HEADER_HEIGHT - 46, 150, 44, ID_MENU_TESTPAGE, "测试页");
   CreateButton(desktop, 850, HEADER_HEIGHT - 46, 150, 44, ID_MENU_EXIT, "退出");
 
-  Createhyperlink(desktop, 900, SCR_HEIGHT - FOOTER_HEIGHT / 2, 100, 30, ID_MENU_PY, "中文");
-
   //创建首页
   CreateHomepage(desktop, ID_HOMEPAGE);
 
   desktop->onPaint = OnPaint_Desktop;
   desktop->EventHandler = eventhandlerdesktop;
+  desktop->onKeyPress = OnKeyPress_Desktop;
 
   return desktop;
 }
@@ -162,7 +319,6 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
     switch (win->winID)
     {
     case ID_MENU_TESTPAGE:
-
       /* 改变鼠标形状、改变背景颜色 */
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
@@ -190,7 +346,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
       { //鼠标按下
         if (win->onClick)
-          win->onClick(win, NULL);       
+          win->onClick(win, NULL);
       }
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标弹起
@@ -213,6 +369,19 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       { //鼠标弹起
         //切换页面
         _g->isExit = TRUE;
+      }
+      break;
+    case ID_MENU_PY:
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标弹起
+        //切换页面
+        if (win->onClick)
+        {
+          win->onClick(win, NULL);
+        }
       }
       break;
     default:
