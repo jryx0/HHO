@@ -104,7 +104,157 @@ int main(void)
       }
       else if (_global->foucsedTextBox)
       { //有激活的textbox
-        if (kbchar >= 0x20 || kbchar == 0x0D)
+        if (_global->InputMode == CHINESE && _global->foucsedTextBox->wintype != TEXTBOX_PASSWORD)
+        { //中文
+          //TRACE(("key = %x, %x, '%c', modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
+          if ((kbchar >= 'a' && kbchar <= 'z') || (kbchar >= 'a' && kbchar <= 'Z'))
+          { //拼音查找汉字
+            char *candihz;
+            if (_global->pyNum < 7)
+              _global->pystring[_global->pyNum++] = tolower(kbchar);
+
+            candihz = getCandidateHZbyPY(_global->pinyin, _global->pystring);
+            if (candihz)
+              strcpy(candiateHZString, candihz);
+            else
+              memset(candiateHZString, 0, 256);
+            _global->hzstring = candiateHZString;
+
+            if (desktop->onKeyPress)
+              desktop->onKeyPress(desktop, _global);
+
+            if (candihz)
+              free(candihz);
+            //_global->hzstring = NULL;
+            //TRACE(("%s(%d): 汉字模式:key = %x, %x, %c, modifiers= %x\n", __FILE__, __LINE__, key, key & 0xFF, key & 0xFF, modifiers));
+          }
+          else if (_global->pystring[0] != 0)
+          { //拼音状态下,若无拼音,其他字符可直接输入
+            if (kbchar == 8)
+            { //backspce  中文backspace 删除拼音重新查找
+              char *candihz;
+              if (_global->pyNum > 0)
+                _global->pystring[--_global->pyNum] = 0;
+
+              candihz = getCandidateHZbyPY(_global->pinyin, _global->pystring);
+              if (candihz)
+                strcpy(candiateHZString, candihz);
+              else
+                memset(candiateHZString, 0, 256);
+              _global->hzstring = candiateHZString;
+              if (desktop->onKeyPress)
+                desktop->onKeyPress(desktop, _global);
+
+              if (candihz)
+                free(candihz);
+              candihz = NULL;
+              //_global->hzstring = NULL;
+            }
+            else if ((kbchar >= '0' && kbchar <= '9') || kbchar == ' ')
+            { //选择汉字
+              char str[3];
+              int index = kbchar - '1';
+
+              if (kbchar == ' ')
+                index = 0;
+              if (kbchar == '0')
+                index = 9;
+
+              TRACE(("选择汉字:%s\n", _global->hzstring));
+              strncpy(str, _global->hzstring + index * 2, 2);
+              // str[0] = *(_global->hzstring + index * 2);
+              // str[1] = *(_global->hzstring + index * 2);
+              str[2] = 0;
+              if (_global->foucsedTextBox->onKeyPress)
+                _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
+
+              _global->hzstring = NULL;
+              memset(_global->pystring, 0, 7);
+              _global->pyNum = 0;
+              if (desktop->onKeyPress)
+                desktop->onKeyPress(desktop, _global);
+            }
+            else if (kbchar == '=')
+            { //下一页 +
+              int len = strlen(candiateHZString);
+              int offest = _global->hzstring - candiateHZString;
+              TRACE(("翻页+1:%s\n", _global->hzstring));
+              if (offest + 20 < len)
+              {
+                _global->hzstring += 20;
+                if (desktop->onKeyPress)
+                  desktop->onKeyPress(desktop, _global);
+                TRACE(("翻页+2:%s\n", _global->hzstring));
+              }
+            }
+            else if (kbchar == '-')
+            { //上一页 -
+              int len = strlen(candiateHZString);
+              int offest = _global->hzstring - candiateHZString;
+              TRACE(("翻页-1:%s\n", _global->hzstring));
+              if (offest - 20 > 0)
+              {
+                _global->hzstring -= 20;
+                if (desktop->onKeyPress)
+                  desktop->onKeyPress(desktop, _global);
+                TRACE(("翻页-2:%s\n", _global->hzstring));
+              }
+            }
+            else
+            {//
+              if (kbchar >= 0x20 || kbchar == 0x0D)
+              {//拼音状态下,有拼音,其他字符由字符模式处理
+                char str[2];
+                str[1] = 0;
+                str[0] = kbchar;
+                if (_global->foucsedTextBox->onKeyPress)
+                  _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
+              }
+              else
+              {
+                if (_global->foucsedTextBox->onKey)
+                  _global->foucsedTextBox->onKey(_global->foucsedTextBox, &key);
+              }
+
+              // hidePYInput(_global->pyWin);
+              //TRACE(("%s(%d): 字符模式:key = %x, %x, %c, modifiers= %x\n", __FILE__, __LINE__, key, key & 0xFF, key & 0xFF, modifiers));
+            }
+          }
+          else
+          {//拼音状态下,无拼音,字符模式处理
+            if (kbchar >= 0x20 || kbchar == 0x0D)
+            {
+              char str[2];
+              str[1] = 0;
+              str[0] = kbchar;
+              if (_global->foucsedTextBox->onKeyPress)
+                _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
+            }
+            else
+            {
+              if (_global->foucsedTextBox->onKey)
+                _global->foucsedTextBox->onKey(_global->foucsedTextBox, &key);
+            }
+          }
+        }
+        else
+        {//字符模式/密码模式
+          if (kbchar >= 0x20 || kbchar == 0x0D)
+          {
+            char str[2];
+            str[1] = 0;
+            str[0] = kbchar;
+            if (_global->foucsedTextBox->onKeyPress)
+              _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
+          }
+          else
+          {
+            if (_global->foucsedTextBox->onKey)
+              _global->foucsedTextBox->onKey(_global->foucsedTextBox, &key);
+          }
+        }
+
+        /*if (kbchar >= 0x20 || kbchar == 0x0D)
         { //可打印字符和回车
           if (_global->InputMode == ENGLISH ||
               _global->foucsedTextBox->wintype == TEXTBOX_PASSWORD)
@@ -199,9 +349,8 @@ int main(void)
               //_global->hzstring = NULL;
             }
           }
-        }
+        }*/
       }
-      //TRACE(("key = %x, %x, %c, modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
     }
 
     if (_global->isExit)
