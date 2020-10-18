@@ -1,6 +1,9 @@
 #include "lginpage.h"
 #include "hhosvga.h"
 #include "HBaseWin.h"
+#include "wResource.h"
+#include "htextbox.h"
+#include "hbutton.h"
 
 hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
 {
@@ -8,6 +11,10 @@ hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
   TESTNULL(page, NULL);
 
   page->onPaint = OnPaint_loginpage;
+
+  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 107, 240, 40, ID_LOGIN_USERNAME, NULL);
+  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 7, 240, 40, ID_LOGIN_KEY, NULL);
+  CreateButton(page, PAGE_W / 2 - 50, PAGE_H - 70, 120, 40, ID_LOGIN_LOGIN, "登 录");
 
   return page;
 }
@@ -19,8 +26,8 @@ void OnPaint_loginpage(hbasewinAttr *win, void *value)
   TESTNULLVOID(win);
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
-  printTextLineXY(x+PAGE_W/2-200, y+PAGE_H/2-100, "用户名", _h);
-  printTextLineXY(x+PAGE_W/2-200, y+PAGE_H/2, "密 码", _h);
+  printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2 - 100, "用户名：", _h);
+  printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2, "密  码：", _h);
 
   repaintChildren(win);
 }

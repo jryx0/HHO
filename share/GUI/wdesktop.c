@@ -205,7 +205,7 @@ hbasewinAttr *CreateDesktop(void)
   desktop->wintype = DESKTOP;
 
   //登陆状态
-  Createhyperlink(desktop, 900, (HEADER_HEIGHT - 44) / 2 - 10, 120, 44, ID_MENU_LOGIN, "请登录");
+  Createhyperlink(desktop, 900, (HEADER_HEIGHT - 44) / 2 - 10, 55, 25, ID_MENU_LOGIN, "请登录");
   //创建菜单,切换页面,临时使用
   CreateButton(desktop, 450, HEADER_HEIGHT - 44, 120, 44, ID_MENU_HOMEPAGE, "首页");
   CreateButton(desktop, 600, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "测试页");
@@ -388,7 +388,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
 
-      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
       { //鼠标弹起
         //切换页面
         if (win->onClick)
