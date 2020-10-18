@@ -19,9 +19,11 @@
 //窗口宏定义
 //////////////////////Desktop windows defined////////////////////////////////
 #define ID_DESKTOP 0
+
 #define ID_MENU_LOG 1      //label
 #define ID_MENU_HOMEPAGE 2 //button
 #define ID_MENU_TESTPAGE 3 //button
+#define ID_MENU_LOGOUT  4 //超链接注销
 #define ID_MENU_EXIT  20 // 退出
 //是否点击desktop控件最大值，用于判断是否点击desktop控件
 #define ID_DESKTOP_MAX 30
@@ -36,12 +38,15 @@
 
 ////////////////////test page///////////////////////////////////////////////////
 #define ID_TESTPAGE 10000
+
 #define ID_TEST_HYPERLINK 10001
 #define ID_TEST_CHECKBOX 10002
 #define ID_TEST_TEXTBOX 10003
 #define ID_TEST_TEXTBOX2 10004
 
 //////////////////////Login windows defined////////////////////////////////
+#define ID_LOGINPAGE 1000
+
 #define ID_LOGIN_REGISTER 1001
 #define ID_LOGIN_LOGIN 1002
 #define ID_LOGIN_EXIT 1003
