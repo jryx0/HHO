@@ -51,14 +51,15 @@ void OnPaint_button(hbasewinAttr *btn, void *value)
   TESTNULLVOID(btn->value);
 
   btnStyle = (WinStyle *)btn->value;
-  fillRegionEx(btn->x, btn->y, btn->nWidth, btn->nHeight, btnStyle->bkcolor);
+  y = getAbsoluteY(btn);
+  x = getAbsoluteX(btn);
+  fillRegionEx(x, y, btn->nWidth, btn->nHeight, btnStyle->bkcolor);
   //rectangleEx(btn->x, btn->y, btn->nWidth, btn->nHeight, 0x05FF, 1, 1);
 
   if (btn->title != NULL)
   {
     _font = getFont(btnStyle->fonttype, btnStyle->fontsize, 0xFFFF);
-    y = getAbsoluteY(btn);
-    x = getAbsoluteX(btn);
+
     if (btnStyle->textalign == TEXT_CENTER)
     {
       int len = calcPrintTextLenght(btn->title, _font);
