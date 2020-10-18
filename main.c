@@ -109,10 +109,10 @@ int main(void)
         if (CHINESE == _global->InputMode && _global->foucsedTextBox->wintype != TEXTBOX_PASSWORD)
         { //ÖÐÎÄ
           //TRACE(("key = %x, %x, '%c', modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
-          if ((kbchar >= 'a' && kbchar <= 'z') || (kbchar >= 'a' && kbchar <= 'Z'))
+          if ((kbchar >= 'a' && kbchar <= 'z') || (kbchar >= 'A' && kbchar <= 'Z'))
           { //Æ´Òô²éÕÒºº×Ö
             char *candihz;
-            if (_global->pyNum < 7)
+            if (_global->pyNum < 6)
               _global->pystring[_global->pyNum++] = tolower(kbchar);
 
             candihz = getCandidateHZbyPY(_global->pinyin, _global->pystring);
