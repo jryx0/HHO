@@ -14,7 +14,8 @@ hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
 
   CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 107, 240, 40, ID_LOGIN_USERNAME, NULL);
   CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 7, 240, 40, ID_LOGIN_KEY, NULL);
-  CreateButton(page, PAGE_W / 2 - 50, PAGE_H - 70, 120, 40, ID_LOGIN_LOGIN, "µÇ Â¼");
+  CreateButton(page, PAGE_W / 2 + 40, PAGE_H - 70, 120, 40, ID_LOGIN_LOGIN, "µÇ Â¼");
+  CreateButton(page, PAGE_W / 2 - 110, PAGE_H - 70, 120, 40, ID_LOGIN_REGISTER, "×¢ ²á");
 
   return page;
 }
