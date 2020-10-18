@@ -16,8 +16,8 @@ hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
   page->onPaint = OnPaint_loginpage;
   page->EventHandler = EventHandler_loginpage;
 
-  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 107, 240, 40, ID_LOGIN_USERNAME, NULL);
-  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 7, 240, 40, ID_LOGIN_KEY, NULL);
+  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 107, 240, 40, ID_LOGIN_USERNAME, "");
+  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 7, 240, 40, ID_LOGIN_KEY, "");
   Createhyperlink(page, 20, 10, 55, 25, ID_LOGIN_RETURN, "·µ »Ø");
   CreateButton(page, PAGE_W / 2 + 30, PAGE_H - 200, 120, 40, ID_LOGIN_LOGIN, "µÇ Â¼");
   CreateButton(page, PAGE_W / 2 - 120, PAGE_H - 200, 120, 40, ID_LOGIN_REGISTER, "×¢ ²á");
