@@ -12,6 +12,7 @@
 
 #include "testpage.h"
 #include "homepage.h"
+#include "lginpage.h"
 #include <memory.h>
 
 #define INPUTWINHEIGHT 38
@@ -56,7 +57,7 @@ void OnPaint_Desktop(hbasewinAttr *win, void *val)
     clearScreen(COLOR_white);
     //draw header
     Putbmp64k(0, 2, "c:\\hho\\data\\bmp\\hhologo.bmp");
-   // linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);
+    // linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);
     fillRegionEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 44, dskStyle->bkcolor);
 
     repaintChildren(win);
@@ -203,6 +204,8 @@ hbasewinAttr *CreateDesktop(void)
   desktop = CreateWindowsEx(NULL, 0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1, ID_DESKTOP, "desktop");
   desktop->wintype = DESKTOP;
 
+  //登陆状态
+  Createhyperlink(desktop, 900, (HEADER_HEIGHT - 44) / 2 - 10, 120, 44, ID_MENU_LOGIN, "请登录");
   //创建菜单,切换页面,临时使用
   CreateButton(desktop, 450, HEADER_HEIGHT - 44, 120, 44, ID_MENU_HOMEPAGE, "首页");
   CreateButton(desktop, 600, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "测试页");
@@ -240,9 +243,10 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID)
   case ID_TESTPAGE:
     newpage = CreateTestPage(desktop, ID_TESTPAGE, "测试页面-建设中.....");
     break;
-  /*
-   * case :
-   * case : 
+  case ID_LOGINPAGE:
+    newpage = Createloginpage(desktop, ID_LOGINPAGE);
+    break;
+  /* case : 
    */
   default:
     break;
@@ -341,8 +345,8 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
           win->onLeave(win, NULL);
         Desktop_changePage(win->parent, ID_TESTPAGE, _g);
       }
-
       break;
+
     case ID_MENU_HOMEPAGE:
       /* 改变鼠标形状、改变背景颜色 */
       //.....
@@ -363,6 +367,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
         Desktop_changePage(win->parent, ID_HOMEPAGE, _g); //->activePage);
       }
       break;
+
     case ID_MENU_EXIT:
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
@@ -378,7 +383,8 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
         _g->isExit = TRUE;
       }
       break;
-    case ID_MENU_PY:
+
+    case ID_MENU_LOGIN:
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
 
@@ -386,9 +392,15 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       { //鼠标弹起
         //切换页面
         if (win->onClick)
-        {
           win->onClick(win, NULL);
-        }
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标弹起
+        //切换页面
+        if (win->onLeave)
+          win->onLeave(win, NULL);
+
+        Desktop_changePage(win->parent, ID_LOGINPAGE, _g); //->activePage);
       }
       break;
     default:

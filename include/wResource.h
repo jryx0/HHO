@@ -22,6 +22,7 @@
 #define ID_MENU_LOG 11      //label
 #define ID_MENU_HOMEPAGE 12 //button
 #define ID_MENU_TESTPAGE 13 //button
+#define ID_MENU_LOGIN 14 //ÓÒÉÏ½ÇµÇÂ¼×´Ì¬
 
 #define ID_MENU_PY 19
 #define ID_MENU_EXIT 20 // ÍË³ö
@@ -47,6 +48,7 @@
 #define ID_TEST_TEXTBOX2 10004
 
 //////////////////////Login windows defined////////////////////////////////
+#define ID_LOGINPAGE 1000
 #define ID_LOGIN_REGISTER 1001
 #define ID_LOGIN_LOGIN 1002
 #define ID_LOGIN_EXIT 1003
