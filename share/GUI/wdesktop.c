@@ -12,6 +12,7 @@
 
 #include "testpage.h"
 #include "homepage.h"
+#include <memory.h>
 
 #define INPUTWINHEIGHT 38
 
@@ -19,16 +20,22 @@
 #define PYFONTTYPE SIMKAI
 #define PYFONTCOLOR 0x7A96
 #define PYZONEX 70
-#define PYZONEY (SCR_HEIGHT - PYFONTSIZE - 12)
+#define PYZONEY (SCR_HEIGHT - PYFONTSIZE - 10)
 #define PYZONEWIDTH (PYFONTSIZE * 6 + 10)
 #define PYZONEHEIGHT (PYFONTSIZE + 6)
 
 #define HZZONEX PYZONEWIDTH + 40
-#define HZZONEY PYZONEY
+#define HZZONEY PYZONEY + 2
 #define HZZONEWIDTH (SCR_WIDTH - HZZONEX) - 1
 #define HZZONEHEIGHT PYZONEHEIGHT
 
+/**
+ * 输入法专用汉字显示函数,在每个前10个汉字前加序号
+ * 
+ * 
+ */
 void printCandiateHZ(int x, int y, char *text, hfont *_font);
+
 /**
  * 窗口绘制程序
  * 
@@ -36,22 +43,26 @@ void printCandiateHZ(int x, int y, char *text, hfont *_font);
 void OnPaint_Desktop(hbasewinAttr *win, void *val)
 {
   hfont *_font;
+  WinStyle *dskStyle = NULL;
   int footY = SCR_HEIGHT - FOOTER_HEIGHT;
 
   if (win == NULL)
     return;
+
+  dskStyle = (WinStyle *)win->value;
 
   if (val == NULL)
   {
     clearScreen(COLOR_white);
     //draw header
     Putbmp64k(0, 2, "c:\\hho\\data\\bmp\\hhologo.bmp");
-    linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);
+   // linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);
+    fillRegionEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 44, dskStyle->bkcolor);
 
     repaintChildren(win);
   }
   else
-  {
+  { //输入法窗口
     globaldef *_g = (globaldef *)val;
     fillRegion(0, footY - INPUTWINHEIGHT, 1024, 768, 0xFFFF);
     if (_g->InputMode == CHINESE)
@@ -80,8 +91,8 @@ void OnPaint_Desktop(hbasewinAttr *win, void *val)
   }
 
   //draw footer
-  linex_styleEx(0, footY, SCR_WIDTH, 0x4A96, 3, 1);
-  _font = getFont(SIMSUN, 16, 0x4228);
+  linex_styleEx(0, footY, SCR_WIDTH, dskStyle->bkcolor, 3, 1);
+  _font = getFont(dskStyle->fontsize, 16, 0x0000);
   //_font->fontcolor = 0x4228;
   printTextLineXY(215, footY + 15, "地址：湖北省武汉市洪山区珞喻路1037号      咨询电话:027-87543469", _font);
   freeFont(_font);
@@ -93,7 +104,7 @@ void OnKeyPress_Desktop(hbasewinAttr *win, void *val)
 {
   globaldef *_g;
   hfont *_font;
-  int footY = SCR_HEIGHT - FOOTER_HEIGHT;
+  //int footY = SCR_HEIGHT - FOOTER_HEIGHT;
 
   TESTNULLVOID(win);
   TESTNULLVOID(val);
@@ -111,33 +122,16 @@ void OnKeyPress_Desktop(hbasewinAttr *win, void *val)
     fillRegionEx(HZZONEX, HZZONEY, SCR_WIDTH - HZZONEX, PYZONEHEIGHT, 0xCE59);
     if (_g->hzstring)
       printCandiateHZ(HZZONEX, HZZONEY, _g->hzstring, _font);
-    //printTextLineXY(HZZONEX, HZZONEY, _g->hzstring, _font);
 
     freeFont(_font);
-
-    // footY -= INPUTWINHEIGHT; //foot 高度增加35
-
-    // fillRegion(0, footY + INPUTWINHEIGHT + 5, 1024, 768, 0xCE59);
-    // rectangle(0, footY + INPUTWINHEIGHT + 5, 1024, 768, 0x7A96, 2, 1);
-    // linexEx(2, footY + INPUTWINHEIGHT + 5 + 2, 1023, 0xFFFF);
-    // lineyEx(2, footY + INPUTWINHEIGHT + 5 + 2, INPUTWINHEIGHT, 0xFFFF);
-
-    // liney_styleEx(2 + 50, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0xCE59, 1, 1);
-    // liney_styleEx(2 + 51, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0x8410, 1, 1);
-    // liney_styleEx(2 + 52, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0xFFFF, 1, 1);
-    // liney_styleEx(2 + 53, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0xDEDB, 1, 1);
-    // liney_styleEx(2 + 54, footY + INPUTWINHEIGHT + 5 + 3, INPUTWINHEIGHT, 0xCE59, 1, 1);
-
-    // _font = getFont(SIMHEI, 16, 0x0000);
-    // printTextLineXY(10, footY + INPUTWINHEIGHT + 5 + 1 + 12, "中文", _font);
-    // freeFont(_font);
-
-    // _font = getFont(SIMKAI, 24, 0x0000);
-    // printTextLineXY(10, footY + INPUTWINHEIGHT + 5 + 1 + 12, _g->pystring, _font);
-    // freeFont(_font);
   }
 }
 
+/**
+ * 输入法专用汉字显示函数,在每个前10个汉字前加序号
+ * 
+ * 
+ */
 void printCandiateHZ(int x, int y, char *text, hfont *_font)
 {
   int x0, y0;                //每个汉字起始点
@@ -164,16 +158,15 @@ void printCandiateHZ(int x, int y, char *text, hfont *_font)
       printASC(x0, y0 - _font->ascy, (char)(index + i), _font); //输出单个字符,非打印字符用空格替代
       x0 += _font->ascSize + _font->xgap;                       //偏移一个字符宽度+字间距
     }
-    else if( i == 9)
+    else if (i == 9)
     {
       printASC(x0, y0 - _font->ascy, '0', _font); //输出单个字符,非打印字符用空格替代
-      x0 += _font->ascSize + _font->xgap;      
+      x0 += _font->ascSize + _font->xgap;
     }
     else
     {
       break;
     }
-    
 
     printASC(x0, y0 - _font->ascy, '.', _font); //输出单个字符,非打印字符用空格替代
     x0 += _font->ascSize + _font->xgap;
@@ -205,15 +198,15 @@ hbasewinAttr *CreateDesktop(void)
 {
   hbasewinAttr *desktop;
   hbasewinAttr *child;
-  WinStyle *lnkStyle;
+  WinStyle *dskStyle;
 
   desktop = CreateWindowsEx(NULL, 0, 0, SCR_WIDTH - 1, SCR_HEIGHT - 1, ID_DESKTOP, "desktop");
   desktop->wintype = DESKTOP;
 
   //创建菜单,切换页面,临时使用
-  CreateButton(desktop, 450, HEADER_HEIGHT - 46, 120, 44, ID_MENU_HOMEPAGE, "首页");
-  CreateButton(desktop, 600, HEADER_HEIGHT - 46, 150, 44, ID_MENU_TESTPAGE, "测试页");
-  CreateButton(desktop, 850, HEADER_HEIGHT - 46, 150, 44, ID_MENU_EXIT, "退出");
+  CreateButton(desktop, 450, HEADER_HEIGHT - 44, 120, 44, ID_MENU_HOMEPAGE, "首页");
+  CreateButton(desktop, 600, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "测试页");
+  CreateButton(desktop, 850, HEADER_HEIGHT - 44, 150, 44, ID_MENU_EXIT, "退出");
 
   //创建首页
   CreateHomepage(desktop, ID_HOMEPAGE);
@@ -221,6 +214,10 @@ hbasewinAttr *CreateDesktop(void)
   desktop->onPaint = OnPaint_Desktop;
   desktop->EventHandler = eventhandlerdesktop;
   desktop->onKeyPress = OnKeyPress_Desktop;
+
+  dskStyle = malloc(sizeof(WinStyle));
+  dskStyle = getWinTheme(dskStyle, 1);
+  desktop->value = dskStyle;
 
   return desktop;
 }
@@ -256,9 +253,10 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID)
  * Desktop专用函数，为desktop切换页面
  * 
  */
-void Desktop_changePage(hbasewinAttr *desktop, int pageID, hbasewinAttr *activePage)
+void Desktop_changePage(hbasewinAttr *desktop, int pageID, globaldef *_g)
 {
-  globaldef *_g;
+  //globaldef *_g;
+  hbasewinAttr *activePage = _g->activePage;
   list_node_t *node;
   hbasewinAttr *py;
 
@@ -266,8 +264,8 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, hbasewinAttr *activeP
   if (activePage && activePage->winID != pageID)
   { //当前活动page不是pageID页面，则删除其他页面
     clearWinRegion(activePage, 0xFFFF);
-    if (_g->foucsedTextBox && _g->foucsedTextBox->onActivate)
-      _g->foucsedTextBox->onActivate(NULL, _g);
+    // if (_g->foucsedTextBox && _g->foucsedTextBox->onActivate)
+    //   _g->foucsedTextBox->onActivate(NULL, _g);
 
     if (activePage->onDestroy)
     {
@@ -286,11 +284,17 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, hbasewinAttr *activeP
     }
     if (activePage->onPaint)
       activePage->onPaint(activePage, NULL);
-  }
 
-  // py = findWinByID(desktop, ID_MENU_PY);
-  // if(py)
-  //   hidePYInput(py);
+    _g->activePage = activePage;
+    activePage->onTheme(activePage, &_g->theme);
+  }
+  _g->foucsedTextBox = NULL;
+
+  if (_g->InputMode == CHINESE)
+  {
+    _g->InputMode = ENGLISH;
+    closePY(desktop, _g);
+  }
 }
 
 /**
@@ -311,7 +315,8 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
   {
   case EVENT_PAGE_CHANGE:
     //发送到desktop窗口
-    Desktop_changePage(win, _g->activePageID, _g->activePage); //使用win
+    //焦点textbox 取消焦点
+    Desktop_changePage(win, _g->activePageID, _g);
     break;
   case EVENT_MOUSE:
     if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow) //在homepage窗口部分显示标准鼠标
@@ -334,7 +339,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
         //切换页面
         if (win->onLeave)
           win->onLeave(win, NULL);
-        Desktop_changePage(win->parent, ID_TESTPAGE, _g->activePage); //使用win->parent
+        Desktop_changePage(win->parent, ID_TESTPAGE, _g);
       }
 
       break;
@@ -354,7 +359,8 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
         //切换页面
         if (win->onLeave)
           win->onLeave(win, NULL);
-        Desktop_changePage(win->parent, ID_HOMEPAGE, _g->activePage);
+
+        Desktop_changePage(win->parent, ID_HOMEPAGE, _g); //->activePage);
       }
       break;
     case ID_MENU_EXIT:
@@ -390,6 +396,19 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
     }
   default:
     break;
+  }
+}
+
+void closePY(hbasewinAttr *win, globaldef *_g)
+{
+  if (_g->InputMode == ENGLISH)
+  {
+    if (win->winID == ID_DESKTOP)
+      win->onPaint(win, _g);
+
+    memset(_g->pystring, 0, 6);
+    _g->hzstring = NULL;
+    _g->pyNum = 0;
   }
 }
 

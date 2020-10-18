@@ -74,9 +74,6 @@ int main(void)
     else
       blink = 0;
 
-    // if (_global->InputMode == ENGLISH)
-    //   hidePYInput(pyInput);
-
     //键盘事件处理
     if (_bios_keybrd(_KEYBRD_READY))
     {
@@ -85,26 +82,31 @@ int main(void)
       /* Determine if shift keys are used */
       modifiers = _bios_keybrd(_KEYBRD_SHIFTSTATUS);
 
-      if (key == 0x6100) //&& modifiers == 0x224)
-      {                  //退出 左 ctrl + F4
+      TRACE(("key = %x, %x, '%c', modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
+
+      if (0x6100 == key) //&& modifiers == 0x224)
+      {                  //退出  ctrl + F4
         _global->isExit = TRUE;
       }
-      else if (key == 0x5E00) //&& modifiers == 0x224)
-      {                       //切换输入法 左 ctrl + F1
+      else if (0x5f00 == key)
+      { // ctrl + F2 切换风格
+        _global->theme++;
+        if (_global->theme >= 3)
+          _global->theme = 1;
+          
+        desktop->onTheme(desktop, &_global->theme);
+        desktop->onPaint(desktop, NULL);
+      }
+      else if (0x5E00 == key) //&& modifiers == 0x224)
+      {                       //切换输入法  ctrl + F1
         _global->InputMode = !_global->InputMode;
         desktop->onPaint(desktop, _global);
-
         if (_global->InputMode == ENGLISH)
-        {
-          memset(_global->pystring, 0, 6);
-          memset(_global->hzstring, 0, 20); //9个汉字
-          _global->pyNum = 0;
-        }
-        //TRACE(("inputmode = %x\n", _global->InputMode));
+          closePY(desktop, _global);
       }
       else if (_global->foucsedTextBox)
       { //有激活的textbox
-        if (_global->InputMode == CHINESE && _global->foucsedTextBox->wintype != TEXTBOX_PASSWORD)
+        if (CHINESE == _global->InputMode && _global->foucsedTextBox->wintype != TEXTBOX_PASSWORD)
         { //中文
           //TRACE(("key = %x, %x, '%c', modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
           if ((kbchar >= 'a' && kbchar <= 'z') || (kbchar >= 'a' && kbchar <= 'Z'))
@@ -130,7 +132,7 @@ int main(void)
           }
           else if (_global->pystring[0] != 0)
           { //拼音状态下,若无拼音,其他字符可直接输入
-            if (kbchar == 8)
+            if (8 == kbchar)
             { //backspce  中文backspace 删除拼音重新查找
               char *candihz;
               if (_global->pyNum > 0)
@@ -150,7 +152,7 @@ int main(void)
               candihz = NULL;
               //_global->hzstring = NULL;
             }
-            else if ((kbchar >= '0' && kbchar <= '9') || kbchar == ' ')
+            else if ((kbchar >= '0' && kbchar <= '9') || ' ' == kbchar)
             { //选择汉字
               char str[3];
               int index = kbchar - '1';
@@ -160,13 +162,19 @@ int main(void)
               if (kbchar == '0')
                 index = 9;
 
-              TRACE(("选择汉字:%s\n", _global->hzstring));
-              strncpy(str, _global->hzstring + index * 2, 2);
-              // str[0] = *(_global->hzstring + index * 2);
-              // str[1] = *(_global->hzstring + index * 2);
-              str[2] = 0;
-              if (_global->foucsedTextBox->onKeyPress)
-                _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
+              //TRACE(("选择汉字:%s\n", _global->hzstring));
+              if (strlen(_global->hzstring) == 0)
+              {
+                if (_global->foucsedTextBox->onKeyPress)
+                  _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, _global->pystring);
+              }
+              else
+              {
+                strncpy(str, _global->hzstring + index * 2, 2);
+                str[2] = 0;
+                if (_global->foucsedTextBox->onKeyPress)
+                  _global->foucsedTextBox->onKeyPress(_global->foucsedTextBox, str);
+              }
 
               _global->hzstring = NULL;
               memset(_global->pystring, 0, 7);
@@ -174,36 +182,36 @@ int main(void)
               if (desktop->onKeyPress)
                 desktop->onKeyPress(desktop, _global);
             }
-            else if (kbchar == '=')
+            else if ('=' == kbchar)
             { //下一页 +
               int len = strlen(candiateHZString);
               int offest = _global->hzstring - candiateHZString;
-              TRACE(("翻页+1:%s\n", _global->hzstring));
+              //TRACE(("翻页+1:%s\n", _global->hzstring));
               if (offest + 20 < len)
               {
                 _global->hzstring += 20;
                 if (desktop->onKeyPress)
                   desktop->onKeyPress(desktop, _global);
-                TRACE(("翻页+2:%s\n", _global->hzstring));
+                //TRACE(("翻页+2:%s\n", _global->hzstring));
               }
             }
-            else if (kbchar == '-')
+            else if ('-' == kbchar)
             { //上一页 -
-              int len = strlen(candiateHZString);
+              //int len = strlen(candiateHZString);
               int offest = _global->hzstring - candiateHZString;
-              TRACE(("翻页-1:%s\n", _global->hzstring));
+              //TRACE(("翻页-1:%s\n", _global->hzstring));
               if (offest - 20 > 0)
               {
                 _global->hzstring -= 20;
                 if (desktop->onKeyPress)
                   desktop->onKeyPress(desktop, _global);
-                TRACE(("翻页-2:%s\n", _global->hzstring));
+                //TRACE(("翻页-2:%s\n", _global->hzstring));
               }
             }
             else
-            {//
-              if (kbchar >= 0x20 || kbchar == 0x0D)
-              {//拼音状态下,有拼音,其他字符由字符模式处理
+            { //
+              if (kbchar >= 0x20 || 0x0D == kbchar)
+              { //拼音状态下,有拼音,其他字符由字符模式处理
                 char str[2];
                 str[1] = 0;
                 str[0] = kbchar;
@@ -221,8 +229,8 @@ int main(void)
             }
           }
           else
-          {//拼音状态下,无拼音,字符模式处理
-            if (kbchar >= 0x20 || kbchar == 0x0D)
+          { //拼音状态下,无拼音,字符模式处理
+            if (kbchar >= 0x20 || 0x0D == kbchar)
             {
               char str[2];
               str[1] = 0;
@@ -238,7 +246,7 @@ int main(void)
           }
         }
         else
-        {//字符模式/密码模式
+        { //字符模式/密码模式
           if (kbchar >= 0x20 || kbchar == 0x0D)
           {
             char str[2];
@@ -253,7 +261,6 @@ int main(void)
               _global->foucsedTextBox->onKey(_global->foucsedTextBox, &key);
           }
         }
-
         /*if (kbchar >= 0x20 || kbchar == 0x0D)
         { //可打印字符和回车
           if (_global->InputMode == ENGLISH ||

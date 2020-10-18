@@ -1,4 +1,5 @@
-#include "macrodef.h"
+
+//#include "macrodef.h"
 #include "mouse.h"
 #include "hhosvga.h"
 #include "wResource.h"
@@ -52,6 +53,8 @@ hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
   HHOwin->onPaint = OnPaint;
   //设置窗口清除函数指针
   HHOwin->onDestroy = OnDestory;
+
+  HHOwin->onTheme = OnTheme;
 
   return HHOwin;
 }
@@ -126,19 +129,6 @@ void destoryChildren(hbasewinAttr *win)
   it = list_iterator_new(win->children, LIST_HEAD);
   while ((node = list_iterator_next(it)))
   {
-    // if (node->val != NULL)
-    // {
-    //   childwin = (hbasewinAttr *)(node->val);
-    //   if (childwin->children == NULL)
-    //   {
-    //     list_remove(win->children, node);
-    //     childwin = NULL;
-    //     if (childwin)
-    //       TRACE(("删除窗口:%d\n", childwin->winID));
-    //   }
-    //   else
-    //     destoryChildren(childwin);
-    // }
     if (node->val != NULL)
     {
       childwin = (hbasewinAttr *)(node->val);
@@ -167,15 +157,6 @@ void clearWinRegion(hbasewinAttr *win, int color)
  * 比较两个窗口是否是同一个
  * 
  */
-// int matchWin(hbasewinAttr *w1, hbasewinAttr *w2)
-// {
-//   if (w1 == NULL)
-//     return 0;
-//   if (w2 == NULL)
-//     return 0;
-//   //return ((hbasewinAttr *)w1)->winID == ((hbasewinAttr *)w2)->winID;
-//   return w1->winID == w2->winID;
-// }
 int matchWin(void *w1, void *w2)
 {
   if (w1 && w2)
@@ -189,6 +170,7 @@ int matchWin(void *w1, void *w2)
  */
 void freeWin(hbasewinAttr *win)
 {
+  //hbasewinAttr *win = (hbasewinAttr *)val;
   if (win->title)
     free(win->title);
 
@@ -336,64 +318,6 @@ hbasewinAttr *findWinByID(hbasewinAttr *win, int winID)
 }
 
 /**
- * 根据窗口ID查找子窗口
- *  win
- */
-/*
-hbasewinAttr *FindChildWinbyID(hbasewinAttr *win, int id)
-{
-  list_iterator_t *it;
-  list_node_t *node = NULL;
-  hbasewinAttr *childwin = NULL;
-
-  if (win == NULL || win->children == NULL)
-    return;
-
-  it = list_iterator_new(win->children, LIST_HEAD);
-  while ((node = list_iterator_next(it)))
-  {
-    if (node->val == NULL)
-      continue;
-
-    childwin = (hbasewinAttr *)(node->val);
-    if (childwin->winID == id)
-      break;
-  }
-  list_iterator_destroy(it);
-
-  return childwin;
-}*/
-
-/**
- * 根据窗口ID查找子窗口
- *  win
- */
-/*
-list_node_t *FindChildNodebyID(hbasewinAttr *win, int id)
-{
-  list_iterator_t *it;
-  list_node_t *node = NULL;
-  hbasewinAttr *childwin = NULL;
-
-  if (win == NULL || win->children == NULL)
-    return;
-
-  it = list_iterator_new(win->children, LIST_HEAD);
-  while ((node = list_iterator_next(it)))
-  {
-    if (node->val == NULL)
-      continue;
-
-    childwin = (hbasewinAttr *)(node->val);
-    if (childwin->winID == id)
-      break;
-  }
-  list_iterator_destroy(it);
-
-  return node;
-}*/
-
-/**
  * 检查坐标 坐标x，y是否在窗口中
  * 
  * @param win 要检查的窗口
@@ -406,8 +330,8 @@ int checkpointInside(hbasewinAttr *win, int x, int y)
   if (win == NULL)
     return 0;
 
-  if (win->status == HHOHIDE || win->status == HHODELETE)
-    return 0;
+  // if (win->status == HHOHIDE || win->status == HHODELETE)
+  //   return 0;
 
   x1 = getAbsoluteX(win);
   y1 = getAbsoluteY(win);
@@ -451,4 +375,48 @@ hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse)
   list_iterator_destroy(it);
 
   return win; //没有点击子窗口，返回自身
+}
+
+void OnTheme(hbasewinAttr *win, void *val)
+{
+  WinStyle *_winStyle = NULL;
+
+  TESTNULLVOID(win);
+  TESTNULLVOID(val);
+
+  if (win->value)
+  {
+    _winStyle = (WinStyle *)win->value;
+    getWinTheme(_winStyle, *(int *)val);    
+  }
+  themeChildren(win, val);
+}
+/**
+ * 遍历win的所有子窗口,执行theme事件
+ * @param win 窗口
+ * @param val 参数
+ * @param event 事件
+ * @return 无
+ */
+void themeChildren(hbasewinAttr *win, void *val)
+{
+  list_iterator_t *it;
+  list_node_t *node;
+  hbasewinAttr *childwin;
+
+  if (win == NULL || win->children == NULL)
+    return;
+
+  it = list_iterator_new(win->children, LIST_HEAD);
+  while ((node = list_iterator_next(it)))
+  {
+    if (node->val == NULL)
+      continue;
+
+    childwin = (hbasewinAttr *)(node->val);
+
+    if (childwin->onTheme != NULL)
+      childwin->onTheme(childwin, val);
+  }
+  list_iterator_destroy(it);
 }

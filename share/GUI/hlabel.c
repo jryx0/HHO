@@ -9,7 +9,7 @@
 #include <memory.h>
 #include <errno.h>
 #include <stdlib.h>
-extern char *sys_errlist[];
+
 /**
  * label-显示文本文件中的内容
  * 
@@ -17,13 +17,84 @@ extern char *sys_errlist[];
 hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
                           int nHeight, int winID, const char *title)
 {
+  WinStyle *labelStyle = NULL;
   hbasewinAttr *label;
 
   label = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
   label->onPaint = OnPaint_Label;
 
+  labelStyle = malloc(sizeof(WinStyle));
+  label->value = labelStyle;
+  labelStyle->type = LABEL_TITLE;
+
   return label;
 }
+
+void OnPaint_Label_Title(hbasewinAttr *label, void *value)
+{
+  hfont *fpfont;
+  hregion _region;
+  WinStyle *style;
+
+  TESTNULLVOID(label);
+  TESTNULLVOID(label->title)
+  style = label->value;
+
+  if (style)
+    fpfont = getFont(style->fonttype, style->fontsize, style->fontcolor);
+  else
+    fpfont = getFont(SIMSUN, 16, 0x00);
+
+  _region.left_top.x = getAbsoluteX(label);
+  _region.left_top.y = getAbsoluteY(label);
+  _region.right_bottom.x = _region.left_top.x + label->nWidth;
+  _region.right_bottom.y = _region.left_top.y + label->nHeight;
+
+  printTextEx(&_region, label->title, fpfont);
+
+  freeFont(fpfont);
+  (void)value;
+}
+
+void OnPaint_Label_File(hbasewinAttr *label, void *value)
+{
+  hfont *fpfont;
+  hregion _region;
+  WinStyle *style;
+  FILE *fpFile;
+
+  TESTNULLVOID(label);
+  TESTNULLVOID(label->title)
+  style = label->value;
+
+  if (style)
+    fpfont = getFont(style->fonttype, style->fontsize, style->fontcolor);
+  else
+    fpfont = getFont(SIMSUN, 16, 0x00);
+
+  _region.left_top.x = getAbsoluteX(label);
+  _region.left_top.y = getAbsoluteY(label);
+  _region.right_bottom.x = _region.left_top.x + label->nWidth;
+  _region.right_bottom.y = _region.left_top.y + label->nHeight;
+
+  fpFile = fopen(label ->title, "r");
+  if(fpFile)
+    printTextFile(&_region, fpFile, fpfont);
+
+  freeFont(fpfont);
+  fclose(fpFile);
+  (void)value;
+}
+
+void OnPaint_Label_Img(hbasewinAttr *label, void *value)
+{
+  TESTNULLVOID(label);
+  TESTNULLVOID(label->title);
+
+  Putbmp64k(getAbsoluteX(label), getAbsoluteY(label), label->title);
+  (void)value;
+}
+
 
 /**
  *  
@@ -37,11 +108,6 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
   hregion _region;
   char str[30];
 
-  // int x, y, type = 3, len, linemax, line, i, maxline;
-  // char *temp, *content;
-  // if (label == NULL)
-  //   return;
-  // OnPaint(label, &type);
   OnPaint(label, NULL);
 
   TESTNULLVOID(label);
@@ -49,15 +115,13 @@ void OnPaint_Label(hbasewinAttr *label, void *value)
 
   //if (value == NULL)
   fptemp = fopen(label->title, "r");
-  // else
-  //   fptemp = fopen((char *)value, "r");
 
   if (fptemp == NULL)
   {
     return;
   }
 
-  fpFont = getFont(SIMSUN, 16, 0x00);
+  fpFont = getFont(SIMYOU, 16, 0x00);
 
   _region.left_top.x = getAbsoluteX(label);
   _region.left_top.y = getAbsoluteY(label);

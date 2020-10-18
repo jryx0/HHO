@@ -39,6 +39,7 @@ globaldef *initGlobalSetting(void)
   ReadCursor((unsigned char *)_global->cursor_arrow, FILE_CURSOR_ARROW);
   ReadCursor((unsigned char *)_global->cursor_hand, FILE_CURSOR_HAND);
   _global->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_global->cursor_arrow;
+  _global->theme = 1;
 
   return _global;
 }
@@ -92,4 +93,35 @@ void dbg_printf(const char *fmt, ...)
   va_end(args);
   fflush(fp);
   fclose(fp);
+}
+
+WinStyle *getWinTheme(WinStyle *_winStyle, int type)
+{
+  TESTNULL(_winStyle, _winStyle);
+
+  switch (type)
+  {
+  case 1:
+    _winStyle->bkcolor = 0x03DF;
+    _winStyle->fontcolor = 0x0000;
+    _winStyle->fontsize = 16;
+    _winStyle->fonttype = SIMYOU;
+    _winStyle->bkcolor1 = 0x003F;
+    _winStyle->bkcolor2 = 0x03DF;
+
+    break;
+  case 2:
+    _winStyle->bkcolor = 0xB81F;
+    _winStyle->fontcolor = 0xFFFF;
+    _winStyle->fontsize = 16;
+    _winStyle->fonttype = SIMSUN;
+    _winStyle->bkcolor1 = 0xA815;
+    _winStyle->bkcolor2 = 0xB81F;
+    break;
+
+  default:
+    break;
+  }
+
+  return _winStyle;
 }

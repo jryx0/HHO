@@ -1,7 +1,6 @@
 #include "HBaseWin.h"
 #include "hhosvga.h"
-#include "checkbox.h"
-#include <graphics.h>
+#include "hcheckbox.h"
 #include <string.h>
 
 hbasewinAttr *CreateCheckBox(hbasewinAttr *parent, int x, int y, int nWidth,
@@ -73,13 +72,13 @@ void OnPaintCheckBox(hbasewinAttr *checkbox, void *value)
   switch (judge)
   {
   case 1:
-    OnPaintCheckBoxRight(hbasewinAttr *checkbox, void *value);
+    OnPaintCheckBoxRight(hbasewinAttr * checkbox, void *value);
     break;
   case 2:
-    OnPaintCheckBoxCross(hbasewinAttr *checkbox, void *value);
+    OnPaintCheckBoxCross(hbasewinAttr * checkbox, void *value);
     break;
   default:
-    OnPaintCheckBoxNone(hbasewinAttr *checkbox, void *value);
+    OnPaintCheckBoxNone(hbasewinAttr * checkbox, void *value);
     break;
   }
 }

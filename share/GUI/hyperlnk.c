@@ -1,7 +1,7 @@
 #include "HBaseWin.h"
 #include "hhosvga.h"
 #include "hyperlnk.h"
-
+#include "hglobal.h"
 #define UNDERLINE 1
 #define NONE 0
 
@@ -19,6 +19,8 @@ hbasewinAttr *Createhyperlink(hbasewinAttr *parent, int x, int y, int nWidth,
   hyperlink->onLeave = OnLeave_hyperlink;
 
   hyperlink->value = getlinkStyle();
+  getWinTheme((WinStyle *)hyperlink->value, 1);
+  //getlinkStyle();
   hyperlink->wintype = HYPERLINK;
   return hyperlink;
 }
@@ -71,7 +73,7 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
   if (link->title != NULL)
   {
     hregion region;
-    _font = getFont(lnkStyle->fonttype, lnkStyle->fontsize, lnkStyle->fontcolor);
+    _font = getFont(lnkStyle->fonttype, lnkStyle ->fontsize, 0x0000);
     y = getAbsoluteY(link);
     x = getAbsoluteX(link);
 
@@ -82,18 +84,19 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
 
     if (lnkStyle->type == UNDERLINE)
     {
-      linex_styleEx(x, y + lnkStyle->fontsize + 2, link->nWidth, lnkStyle->fontcolor, 2, 1);
-      rectangle(x, y, region.right_bottom.x, region.right_bottom.y, lnkStyle->fontcolor, 1, 2);
+      linex_styleEx(x, y + lnkStyle->fontsize + 2, link->nWidth, lnkStyle->bkcolor, 2, 1);
+      rectangle(x, y, region.right_bottom.x, region.right_bottom.y, lnkStyle->bkcolor1, 1, 2);
     }
     else
     {
-      linex_styleEx(x, y + lnkStyle->fontsize + 2, link->nWidth, lnkStyle->bkcolor, 2, 1);
-      rectangle(x, y, region.right_bottom.x, region.right_bottom.y, lnkStyle->bkcolor, 1, 2);
+      linex_styleEx(x, y + lnkStyle->fontsize + 2, link->nWidth, 0xFFFF, 2, 1);
+      rectangle(x, y, region.right_bottom.x, region.right_bottom.y, 0xFFFF, 1, 2);
     }
 
     printTextEx(&region, link->title, _font);
     freeFont(_font);
   }
+  (void)val;
 }
 
 /**

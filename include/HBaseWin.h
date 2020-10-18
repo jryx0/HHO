@@ -42,6 +42,7 @@ typedef struct _style
 
   int bkcolor;
   int bkcolor1;
+  int bkcolor2;
 } WinStyle;
 
 typedef struct winstruct
@@ -60,12 +61,12 @@ typedef struct winstruct
   int nHeight;
 
   //窗口状态
-  int status; // winStatus
+  //int status; // winStatus
 
   //显示标题
   char *title;
 
-  //存储的数据，如文本输入框的字符串
+  //存储的窗口参数:颜色/字体/可扩充保存数据
   void far *value;
 
   //响应鼠标事件函数指针单击,左键按下，左键按起，鼠标离开，鼠标进入
@@ -76,6 +77,9 @@ typedef struct winstruct
   hhoevent onPaint;
   //响应激活事件，窗口激活
   hhoevent onActivate;
+
+  //窗口颜色样式改变
+  hhoevent onTheme;
 
   //窗口删除
   hhoevent onDestroy;
@@ -89,8 +93,6 @@ typedef struct winstruct
   struct winstruct *parent;
   //struct winstruct *desktop;
 } hbasewinAttr;
-
-
 
 /**
  * @brief 初始化窗口基本信息。
@@ -189,5 +191,15 @@ hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse);
  * 
  */
 hbasewinAttr *findWinByID(hbasewinAttr *win, int winID);
+
+/**
+ * 遍历win的所有子窗口,theme
+ * @param win 窗口
+ * @param val 参数
+ * @param event 事件
+ * @return 无
+ */
+void themeChildren(hbasewinAttr *win, void *val);
+void OnTheme(hbasewinAttr *win, void *val);
 
 #endif

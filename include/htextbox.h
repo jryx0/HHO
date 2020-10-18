@@ -1,7 +1,7 @@
 #ifndef __HTEXTBOX_H__
 #define __HTEXTBOX_H__
 
-#include "hhosvga.h"
+//#include "hhosvga.h"
 #include "HBaseWin.h"
 
 typedef struct _textinfo
@@ -25,12 +25,15 @@ typedef struct _textinfo
   
   //当前文字最大缓存空间(可扩展)
   int textMaxlen;
+
+  WinStyle *textStyle;
 } textInfo;
 
 hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
                             int nHeight, int winID, const char *title);
 
 void OnPaint_TextBox(hbasewinAttr *link, void *value);
+void OnTheme_TextBox(hbasewinAttr *tb, void *val);
 /**
  * 点击时,设置当前textbox为活动控件
  * 

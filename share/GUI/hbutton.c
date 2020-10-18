@@ -1,17 +1,21 @@
 #include "HBaseWin.h"
 #include "hbutton.h"
-
+#include "hglobal.h"
 
 hbasewinAttr *CreateButton(hbasewinAttr *parent, int x, int y, int nWidth,
                            int nHeight, int winID, const char *title)
 {
+  WinStyle *btnStyle = NULL;
   hbasewinAttr *button = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
 
   button->onPaint = OnPaint_button;
   button->onClick = OnClick_button;
   button->onLeave = OnLeave_button;
 
-  button->value = getbtnStyle();
+  btnStyle = getbtnStyle();
+  getWinTheme(btnStyle, 1);
+  button->value = btnStyle;
+
   return button;
 }
 
@@ -21,7 +25,7 @@ void OnClick_button(hbasewinAttr *btn, void *value)
   TESTNULLVOID(btn);
   TESTNULLVOID(btn->value);
   btnStyle = (WinStyle *)btn->value;
-  btnStyle->bkcolor = 0x003F; //颜色变深
+  btnStyle->bkcolor = btnStyle->bkcolor1; //颜色变深
 
   OnPaint_button(btn, value);
 }
@@ -32,7 +36,7 @@ void OnLeave_button(hbasewinAttr *btn, void *value)
   TESTNULLVOID(btn);
   TESTNULLVOID(btn->value);
   btnStyle = (WinStyle *)btn->value;
-  btnStyle->bkcolor = 0x03DF; //颜色变深
+  btnStyle->bkcolor = btnStyle->bkcolor2; //颜色变深
 
   OnPaint_button(btn, value);
 }
@@ -52,7 +56,7 @@ void OnPaint_button(hbasewinAttr *btn, void *value)
 
   if (btn->title != NULL)
   {
-    _font = getFont(btnStyle->fonttype, btnStyle->fontsize, btnStyle->fontcolor);
+    _font = getFont(btnStyle->fonttype, btnStyle->fontsize, 0xFFFF);
     y = getAbsoluteY(btn);
     x = getAbsoluteX(btn);
     if (btnStyle->textalign == TEXT_CENTER)
@@ -64,6 +68,7 @@ void OnPaint_button(hbasewinAttr *btn, void *value)
     printTextLineXY(x, y, btn->title, _font);
     freeFont(_font);
   }
+  (void)value;
 }
 
 /**
@@ -77,6 +82,8 @@ WinStyle *getbtnStyle(void)
   TESTNULL(btnStyle, NULL);
 
   btnStyle->bkcolor = 0x03DF;
+  btnStyle->bkcolor1 = 0x003F;
+  btnStyle->bkcolor2 = 0x03DF;
 
   btnStyle->type = STANDARD;
   btnStyle->textalign = TEXT_CENTER;

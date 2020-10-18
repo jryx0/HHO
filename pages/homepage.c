@@ -6,6 +6,7 @@
 #include "homepage.h"
 #include "wResource.h"
 #include <string.h>
+#include <stdio.h>
 
 void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
 {
@@ -74,7 +75,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
         fillRegionEx(x, y, hitwin->nWidth + 1, hitwin->nHeight + 1, 0xFFFF); //清除子窗口区域
 
         TRACE(("%s(%d): 删除label%u\n", __FILE__, __LINE__, hitwin->winID));
-        hitwin->onDestroy(hitwin, NULL);        
+        hitwin->onDestroy(hitwin, NULL);
       }
     }
     break;
@@ -107,14 +108,14 @@ void EventHandler_homepage(hbasewinAttr *win, int type, void *value)
 hbasewinAttr *CreateHomepage(hbasewinAttr *parent, int winID)
 {
   hbasewinAttr *page = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, "homepage");
-  hbasewinAttr *label;
+  //hbasewinAttr *label;
   TESTNULL(page, NULL);
 
-  CreateLabel(page, 15, 90, 300, 150, ID_LABEL_1, "readme");
-  CreateLabel(page, 15 + 350, 90, 300, 150, ID_LABEL_2, "c:\\hho\\data\\news\\1.txt");
-  label = CreateLabel(page, 15 + 700, 90, 300, 150, ID_LABEL_3, NULL);
-  label->value = malloc(10);
-  strcpy((char *)label->value, "test");
+  // CreateLabel(page, 15, 90, 300, 150, ID_LABEL_1, "readme");
+  // CreateLabel(page, 15 + 350, 90, 300, 150, ID_LABEL_2, "c:\\hho\\data\\news\\1.txt");
+  // label = CreateLabel(page, 15 + 700, 90, 300, 150, ID_LABEL_3, NULL);
+  // label->value = malloc(10);
+  // strcpy((char *)label->value, "test");
 
   page->onPaint = OnPaint_homepage;
   page->EventHandler = EventHandler_homepage;
@@ -124,10 +125,13 @@ hbasewinAttr *CreateHomepage(hbasewinAttr *parent, int winID)
 
 void OnPaint_homepage(hbasewinAttr *win, void *value)
 {
+  FILE *fpfile;
+  int x, y;
   TESTNULLVOID(win);
 
-  //测试用
-  //rectangleEx(win->x, win->y, win->nWidth, win->nHeight, 0xF801, 1, 3);
+  x= getAbsoluteX(win);
+  y = getAbsoluteY(win);
+  Putbmp64k(x, y, "data\\news\\news-pic.bmp");
 
   repaintChildren(win);
 

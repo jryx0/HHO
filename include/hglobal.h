@@ -33,10 +33,11 @@ typedef struct _globaldef
   unsigned char isExit;    //是否退出程序
   unsigned char InputMode; //输入模式
 
-  pyInput *pinyin;
   char pystring[7]; //拼音
   char pyNum;       //输入的拼音数
   char *hzstring;   //候选汉字
+  pyInput *pinyin;
+  int theme;
 } globaldef;
 
 globaldef *initGlobalSetting(void);
@@ -57,5 +58,7 @@ FILE *getFontFile(int type, int size);
  * 删除字符串中指定位置的字符
  */
 int DelPosChar(char *str, int pos);
+
+WinStyle *getWinTheme(WinStyle *_winStyle, int type);
 
 #endif

@@ -28,12 +28,13 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   tb->onActivate = OnActive_TextBox;
   tb->onKeyPress = OnKeyPress_Textbox;
   tb->onKey = OnKey_Textbox;
+  tb->onTheme = OnTheme_TextBox;
   tb->wintype = TEXTBOX;
 
   ti = malloc(sizeof(textInfo));
 
   ti->r.left_top.x = getAbsoluteX(tb) + 6;
-  ti->r.left_top.y = getAbsoluteY(tb) + 6;
+  ti->r.left_top.y = getAbsoluteY(tb) + 8;
   ti->r.right_bottom.x = ti->r.left_top.x + tb->nWidth - 6 - 2;
   ti->r.right_bottom.y = ti->r.left_top.y + tb->nHeight - 6 - 2;
   ti->active = INACTIVE;
@@ -46,14 +47,25 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   else
     ti->curTextindex = 0;
 
+  ti->textStyle = malloc(sizeof(WinStyle));
+  getWinTheme(ti->textStyle, 1);
+
   tb->value = ti; // malloc(2); //int 控制活动状态时的绘制
   return tb;
 }
 
 void OnDestory_TextBox(hbasewinAttr *tb, void *value)
 {
+  textInfo *ti;
   //TRACE(("TEXTBOX destory1\n"));
   TESTNULLVOID(tb);
+  TESTNULLVOID(tb->value)
+
+  ti = tb->value;
+  free(ti->textStyle);
+
+  ti->textStyle = NULL;
+
   OnLeave_TextBox(tb, NULL);
   // TRACE(("TEXTBOX destory2\n"));
   (void)value;
@@ -93,6 +105,17 @@ void OnLeave_TextBox(hbasewinAttr *tb, void *value)
   (void)value;
 }
 
+void OnTheme_TextBox(hbasewinAttr *tb, void *val)
+{
+  textInfo *ti;
+  TESTNULLVOID(tb);
+  TESTNULLVOID(tb->value);
+  TESTNULLVOID(val);
+
+  ti = tb->value;
+  getWinTheme(ti->textStyle, *(int *)val);
+}
+
 void OnPaint_TextBox(hbasewinAttr *tb, void *value)
 {
   textInfo *ti;
@@ -107,11 +130,12 @@ void OnPaint_TextBox(hbasewinAttr *tb, void *value)
 
   if (ti)
   {
-    hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+    //hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+    hfont *_font = getFont(ti->textStyle->fonttype, ti->textStyle->fontsize, DEFAULT_FONTCOLOR);
     if (ti->active == ACTIVE)
     // if (*(int *)(tb->value) == ACTIVE)
     {
-      rectangle(x, y, x + tb->nWidth, y + tb->nHeight, 0x03DF, 2, 1);
+      rectangle(x, y, x + tb->nWidth, y + tb->nHeight, ti->textStyle->bkcolor, 2, 1);
     }
     else
     {
@@ -215,12 +239,12 @@ void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink)
 
   if (textbox->title)
     liney_styleEx(ti->curx, ti->cury,
-                  23, color, 2, 1);
+                  ti->textStyle->fontsize + 2, color, 2, 1);
   // liney_styleEx(getAbsoluteX(textbox) + 10 + strlen(textbox->title) * 12, getAbsoluteY(textbox) + 6,
   //               23, color, 2, 1);
   else
     liney_styleEx(getAbsoluteX(textbox) + 10, getAbsoluteY(textbox) + 6,
-                  23, color, 2, 1);
+                  ti->textStyle->fontsize + 2, color, 2, 1);
 }
 
 void OnKey_Textbox(hbasewinAttr *textbox, void *key)
@@ -266,7 +290,7 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
 
     if (0 <= ti->curTextindex && ti->curTextindex < len)
     {
-      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      hfont *_font = getFont(ti->textStyle->fonttype, ti->textStyle->fontsize, DEFAULT_FONTCOLOR); //getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
       ch = textbox->title[ti->curTextindex];
       if (ch > 0xa0) //汉字
       {
@@ -303,7 +327,7 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     /* 上 */
     //if (ti->curTextindex - ti->maxCol >= 0)
     {
-      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      hfont *_font = getFont(ti->textStyle->fonttype, ti->textStyle->fontsize, DEFAULT_FONTCOLOR); // getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
       ti->curTextindex = ti->curTextindex - ti->maxCol - 1;
       if (ti->curTextindex <= 0)
         ti->curTextindex = 0;
@@ -322,7 +346,7 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     /* 下 */
     //  if (ti->curTextindex + ti->maxCol <= len)
     {
-      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      hfont *_font = getFont(ti->textStyle->fonttype, ti->textStyle->fontsize, DEFAULT_FONTCOLOR); // getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
       ti->curTextindex = ti->curTextindex + ti->maxCol - 1;
       if (ti->curTextindex >= len)
         ti->curTextindex = len - 1;
@@ -340,7 +364,8 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     /*左*/
     if (0 < ti->curTextindex && ti->curTextindex <= len)
     {
-      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      hfont *_font = getFont(ti->textStyle->fonttype, ti->textStyle->fontsize, DEFAULT_FONTCOLOR);
+      ; //getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
       ch = textbox->title[ti->curTextindex - 1];
       if (ch > 0xa0) //汉字
         ti->curTextindex--;
@@ -354,7 +379,7 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     /* 右 */
     if (0 <= ti->curTextindex && ti->curTextindex <= len)
     {
-      hfont *_font = getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      hfont *_font = getFont(ti->textStyle->fonttype, ti->textStyle->fontsize, DEFAULT_FONTCOLOR); // getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
       if (ti->curTextindex < len)
       {
         ch = textbox->title[ti->curTextindex];
@@ -421,5 +446,5 @@ void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
 
   ti->curTextindex += len;
   textbox->onPaint(textbox, NULL);
-  TRACE(("%s(%c):插入字符%s\n", __FILE__, __LINE__, str));
+  //TRACE(("%s(%d):插入字符%s\n", __FILE__, __LINE__, str));
 }

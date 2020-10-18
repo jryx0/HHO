@@ -13,4 +13,5 @@ hbasewinAttr *CreateDesktop(void);
 void eventhandlerdesktop(hbasewinAttr *win, int type, void *value);
 hbasewinAttr *creatmouseevent(hbasewinAttr *win, mousestatus *mouse);
 hbasewinAttr *checkmousewin(hbasewinAttr *win, mousestatus *mouse);
+void closePY(hbasewinAttr *win, globaldef *_g);
 #endif

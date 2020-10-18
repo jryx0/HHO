@@ -1,7 +1,7 @@
 #ifndef __HYPERLNK_H__
 #define __HYPERLNK_H__
 
-#include "hhosvga.h"
+//#include "hhosvga.h"
 #include "HBaseWin.h"
 
 #define UNDERLINE 1

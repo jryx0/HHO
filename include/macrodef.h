@@ -78,6 +78,7 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #define SIMSUN 0 //宋体
 #define SIMHEI 1 //黑体
 #define SIMKAI 2 //楷体
+#define SIMYOU 3 //幼圆
 #define ASCII 10 //英文字符
 
 //mouse cursors
