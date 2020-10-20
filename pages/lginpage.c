@@ -97,6 +97,10 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
       }
       break;
 
+    case ID_LOGIN_REGISTER:
+      //Ìø×ª×¢²á½çÃæ
+      break; 
+
     default:
       break;
     }

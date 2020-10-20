@@ -55,4 +55,10 @@
 #define ID_LOGIN_USERNAME 1004
 #define ID_LOGIN_KEY 1005
 
+//////////////////////register page////////////////////////////////
+#define ID_REGISTERPAGE 2000
+#define ID_REGISTER_RETURN 2001
+#define ID_REGISTER_REGSBUTTON 2002
+#define ID_REGISTER_
+
 #endif
