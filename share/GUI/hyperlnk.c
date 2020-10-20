@@ -18,9 +18,8 @@ hbasewinAttr *Createhyperlink(hbasewinAttr *parent, int x, int y, int nWidth,
   hyperlink->onClick = OnClick_hyperlink;
   hyperlink->onLeave = OnLeave_hyperlink;
 
-  hyperlink->value = getlinkStyle();
-  getWinTheme((WinStyle *)hyperlink->value, 1);
-  //getlinkStyle();
+  hyperlink->style = getlinkStyle();
+  getWinTheme((WinStyle *)hyperlink->style, 1);
   hyperlink->wintype = HYPERLINK;
   return hyperlink;
 }
@@ -33,9 +32,9 @@ void OnClick_hyperlink(hbasewinAttr *link, void *val)
 {
   WinStyle *lnkStyle = NULL;
   TESTNULLVOID(link);
-  TESTNULLVOID(link->value);
+  TESTNULLVOID(link->style);
 
-  lnkStyle = (WinStyle *)link->value;
+  lnkStyle = (WinStyle *)link->style;
   lnkStyle->type = UNDERLINE;
 
   OnPaint_hyperlink(link, val);
@@ -49,8 +48,8 @@ void OnLeave_hyperlink(hbasewinAttr *btn, void *val)
 {
   WinStyle *lnkStyle = NULL;
   TESTNULLVOID(btn);
-  TESTNULLVOID(btn->value);
-  lnkStyle = (WinStyle *)btn->value;
+  TESTNULLVOID(btn->style);
+  lnkStyle = (WinStyle *)btn->style;
   lnkStyle->type = NONE;
 
   OnPaint_hyperlink(btn, val);
@@ -66,9 +65,9 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
   hfont *_font;
 
   TESTNULLVOID(link);
-  TESTNULLVOID(link->value);
+  TESTNULLVOID(link->style);
 
-  lnkStyle = (WinStyle *)link->value;
+  lnkStyle = (WinStyle *)link->style;
 
   if (link->title != NULL)
   {

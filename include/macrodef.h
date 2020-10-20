@@ -83,16 +83,16 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 
 //mouse cursors
 //鼠标大小
-#define MOUSE_WIDTH 20
-#define MOUSE_HEIGHT 30
-#define FILE_CURSOR_ARROW DATAPATH "cursor\\arrowbg.cur"
-#define FILE_CURSOR_HAND DATAPATH "cursor\\handbg.cur"
+// #define MOUSE_WIDTH 20
+// #define MOUSE_HEIGHT 30
+// #define FILE_CURSOR_ARROW DATAPATH "cursor\\arrowbg.cur"
+// #define FILE_CURSOR_HAND DATAPATH "cursor\\handbg.cur"
 //#define FILE_CURSOR_ARROW DATAPATH "cursor\\arrowbg.cur"
 
-// #define MOUSE_WIDTH 16
-// #define MOUSE_HEIGHT 16
-// #define FILE_CURSOR_ARROW DATAPATH "cursor\\arrow.cur"
-// #define FILE_CURSOR_HAND DATAPATH "cursor\\hand.cur"
+#define MOUSE_WIDTH 16
+#define MOUSE_HEIGHT 16
+#define FILE_CURSOR_ARROW DATAPATH "cursor\\arrow.cur"
+#define FILE_CURSOR_HAND DATAPATH "cursor\\hand.cur"
 
 //鼠标移动状态
 #define MOUSE_ENTERED 1

@@ -24,7 +24,7 @@ hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
   label->onPaint = OnPaint_Label;
 
   labelStyle = malloc(sizeof(WinStyle));
-  label->value = labelStyle;
+  label->style = labelStyle;
   labelStyle->type = LABEL_TITLE;
 
   return label;
@@ -34,14 +34,14 @@ void OnPaint_Label_Title(hbasewinAttr *label, void *value)
 {
   hfont *fpfont;
   hregion _region;
-  WinStyle *style;
+  WinStyle *lbstyle;
 
   TESTNULLVOID(label);
   TESTNULLVOID(label->title)
-  style = label->value;
+  lbstyle = label->style;
 
-  if (style)
-    fpfont = getFont(style->fonttype, style->fontsize, style->fontcolor);
+  if (lbstyle)
+    fpfont = getFont(lbstyle->fonttype, lbstyle->fontsize, lbstyle->fontcolor);
   else
     fpfont = getFont(SIMSUN, 16, 0x00);
 
@@ -65,7 +65,7 @@ void OnPaint_Label_File(hbasewinAttr *label, void *value)
 
   TESTNULLVOID(label);
   TESTNULLVOID(label->title)
-  style = label->value;
+  style = label->style;
 
   if (style)
     fpfont = getFont(style->fonttype, style->fontsize, style->fontcolor);

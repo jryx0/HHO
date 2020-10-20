@@ -46,6 +46,13 @@
 #define ID_HOMEPAGE_LINK8 38
 #define ID_HOMEPAGE_LINK9 39
 #define ID_HOMEPAGE_LINK10 40
+#define ID_HOMEPAGE_AISEARCH 41
+#define ID_HOMEPAGE_AIBUTTON 42
+
+#define ID_HOMEPAGE_BUTTON1 43
+#define ID_HOMEPAGE_BUTTON2 44
+#define ID_HOMEPAGE_BUTTON3 45
+#define ID_HOMEPAGE_BUTTON4 46
 
 ////////////////////test page///////////////////////////////////////////////////
 #define ID_TESTPAGE 10000

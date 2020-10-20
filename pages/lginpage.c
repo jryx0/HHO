@@ -11,19 +11,21 @@
 hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
 {
   hbasewinAttr *page = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, "loginpage");
+  hbasewinAttr *pwd;
   TESTNULL(page, NULL);
 
   page->onPaint = OnPaint_loginpage;
   page->EventHandler = EventHandler_loginpage;
 
-  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 67, 240, 40, ID_LOGIN_USERNAME, "");
-  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 + 3, 240, 40, ID_LOGIN_KEY, "");
-  Createhyperlink(page, 20, 10, 55, 25, ID_LOGIN_RETURN, "[首  页]");
+  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 67, 240, 40, ID_LOGIN_USERNAME, "", 1);
+  pwd = CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 + 3, 240, 40, ID_LOGIN_KEY, "", 1);
+  pwd->wintype = TEXTBOX_PASSWORD;
+  Createhyperlink(page, 20, 10, 65, 25, ID_LOGIN_RETURN, "[首 页]");
   CreateButton(page, PAGE_W / 2 + 30, PAGE_H - 200, 120, 40, ID_LOGIN_LOGIN, "登 录");
   CreateButton(page, PAGE_W / 2 - 120, PAGE_H - 200, 120, 40, ID_LOGIN_REGISTER, "注 册");
 
-  page->value = malloc(sizeof(WinStyle));
-  getWinTheme((WinStyle *)page->value, 1);
+  page->style      = malloc(sizeof(WinStyle));
+  getWinTheme((WinStyle *)page->style, 1);
   return page;
 }
 
@@ -34,9 +36,9 @@ void OnPaint_loginpage(hbasewinAttr *win, void *value)
   hfont *_h;
   int x, y;
   TESTNULLVOID(win);
-  TESTNULLVOID(win->value);
+  TESTNULLVOID(win->style);
 
-  style = (WinStyle *)win->value;
+  style = (WinStyle *)win->style;
   _h = getFont(style->fonttype, style->fontsize, 0x0);
 
   x = getAbsoluteX(win);
@@ -52,7 +54,7 @@ void OnPaint_loginpage(hbasewinAttr *win, void *value)
   _h->fontcolor = 0xFFFF;
   printTextLineXY(x + PAGE_W / 2 - 200 - 30 + 5, y + PAGE_H / 2 - 100 - 40 + 13, "请输入用户名和密码:", _h);
 
-  repaintChildren(win,value);
+  repaintChildren(win, value);
   freeFont(_h);
 }
 

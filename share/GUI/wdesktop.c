@@ -50,7 +50,7 @@ void OnPaint_Desktop(hbasewinAttr *win, void *val)
   if (win == NULL)
     return;
 
-  dskStyle = (WinStyle *)win->value;  
+  dskStyle = (WinStyle *)win->style;  
 
   if (val == NULL)
   {
@@ -219,7 +219,7 @@ hbasewinAttr *CreateDesktop(void)
 
   dskStyle = malloc(sizeof(WinStyle));
   dskStyle = getWinTheme(dskStyle, 1);
-  desktop->value = dskStyle;
+  desktop->style = dskStyle;
 
   return desktop;
 }

@@ -26,11 +26,14 @@ typedef struct _textinfo
   //当前文字最大缓存空间(可扩展)
   int textMaxlen;
 
+  //单行多行
+  int single;
+
   WinStyle *textStyle;
 } textInfo;
 
 hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
-                            int nHeight, int winID, const char *title);
+                            int nHeight, int winID, const char *title, int singleline);
 
 void OnPaint_TextBox(hbasewinAttr *link, void *value);
 void OnTheme_TextBox(hbasewinAttr *tb, void *val);

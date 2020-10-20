@@ -7,17 +7,12 @@
 #define UNDERLINE 1
 #define NONE 0
 
-typedef struct _lnkstyle
-{
-
-}linkStyle;
-
 /**
  * 创建超链接控件
  * 
  */
 hbasewinAttr *Createhyperlink(hbasewinAttr *parent, int x, int y, int nWidth,
-                               int nHeight, int winID, const char *title);
+                              int nHeight, int winID, const char *title);
 
 /**
  * 设置超链接点击时的屏幕显示
@@ -35,7 +30,7 @@ void OnLeave_hyperlink(hbasewinAttr *link, void *value);
  * 
  */
 void OnPaint_hyperlink(hbasewinAttr *link, void *value);
-
+void OnDestory_Hyperlink(hbasewinAttr *link, void *value);
 /**
  * 构造缺省按钮参数
  * 默认标准按钮

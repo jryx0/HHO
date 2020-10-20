@@ -16,7 +16,7 @@
 #define DEFAULT_FONTCOLOR 0x0000
 
 hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
-                            int nHeight, int winID, const char *title)
+                            int nHeight, int winID, const char *title, int singleline)
 {
   textInfo *ti;
   hbasewinAttr *tb = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
@@ -35,7 +35,9 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   ti->textStyle = malloc(sizeof(WinStyle));
   getWinTheme(ti->textStyle, 1);
 
-  tb->nHeight = ti->textStyle->height;
+  ti->single = singleline;
+  if (singleline == 1)
+    tb->nHeight = ti->textStyle->height;
 
   ti->r.left_top.x = getAbsoluteX(tb) + 6;
   ti->r.left_top.y = getAbsoluteY(tb) + 8;
@@ -51,7 +53,7 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   else
     ti->curTextindex = 0;
 
-  tb->value = ti; // malloc(2); //int 控制活动状态时的绘制
+  tb->style = ti; // malloc(2); //int 控制活动状态时的绘制
   return tb;
 }
 
@@ -60,9 +62,9 @@ void OnDestory_TextBox(hbasewinAttr *tb, void *value)
   textInfo *ti;
   //TRACE(("TEXTBOX destory1\n"));
   TESTNULLVOID(tb);
-  TESTNULLVOID(tb->value)
+  TESTNULLVOID(tb->style)
 
-  ti = tb->value;
+  ti = tb->style;
   free(ti->textStyle);
 
   ti->textStyle = NULL;
@@ -80,7 +82,7 @@ void OnClick_TextBox(hbasewinAttr *tb, void *value)
 {
   textInfo *ti;
   TESTNULLVOID(tb);
-  ti = tb->value;
+  ti = tb->style;
 
   if (ti)
     ti->active = ACTIVE;
@@ -97,7 +99,7 @@ void OnLeave_TextBox(hbasewinAttr *tb, void *value)
 {
   textInfo *ti;
   TESTNULLVOID(tb);
-  ti = tb->value;
+  ti = tb->style;
 
   if (ti)
     ti->active = INACTIVE;
@@ -110,12 +112,14 @@ void OnTheme_TextBox(hbasewinAttr *tb, void *val)
 {
   textInfo *ti;
   TESTNULLVOID(tb);
-  TESTNULLVOID(tb->value);
+  TESTNULLVOID(tb->style);
   TESTNULLVOID(val);
 
-  ti = tb->value;
+  ti = tb->style;
   getWinTheme(ti->textStyle, *(int *)val);
-  tb->nHeight = ti->textStyle->height;
+  if (ti->single == 1)
+    tb->nHeight = ti->textStyle->height;
+  //tb->nHeight = ti->textStyle->height;
 }
 
 void OnPaint_TextBox(hbasewinAttr *tb, void *value)
@@ -125,7 +129,7 @@ void OnPaint_TextBox(hbasewinAttr *tb, void *value)
 
   TESTNULLVOID(tb);
 
-  ti = tb->value;
+  ti = tb->style;
 
   x = getAbsoluteX(tb);
   y = getAbsoluteY(tb);
@@ -220,7 +224,7 @@ void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink)
   static unsigned int color = 0xFFFF;
   TESTNULLVOID(textbox);
 
-  ti = (textInfo *)textbox->value;
+  ti = (textInfo *)textbox->style;
   TESTNULLVOID(ti);
 
   if (ti->active == INACTIVE && color == 0xFFFF) //非激活状态
@@ -256,10 +260,10 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
   unsigned char ch;
   TESTNULLVOID(textbox);
   TESTNULLVOID(key);
-  TESTNULLVOID(textbox->value);
+  TESTNULLVOID(textbox->style);
 
   len = strlen(textbox->title);
-  ti = (textInfo *)textbox->value;
+  ti = (textInfo *)textbox->style;
   if (ti->curTextindex > len)
     ti->curTextindex = len;
 
@@ -408,12 +412,12 @@ void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
   int i;
   TESTNULLVOID(textbox);
   TESTNULLVOID(str);
-  TESTNULLVOID(textbox->value);
+  TESTNULLVOID(textbox->style);
 
   //隐藏光标
   DrawTextCursor(textbox, FREQ - 1);
 
-  ti = (textInfo *)textbox->value;
+  ti = (textInfo *)textbox->style;
   if (ti->active == INACTIVE)
     return;
 

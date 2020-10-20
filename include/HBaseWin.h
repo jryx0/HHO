@@ -69,7 +69,10 @@ typedef struct winstruct
   char *title;
 
   //存储的窗口参数:颜色/字体/可扩充保存数据
-  void far *value;
+  //void far *value;
+  void far *style;
+
+  int data;
 
   //响应鼠标事件函数指针单击,左键按下，左键按起，鼠标离开，鼠标进入
   hhoevent onClick, onLeave; //, onLeftUp, onLeftDown, onEnter;

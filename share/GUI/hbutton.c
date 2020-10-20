@@ -14,7 +14,7 @@ hbasewinAttr *CreateButton(hbasewinAttr *parent, int x, int y, int nWidth,
 
   btnStyle = getbtnStyle();
   getWinTheme(btnStyle, 1);
-  button->value = btnStyle;
+  button->style = btnStyle;
 
   return button;
 }
@@ -23,8 +23,8 @@ void OnClick_button(hbasewinAttr *btn, void *value)
 {
   WinStyle *btnStyle = NULL;
   TESTNULLVOID(btn);
-  TESTNULLVOID(btn->value);
-  btnStyle = (WinStyle *)btn->value;
+  TESTNULLVOID(btn->style);
+  btnStyle = (WinStyle *)btn->style;
   btnStyle->bkcolor = btnStyle->bkcolor1; //颜色变深
 
   OnPaint_button(btn, value);
@@ -34,8 +34,8 @@ void OnLeave_button(hbasewinAttr *btn, void *value)
 {
   WinStyle *btnStyle = NULL;
   TESTNULLVOID(btn);
-  TESTNULLVOID(btn->value);
-  btnStyle = (WinStyle *)btn->value;
+  TESTNULLVOID(btn->style);
+  btnStyle = (WinStyle *)btn->style;
   btnStyle->bkcolor = btnStyle->bkcolor2; //颜色变深
 
   OnPaint_button(btn, value);
@@ -48,9 +48,9 @@ void OnPaint_button(hbasewinAttr *btn, void *value)
   hfont *_font;
 
   TESTNULLVOID(btn);
-  TESTNULLVOID(btn->value);
+  TESTNULLVOID(btn->style);
 
-  btnStyle = (WinStyle *)btn->value;
+  btnStyle = (WinStyle *)btn->style;
   y = getAbsoluteY(btn);
   x = getAbsoluteX(btn);
   fillRegionEx(x, y, btn->nWidth, btn->nHeight, btnStyle->bkcolor);

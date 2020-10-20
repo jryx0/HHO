@@ -174,8 +174,8 @@ void freeWin(hbasewinAttr *win)
   if (win->title)
     free(win->title);
 
-  if (win->value)
-    free(win->value);
+  if (win->style)
+	free(win->style);
 
   free(win);
   win = NULL;
@@ -384,9 +384,9 @@ void OnTheme(hbasewinAttr *win, void *val)
   TESTNULLVOID(win);
   TESTNULLVOID(val);
 
-  if (win->value)
+  if (win->style)
   {
-    _winStyle = (WinStyle *)win->value;
+	_winStyle = (WinStyle *)win->style;
     getWinTheme(_winStyle, *(int *)val);
   }
   themeChildren(win, val);
