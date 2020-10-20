@@ -1,6 +1,7 @@
 #include "regspage.h"
 #include "HBaseWin.h"
 #include "macrodef.h"
+#include "hhosvga.h"
 
 hbasewinAttr *Createregisterpage(hbasewinAttr *parent, int winID)
 {
@@ -10,11 +11,15 @@ hbasewinAttr *Createregisterpage(hbasewinAttr *parent, int winID)
   page->onPaint = OnPaint_registerpage;
   page->EventHandler = EventHandler_registerpage;
 
+  
+
   return page;
 }
 
 void OnPaint_registerpage(hbasewinAttr *win, void *value)
 {
+  
+  
   repaintChildren(win, value);
 }
 void EventHandler_registerpage(hbasewinAttr *win, int type, void *value)
