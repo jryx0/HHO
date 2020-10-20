@@ -7,10 +7,10 @@
 #define UNDERLINE 1
 #define NONE 0
 
-typedef struct _lnkstyle
-{
+// typedef struct _lnkstyle
+// {
 
-}linkStyle;
+// }linkStyle;
 
 /**
  * 创建超链接控件

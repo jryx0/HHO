@@ -13,6 +13,7 @@
 #include "testpage.h"
 #include "homepage.h"
 #include "lginpage.h"
+#include "regspage.h"
 #include <memory.h>
 
 #define INPUTWINHEIGHT 38
@@ -50,14 +51,14 @@ void OnPaint_Desktop(hbasewinAttr *win, void *val)
   if (win == NULL)
     return;
 
-  dskStyle = (WinStyle *)win->value;  
+  dskStyle = (WinStyle *)win->value;
 
   if (val == NULL)
   {
     clearScreen(COLOR_white);
     //draw header
     Putbmp64k(0, 2, "c:\\hho\\data\\bmp\\hhologo.bmp");
-    // linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);    
+    // linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);
     fillRegionEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 44, dskStyle->bkcolor);
     repaintChildren(win, val);
   }
@@ -245,8 +246,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID)
   case ID_LOGINPAGE:
     newpage = Createloginpage(desktop, ID_LOGINPAGE);
     break;
-  /* case : 
-   */
+  case ID_REGISTERPAGE:
+    newpage = Createregisterpage(desktop, ID_REGISTERPAGE);
+    break;
   default:
     break;
   }
@@ -331,7 +333,6 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       /* 改变鼠标形状、改变背景颜色 */
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
-        
 
       if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
       { //鼠标按下,改变按钮样式

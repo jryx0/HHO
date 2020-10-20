@@ -18,7 +18,7 @@ hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
 
   CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 67, 240, 40, ID_LOGIN_USERNAME, "");
   CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 + 3, 240, 40, ID_LOGIN_KEY, "");
-  Createhyperlink(page, 20, 10, 55, 25, ID_LOGIN_RETURN, "[首  页]");
+  Createhyperlink(page, 20, 10, 100, 25, ID_LOGIN_RETURN, "[首  页]");
   CreateButton(page, PAGE_W / 2 + 30, PAGE_H - 200, 120, 40, ID_LOGIN_LOGIN, "登 录");
   CreateButton(page, PAGE_W / 2 - 120, PAGE_H - 200, 120, 40, ID_LOGIN_REGISTER, "注 册");
 
@@ -116,6 +116,26 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
 
     case ID_LOGIN_REGISTER:
       //跳转注册界面
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标释放
+        if (hitwin->onLeave)
+          hitwin->onLeave(hitwin, NULL);
+
+        //转跳homepage
+        if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+        {
+          _g->activePageID = ID_HOMEPAGE;
+          win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+        }
+      }
       break; 
 
     default:
