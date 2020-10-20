@@ -50,17 +50,16 @@ void OnPaint_Desktop(hbasewinAttr *win, void *val)
   if (win == NULL)
     return;
 
-  dskStyle = (WinStyle *)win->value;
+  dskStyle = (WinStyle *)win->value;  
 
   if (val == NULL)
   {
     clearScreen(COLOR_white);
     //draw header
     Putbmp64k(0, 2, "c:\\hho\\data\\bmp\\hhologo.bmp");
-    // linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);
+    // linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);    
     fillRegionEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 44, dskStyle->bkcolor);
-
-    repaintChildren(win);
+    repaintChildren(win, val);
   }
   else
   { //输入法窗口
@@ -205,7 +204,7 @@ hbasewinAttr *CreateDesktop(void)
   desktop->wintype = DESKTOP;
 
   //登陆状态
-  Createhyperlink(desktop, 900, (HEADER_HEIGHT - 44) / 2 - 10, 55, 25, ID_MENU_LOGIN, "请登录");
+  Createhyperlink(desktop, 900, (HEADER_HEIGHT - 44) / 2 - 10, 100, 25, ID_MENU_LOGIN, "[请登录]");
   //创建菜单,切换页面,临时使用
   CreateButton(desktop, 450, HEADER_HEIGHT - 44, 120, 44, ID_MENU_HOMEPAGE, "首页");
   CreateButton(desktop, 600, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "测试页");
@@ -287,7 +286,7 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, globaldef *_g)
       return;
     }
     if (activePage->onPaint)
-      activePage->onPaint(activePage, NULL);
+      activePage->onPaint(activePage, &_g->theme);
 
     _g->activePage = activePage;
     activePage->onTheme(activePage, &_g->theme);
@@ -332,6 +331,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
       /* 改变鼠标形状、改变背景颜色 */
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+        
 
       if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
       { //鼠标按下,改变按钮样式

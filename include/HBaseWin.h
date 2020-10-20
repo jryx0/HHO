@@ -43,6 +43,8 @@ typedef struct _style
   int bkcolor;
   int bkcolor1;
   int bkcolor2;
+
+  int height;
 } WinStyle;
 
 typedef struct winstruct
@@ -166,7 +168,7 @@ int getAbsoluteY(hbasewinAttr *win);
  * @param win 要删除的窗口  
  * @return 无 
  */
-void repaintChildren(hbasewinAttr *win);
+void repaintChildren(hbasewinAttr *win, void *val);
 
 /**
  * 检查坐标 坐标x，y是否在窗口中

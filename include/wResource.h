@@ -22,7 +22,7 @@
 #define ID_MENU_LOG 11      //label
 #define ID_MENU_HOMEPAGE 12 //button
 #define ID_MENU_TESTPAGE 13 //button
-#define ID_MENU_LOGIN 14 //ÓÒÉÏ½ÇµÇÂ¼×´Ì¬
+#define ID_MENU_LOGIN 14    //ÓÒÉÏ½ÇµÇÂ¼×´Ì¬
 
 #define ID_MENU_PY 19
 #define ID_MENU_EXIT 20 // ÍË³ö
@@ -36,9 +36,16 @@
 ////////////////////////////homepage//////////////////////////////////////////////
 #define ID_HOMEPAGE 30
 
-#define ID_LABEL_1 31
-#define ID_LABEL_2 32
-#define ID_LABEL_3 33
+#define ID_HOMEPAGE_LINK1 31
+#define ID_HOMEPAGE_LINK2 32
+#define ID_HOMEPAGE_LINK3 33
+#define ID_HOMEPAGE_LINK4 34
+#define ID_HOMEPAGE_LINK5 35
+#define ID_HOMEPAGE_LINK6 36
+#define ID_HOMEPAGE_LINK7 37
+#define ID_HOMEPAGE_LINK8 38
+#define ID_HOMEPAGE_LINK9 39
+#define ID_HOMEPAGE_LINK10 40
 
 ////////////////////test page///////////////////////////////////////////////////
 #define ID_TESTPAGE 10000

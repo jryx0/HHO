@@ -599,11 +599,13 @@ void printASC(int x, int y, char acs, hfont *font)
   TESTNULLVOID(font);
   TESTNULLVOID(font->fpASC);
 
-  fseek(font->fpASC, (acs - ' ') * 12L, SEEK_SET); //asc12 - ' ', asc16 - 0L
-  fread(buffer, 12, 1, font->fpASC);
+  // fseek(font->fpASC, (acs - ' ') * 12L, SEEK_SET); //asc12 - ' ', asc16 - 0L
+  // fread(buffer, 12, 1, font->fpASC);
 
   y = y + 2; //for asc12
-  for (i = 0; i < 12; i++)
+  fseek(font->fpASC, acs * 16L, SEEK_SET);
+  fread(buffer, 16, 1, font->fpASC);
+  for (i = 0; i < 16; i++)
     for (m = 1; m <= font->ascScaley; m++) //y方向缩放
       for (j = 0; j < 8; j++)
         for (k = 1; k <= font->ascScalex; k++) //x方向缩放
@@ -1046,7 +1048,7 @@ void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y)
     else
     { //打印字符
       if (*text == '\r' || *text == '\n')
-      {                     //换行处理
+      { //换行处理
         //isFirstLine = TRUE; //有回车换行符说明是新的一段
 
         // if (*(text + 1) != 0) //不是最后一个字符
@@ -1125,7 +1127,7 @@ int printTextEx5(hregion *region, char *text, hfont *_font, int *index, int *x, 
   int curCol = 0; //当前列宽
   int curindex = *index;
 
- // char isFirstLine = _font->firstline; //是否是段落首行，首行空两个字宽度
+  // char isFirstLine = _font->firstline; //是否是段落首行，首行空两个字宽度
 
   if (curindex == 0)
   {
@@ -1179,7 +1181,7 @@ int printTextEx5(hregion *region, char *text, hfont *_font, int *index, int *x, 
     else
     { //打印字符
       if (*text == '\r' || *text == '\n')
-      {                     //换行处理
+      { //换行处理
         //isFirstLine = TRUE; //有回车换行符说明是新的一段
 
         // if (*(text + 1) != 0) //不是最后一个字符
@@ -1276,7 +1278,7 @@ FILE *getFontFile(int type, int size)
     sprintf(fontfile, FONTPATH "HZK16Y");
     break;
   case ASCII:
-    sprintf(fontfile, FONTPATH "ASC%d", size);
+    sprintf(fontfile, FONTPATH "ASC16");
     break;
   default: //宋体
     sprintf(fontfile, FONTPATH "HZK%dS", size);
@@ -1311,8 +1313,8 @@ void calcFontSetting(hfont *font)
   case 24:
     font->ascScalex = 2;
     font->ascScaley = 2;
-    font->ascy = 0;
-    font->ascSize = 14;
+    font->ascy = 4;
+    font->ascSize = 8 * 2;
     break;
   case 32:
     font->ascScalex = 3;

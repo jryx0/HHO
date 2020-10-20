@@ -16,26 +16,43 @@ hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
   page->onPaint = OnPaint_loginpage;
   page->EventHandler = EventHandler_loginpage;
 
-  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 107, 240, 40, ID_LOGIN_USERNAME, "");
-  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 7, 240, 40, ID_LOGIN_KEY, "");
-  Createhyperlink(page, 20, 10, 55, 25, ID_LOGIN_RETURN, "返 回");
+  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 - 67, 240, 40, ID_LOGIN_USERNAME, "");
+  CreateTextBox(page, PAGE_W / 2 - 100, PAGE_H / 2 + 3, 240, 40, ID_LOGIN_KEY, "");
+  Createhyperlink(page, 20, 10, 55, 25, ID_LOGIN_RETURN, "[首  页]");
   CreateButton(page, PAGE_W / 2 + 30, PAGE_H - 200, 120, 40, ID_LOGIN_LOGIN, "登 录");
   CreateButton(page, PAGE_W / 2 - 120, PAGE_H - 200, 120, 40, ID_LOGIN_REGISTER, "注 册");
 
+  page->value = malloc(sizeof(WinStyle));
+  getWinTheme((WinStyle *)page->value, 1);
   return page;
 }
 
 void OnPaint_loginpage(hbasewinAttr *win, void *value)
 {
-  hfont *_h = getFont(SIMSUN, 24, 0);
+  //hfont *_h = getFont(SIMSUN, 24, 0);
+  WinStyle *style;
+  hfont *_h;
   int x, y;
   TESTNULLVOID(win);
+  TESTNULLVOID(win->value);
+
+  style = (WinStyle *)win->value;
+  _h = getFont(style->fonttype, style->fontsize, 0x0);
+
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
-  printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2 - 100, "用户名：", _h);
-  printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2, "密  码：", _h);
+  printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2 - 60, "用户名：", _h);
+  printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2 + 10, "密  码：", _h);
+  printTextLineXY(x + style->fontsize * 6, y + 10, "- 用户登录", _h);
 
-  repaintChildren(win);
+  linex_styleEx(x + PAGE_W / 2 - 200 - 30, y + PAGE_H / 2 - 100, 450, 0x6BAF, 1, 1);
+  rectangleEx(x + PAGE_W / 2 - 200 - 30, y + PAGE_H / 2 - 100 - 40, 450, 280, 0x6BAF, 1, 1);
+  fillRegionEx(x + PAGE_W / 2 - 200 - 30 + 1, y + PAGE_H / 2 - 100 - 40 + 1, 449, 39, style->bkcolor2);
+
+  _h->fontcolor = 0xFFFF;
+  printTextLineXY(x + PAGE_W / 2 - 200 - 30 + 5, y + PAGE_H / 2 - 100 - 40 + 13, "请输入用户名和密码:", _h);
+
+  repaintChildren(win,value);
   freeFont(_h);
 }
 

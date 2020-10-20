@@ -41,7 +41,10 @@ int main(void)
   _global->activePage = findWinByID(desktop, ID_HOMEPAGE); //设置缺省活动页面-homepage
   //_global->pyWin = findWinByID(desktop, ID_PINYIN);
   if (desktop && desktop->onPaint) //刷新页面
+  {
     desktop->onPaint(desktop, NULL);
+    //desktop->onPaint(desktop, &_global->theme);
+  }
 
   //初始化鼠标
   ResetMouse(&_global->mouse);
@@ -91,9 +94,9 @@ int main(void)
       else if (0x5f00 == key)
       { // ctrl + F2 切换风格
         _global->theme++;
-        if (_global->theme >= 3)
+        if (_global->theme >= 4)
           _global->theme = 1;
-          
+
         desktop->onTheme(desktop, &_global->theme);
         desktop->onPaint(desktop, NULL);
       }

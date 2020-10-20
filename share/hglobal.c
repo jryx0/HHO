@@ -108,7 +108,7 @@ WinStyle *getWinTheme(WinStyle *_winStyle, int type)
     _winStyle->fonttype = SIMYOU;
     _winStyle->bkcolor1 = 0x003F;
     _winStyle->bkcolor2 = 0x03DF;
-
+    _winStyle->height = _winStyle->fontsize * 2;
     break;
   case 2:
     _winStyle->bkcolor = 0xB81F;
@@ -117,8 +117,18 @@ WinStyle *getWinTheme(WinStyle *_winStyle, int type)
     _winStyle->fonttype = SIMSUN;
     _winStyle->bkcolor1 = 0xA815;
     _winStyle->bkcolor2 = 0xB81F;
+    //_winStyle->height = _winStyle->fontsize * 5 / 3;
+    _winStyle->height = _winStyle->fontsize * 2;
     break;
-
+  case 3:
+    _winStyle->bkcolor = 0x050B;
+    _winStyle->fontcolor = 0x0000;
+    _winStyle->fontsize = 24;
+    _winStyle->fonttype = SIMKAI;
+    _winStyle->bkcolor1 = 0x2D28;
+    _winStyle->bkcolor2 = 0x2D28;
+    _winStyle->height = _winStyle->fontsize * 5 / 3;
+    //_winStyle->height = _winStyle->fontsize * 2;
   default:
     break;
   }

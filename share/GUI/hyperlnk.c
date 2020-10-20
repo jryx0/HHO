@@ -73,24 +73,33 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
   if (link->title != NULL)
   {
     hregion region;
-    _font = getFont(lnkStyle->fonttype, lnkStyle ->fontsize, 0x0000);
-    y = getAbsoluteY(link);
+    int wid;
+    _font = getFont(lnkStyle->fonttype, lnkStyle->fontsize, 0x0000);
+
     x = getAbsoluteX(link);
+    y = getAbsoluteY(link);
 
     region.left_top.x = x;
     region.left_top.y = y;
+
+    //printTextLineXY(x, y, link->title, _font);
+    wid = calcPrintTextLenght(link->title, _font);
+    if (wid < link->nWidth)
+      link->nWidth = wid;
+
     region.right_bottom.x = x + link->nWidth;
     region.right_bottom.y = y + link->nHeight;
 
     if (lnkStyle->type == UNDERLINE)
     {
       linex_styleEx(x, y + lnkStyle->fontsize + 2, link->nWidth, lnkStyle->bkcolor, 2, 1);
-      rectangle(x, y, region.right_bottom.x, region.right_bottom.y, lnkStyle->bkcolor1, 1, 2);
+      //rectangle(x, y, region.right_bottom.x, region.right_bottom.y, lnkStyle->bkcolor1, 1, 2);
+      rectangleEx(x, y, link->nWidth, link->nHeight, lnkStyle->bkcolor1, 1, 2);
     }
     else
     {
       linex_styleEx(x, y + lnkStyle->fontsize + 2, link->nWidth, 0xFFFF, 2, 1);
-      rectangle(x, y, region.right_bottom.x, region.right_bottom.y, 0xFFFF, 1, 2);
+      rectangleEx(x, y, link->nWidth, link->nHeight, 0xFFFF, 1, 2);
     }
 
     printTextEx(&region, link->title, _font);
@@ -106,14 +115,14 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
  */
 WinStyle *getlinkStyle(void)
 {
-  WinStyle *lnkStyle = malloc(sizeof(WinStyle));
-  TESTNULL(lnkStyle, NULL);
+  WinStyle *lnkstyle = malloc(sizeof(WinStyle));
+  TESTNULL(lnkstyle, NULL);
 
-  lnkStyle->bkcolor = 0xFFFF;
-  lnkStyle->fontcolor = 0x0000;
-  lnkStyle->fontsize = 24;
-  lnkStyle->fonttype = SIMSUN;
-  lnkStyle->type = NONE;
+  lnkstyle->bkcolor = 0xFFFF;
+  lnkstyle->fontcolor = 0x0000;
+  lnkstyle->fontsize = 24;
+  lnkstyle->fonttype = SIMSUN;
+  lnkstyle->type = NONE;
 
-  return lnkStyle;
+  return lnkstyle;
 }
