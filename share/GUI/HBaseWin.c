@@ -245,7 +245,7 @@ int getAbsoluteY(hbasewinAttr *win)
  * @param win 要删除的窗口  
  * @return 无 
  */
-void repaintChildren(hbasewinAttr *win)
+void repaintChildren(hbasewinAttr *win, void *val)
 {
   list_iterator_t *it;
   list_node_t *node;
@@ -263,7 +263,7 @@ void repaintChildren(hbasewinAttr *win)
     childwin = (hbasewinAttr *)(node->val);
 
     if (childwin->onPaint != NULL)
-      childwin->onPaint(childwin, NULL);
+      childwin->onPaint(childwin, val);
   }
   list_iterator_destroy(it);
 }
@@ -387,7 +387,7 @@ void OnTheme(hbasewinAttr *win, void *val)
   if (win->value)
   {
     _winStyle = (WinStyle *)win->value;
-    getWinTheme(_winStyle, *(int *)val);    
+    getWinTheme(_winStyle, *(int *)val);
   }
   themeChildren(win, val);
 }

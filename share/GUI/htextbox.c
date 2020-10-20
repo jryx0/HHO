@@ -32,13 +32,17 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   tb->wintype = TEXTBOX;
 
   ti = malloc(sizeof(textInfo));
+  ti->textStyle = malloc(sizeof(WinStyle));
+  getWinTheme(ti->textStyle, 1);
+
+  tb->nHeight = ti->textStyle->height;
 
   ti->r.left_top.x = getAbsoluteX(tb) + 6;
   ti->r.left_top.y = getAbsoluteY(tb) + 8;
   ti->r.right_bottom.x = ti->r.left_top.x + tb->nWidth - 6 - 2;
   ti->r.right_bottom.y = ti->r.left_top.y + tb->nHeight - 6 - 2;
   ti->active = INACTIVE;
-  ti->fontsize = DEFAULT_FONTSIZE;
+  //ti->fontsize = DEFAULT_FONTSIZE;
   if (title)
   {
     ti->textMaxlen = strlen(title);
@@ -46,9 +50,6 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
   }
   else
     ti->curTextindex = 0;
-
-  ti->textStyle = malloc(sizeof(WinStyle));
-  getWinTheme(ti->textStyle, 1);
 
   tb->value = ti; // malloc(2); //int 控制活动状态时的绘制
   return tb;
@@ -114,6 +115,7 @@ void OnTheme_TextBox(hbasewinAttr *tb, void *val)
 
   ti = tb->value;
   getWinTheme(ti->textStyle, *(int *)val);
+  tb->nHeight = ti->textStyle->height;
 }
 
 void OnPaint_TextBox(hbasewinAttr *tb, void *value)

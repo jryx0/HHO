@@ -48,7 +48,7 @@ void OnPaint_TestPage(hbasewinAttr *win, void *value)
     freeFont(_h);
   }
 
-  repaintChildren(win);
+  repaintChildren(win, value);
   (void)value;
 }
 
