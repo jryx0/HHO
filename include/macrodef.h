@@ -66,8 +66,10 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #define DATAPATH "C:\\HHO\\data\\"
 #endif
 
-#define USERINFOFILE DATAPATH "userinfo.txt"
-#define DOCTORINFOFILE DATAPATH "doctorinfo.txt"
+#define USERINFOFILE DATAPATH "database\\userinfo.txt"
+#define DOCTORINFOFILE DATAPATH "database\\doctorinfo.txt"
+#define PATIENTINFOFILE DATAPATH "database\\patientinfo.txt"
+#define DEPTINFOFILE DATAPATH "database\\deptinfo.txt"
 
 //pinyin files
 #define FILE_PYINDEX DATAPATH "pinyin\\index.txt"

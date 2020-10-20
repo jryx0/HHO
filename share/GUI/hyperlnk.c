@@ -77,6 +77,7 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
 
     x = getAbsoluteX(link);
     y = getAbsoluteY(link);
+    fillRegionEx(x, y, link->nWidth, link->nHeight, 0xffff);
 
     region.left_top.x = x;
     region.left_top.y = y;

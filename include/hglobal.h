@@ -32,6 +32,7 @@ typedef struct _globaldef
   unsigned char usertype;  //用户类型
   unsigned char isExit;    //是否退出程序
   unsigned char InputMode; //输入模式
+  unsigned char isLogin;   //0未登录，1已登录
 
   char pystring[7]; //拼音
   char pyNum;       //输入的拼音数

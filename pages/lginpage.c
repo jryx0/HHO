@@ -7,6 +7,7 @@
 #include "hyperlnk.h"
 #include "hglobal.h"
 #include "macrodef.h"
+#include "data.h"
 
 hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
 {
@@ -24,7 +25,7 @@ hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
   CreateButton(page, PAGE_W / 2 + 30, PAGE_H - 200, 120, 40, ID_LOGIN_LOGIN, "登 录");
   CreateButton(page, PAGE_W / 2 - 120, PAGE_H - 200, 120, 40, ID_LOGIN_REGISTER, "注 册");
 
-  page->style      = malloc(sizeof(WinStyle));
+  page->style = malloc(sizeof(WinStyle));
   getWinTheme((WinStyle *)page->style, 1);
   return page;
 }
@@ -112,6 +113,61 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
         {
           _g->activePageID = ID_HOMEPAGE;
           win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+        }
+      }
+      break;
+
+    case ID_LOGIN_LOGIN:
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在窗口部分显示手型鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标释放
+        userInfo *infotemp;
+        hbasewinAttr *username, *password;
+        if (hitwin->onLeave)
+          hitwin->onLeave(hitwin, NULL);
+        username = findWinByID(win, ID_LOGIN_USERNAME);
+        password = findWinByID(win, ID_LOGIN_KEY);
+        if (username && password)
+        {
+          infotemp = fFindUserInfo(USERINFOFILE, username->title, password->title);
+          if (infotemp != NULL)
+          {
+            _g->userid = infotemp->userID;
+            _g->usertype = infotemp->userType;
+            _g->isLogin = 1;
+            switch (_g->usertype)
+            {
+            case PATIENT:
+              _g->activePageID = ID_HOMEPAGE;
+              break;
+            case DOCTOR:
+              _g->activePageID = ID_HOMEPAGE;
+              break;
+            case PHARMCY:
+              _g->activePageID = ID_HOMEPAGE;
+              break;
+            case LOGISTIC:
+              _g->activePageID = ID_HOMEPAGE;
+              break;
+            default:
+              _g->activePageID = ID_HOMEPAGE;
+              break;
+            }
+            win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+          }
+          else
+          {
+            hfont *_h = getFont(SIMSUN, 16, 0xF801);
+            printTextLineXY(PAGE_W / 2 - 60, PAGE_H - 100, "用户名或密码错误", _h);
+            freeFont(_h);
+          }
         }
       }
       break;
