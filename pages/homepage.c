@@ -127,7 +127,7 @@ hbasewinAttr *CreateHomepage(hbasewinAttr *parent, int winID)
   Createhyperlink(page, 310, 40 + 26 * 4, 450, 30, ID_HOMEPAGE_LINK5, "校医院线上健康教育课启发学生新感受");
   Createhyperlink(page, 310, 40 + 26 * 5, 450, 30, ID_HOMEPAGE_LINK6, "校医院暖心服务高考阅卷");
   Createhyperlink(page, 310, 40 + 26 * 6, 450, 30, ID_HOMEPAGE_LINK7, "【别样毕业季】校医院为毕业生返校保驾护航");
-  Createhyperlink(page, 310, 40 + 26 * 7, 450, 30, ID_HOMEPAGE_LINK8, "大“疫”当前 急诊人显担当");
+  Createhyperlink(page, 310, 40 + 26 * 7, 450, 25, ID_HOMEPAGE_LINK8, "大“疫”当前 急诊人显担当");
   CreateTextBox(page, 90, 330, 779, 32, ID_HOMEPAGE_AISEARCH, "", 1);
   CreateButton(page, 870, 330, 130, 32, ID_HOMEPAGE_AIBUTTON, "立即咨询");
 
