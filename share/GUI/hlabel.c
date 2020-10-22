@@ -86,17 +86,13 @@ void OnPaint_Label_File(hbasewinAttr *label, void *value)
   (void)value;
 }
 
-void OnPaint_Label_FileFormat(hbasewinAttr *label, void *value)
-{
-
-}
-
 void OnPaint_Label_Img(hbasewinAttr *label, void *value)
 {
   TESTNULLVOID(label);
   TESTNULLVOID(label->title);
 
-  Putbmp64k(getAbsoluteX(label), getAbsoluteY(label), label->title);
+  //Putbmp64k(getAbsoluteX(label), getAbsoluteY(label), label->title);
+  Putbmp565(getAbsoluteX(label), getAbsoluteY(label), label->title);
   (void)value;
 }
 

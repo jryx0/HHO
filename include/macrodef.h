@@ -53,7 +53,7 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #define PAGE_X 5
 #define PAGE_Y (HEADER_HEIGHT + 5)
 #define PAGE_W (SCR_WIDTH - 10)
-#define PAGE_H ((SCR_HEIGHT - (HEADER_HEIGHT + FOOTER_HEIGHT + 10)) - 38)
+#define PAGE_H ((SCR_HEIGHT - (HEADER_HEIGHT + FOOTER_HEIGHT + 10)) - 20)
 
 // #define SVGA32K
 // #define SVGA800x600

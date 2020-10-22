@@ -1,16 +1,19 @@
 #include "HBaseWin.h"
 #include "hhosvga.h"
-#include "hcheckbox.h"
+#include "hchkbox.h"
 #include <string.h>
 
 hbasewinAttr *CreateCheckBox(hbasewinAttr *parent, int x, int y, int nWidth,
                              int nHeight, int winID, const char *title)
 {
   hbasewinAttr *checkbox;
-  if (nHeight < 16 || nWidth < 32)
-    return NULL;
+  // if (nHeight < 16 || nWidth < 32)
+  //   return NULL;
   checkbox = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
   checkbox->onPaint = OnPaintCheckBox;
+  checkbox->onClick = OnClickCheckBox;
+
+  return checkbox;
 }
 
 void OnPaintCheckBoxNone(hbasewinAttr *checkbox, void *value)
@@ -18,15 +21,17 @@ void OnPaintCheckBoxNone(hbasewinAttr *checkbox, void *value)
   int x0, y0, x1, y1, x2, y2, type = 3;
   if (checkbox == NULL)
     return;
-  OnPaint(checkbox, &type);
+  //OnPaint(checkbox, &type);
   x0 = getAbsoluteX(checkbox);
-  y0 = getAbsoluteX(checkbox);
-  x1 = x0 + 4;
-  y1 = (checkbox->nHeight - 9) / 2;
-  x2 = x1 + 9;
-  y2 = y1 + 9;
-  fillRegion(x1, y1, x2, y2, 0xFFFF);
-  rectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 0);
+  y0 = getAbsoluteY(checkbox);
+  // x1 = x0 + 4;
+  // y1 = y0 + (checkbox->nHeight - 9) / 2;
+  // x2 = x1 + 32;
+  // y2 = y1 + 32;
+  x1 = x0 + checkbox->nWidth;
+  y1 = y0 + checkbox->nHeight;
+  fillRegion(x0, y0, x1, y1, 0xFFFF);
+  rectangle(x0 - 1, y0 - 1, x1 + 1, y1 + 1, 0x0000, 1, 1);
 }
 
 void OnPaintCheckBoxRight(hbasewinAttr *checkbox, void *value)
@@ -34,15 +39,15 @@ void OnPaintCheckBoxRight(hbasewinAttr *checkbox, void *value)
   int x0, y0, x1, y1, x2, y2, type = 3;
   if (checkbox == NULL)
     return;
-  OnPaint(checkbox, &type);
+  //OnPaint(checkbox, &type);
   x0 = getAbsoluteX(checkbox);
-  y0 = getAbsoluteX(checkbox);
+  y0 = getAbsoluteY(checkbox);
   x1 = x0 + 4;
-  y1 = (checkbox->nHeight - 9) / 2;
+  y1 = y0 + (checkbox->nHeight - 9) / 2;
   x2 = x1 + 9;
   y2 = y1 + 9;
   fillRegion(x1, y1, x2, y2, 0xFFFF);
-  rectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 0);
+  rectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 0x0000, 1, 1);
   line(x1, y1 + 5, x1 + 5, y2, 0);
   line(x1 + 5, y2, x2, y1, 0);
 }
@@ -52,33 +57,40 @@ void OnPaintCheckBoxCross(hbasewinAttr *checkbox, void *value)
   int x0, y0, x1, y1, x2, y2, type = 3;
   if (checkbox == NULL)
     return;
-  OnPaint(checkbox, &type);
+  //OnPaint(checkbox, &type);
   x0 = getAbsoluteX(checkbox);
-  y0 = getAbsoluteX(checkbox);
+  y0 = getAbsoluteY(checkbox);
   x1 = x0 + 4;
-  y1 = (checkbox->nHeight - 9) / 2;
+  y1 = y0 + (checkbox->nHeight - 9) / 2;
   x2 = x1 + 9;
   y2 = y1 + 9;
   fillRegion(x1, y1, x2, y2, 0xFFFF);
-  rectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 0);
+  rectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 0x0000, 1, 1);
   line(x1, y1, x2, y2, 0);
   line(x1, y2, x2, y1, 0);
 }
 
+void OnClickCheckBox(hbasewinAttr *checkbox, void *value)
+{
+  TESTNULLVOID(checkbox);
+
+  if (++checkbox->data >= 3)
+    checkbox->data = 0;
+}
+
 void OnPaintCheckBox(hbasewinAttr *checkbox, void *value)
 {
-  int judge;
-  judge = *(checkbox->value);
-  switch (judge)
+
+  switch (checkbox->data)
   {
   case 1:
-    OnPaintCheckBoxRight(hbasewinAttr * checkbox, void *value);
+    OnPaintCheckBoxRight(checkbox, value);
     break;
   case 2:
-    OnPaintCheckBoxCross(hbasewinAttr * checkbox, void *value);
+    OnPaintCheckBoxCross(checkbox, value);
     break;
   default:
-    OnPaintCheckBoxNone(hbasewinAttr * checkbox, void *value);
+    OnPaintCheckBoxNone(checkbox, value);
     break;
   }
 }

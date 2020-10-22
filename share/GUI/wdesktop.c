@@ -58,7 +58,8 @@ void OnPaint_Desktop(hbasewinAttr *win, void *val)
   {
     clearScreen(COLOR_white);
     //draw header
-    Putbmp64k(0, 2, "c:\\hho\\data\\bmp\\hhologo.bmp");
+    //Putbmp64k(0, 2, "c:\\hho\\data\\bmp\\hhologo.bmp");
+    Putbmp565(0, 2, "c:\\hho\\data\\bmp\\hhologo.565");
     // linex_styleEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 0x4A96, 3, 1);
     fillRegionEx(0, HEADER_HEIGHT - 44, SCR_WIDTH, 44, dskStyle->bkcolor);
     repaintChildren(win, val);
@@ -248,12 +249,12 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
     newpage = Createloginpage(desktop, ID_LOGINPAGE);
     break;
   case ID_NEWSPAGE:
-    {
-      char title[40];
-      sprintf(title, "%s\\news%02d.txt", NEWSPATH, _g->data);
-      newpage = CreateNewspage(desktop, ID_NEWSPAGE, title);
-    }
-    break;
+  {
+    char title[40];
+    sprintf(title, "%s\\news%02d.txt", NEWSPATH, _g->data);
+    newpage = CreateNewspage(desktop, ID_NEWSPAGE, title);
+  }
+  break;
   /* case : 
    */
   default:

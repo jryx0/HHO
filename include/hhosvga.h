@@ -371,4 +371,6 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font);
  * 
  */
 void freeFont(hfont *_f);
+
+int Putbmp565(int x, int y, const char *path);
 #endif

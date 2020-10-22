@@ -44,6 +44,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
   case ID_HOMEPAGE_LINK6:
   case ID_HOMEPAGE_LINK7:
   case ID_HOMEPAGE_LINK8:
+    /*新闻公告*/
     if (type == EVENT_MOUSE)
     {                                                                             //homepage 处理鼠标移动理鼠标移动
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
@@ -64,6 +65,45 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
           _g->activePageID = ID_NEWSPAGE;
           _g->data = hitwin->winID; //页面之间数据交换
           win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+        }
+      }
+    }
+    break;
+  case ID_HOMEPAGE_CHARGE1:
+  case ID_HOMEPAGE_CHARGE2:
+  case ID_HOMEPAGE_DIAGNOSE:
+  case ID_HOMEPAGE_RESULT:
+  case ID_HOMEPAGE_DRUG:
+  case ID_HOMEPAGE_LOGISTICS:
+  case ID_HOMEPAGE_REGS:
+    /*看病流程*/
+    if (type == EVENT_MOUSE)
+    {                                                                             //homepage 处理鼠标移动理鼠标移动
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标释放
+        if (hitwin->onLeave)
+          hitwin->onLeave(hitwin, NULL);
+
+        if (_g->isLogin == 1)
+        {
+          
+        }
+        else
+        {
+          /*转跳登录页面*/
+          if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+          {
+            _g->activePageID = ID_LOGINPAGE;
+            win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+          }
         }
       }
     }
@@ -144,11 +184,6 @@ hbasewinAttr *CreateHomepage(hbasewinAttr *parent, int winID)
   hbasewinAttr *ctrl;
   TESTNULL(page, NULL);
 
-  // CreateLabel(page, 15, 90, 300, 150, ID_LABEL_1, "readme");
-  // CreateLabel(page, 15 + 350, 90, 300, 150, ID_LABEL_2, "c:\\hho\\data\\news\\1.txt");
-  // label = CreateLabel(page, 15 + 700, 90, 300, 150, ID_LABEL_3, NULL);
-  // label->value = malloc(10);
-  // strcpy((char *)label->value, "test");
   ctrl = Createhyperlink(page, 310, 40, 450, 30, ID_HOMEPAGE_LINK1, "校医院职工大会强调：党建引领 练内功 做服务 办特色");
   ctrl->data = ID_HOMEPAGE_LINK1;
   ctrl = Createhyperlink(page, 310, 40 + 26, 450, 30, ID_HOMEPAGE_LINK2, "【抗击新冠肺炎 华中大在行动】校医院临时后勤团队为一线人员提供坚实保障");
@@ -172,7 +207,15 @@ hbasewinAttr *CreateHomepage(hbasewinAttr *parent, int winID)
   CreateButton(page, 810, 30, 200, 45, ID_HOMEPAGE_BUTTON1, "就诊须知");
   CreateButton(page, 810, 85, 200, 45, ID_HOMEPAGE_BUTTON2, "操作指南");
   CreateButton(page, 810, 140, 200, 45, ID_HOMEPAGE_BUTTON3, "电话投诉");
-  CreateButton(page, 810, 196, 200, 45, ID_HOMEPAGE_BUTTON4, "交通位置");
+  CreateButton(page, 810, 196, 200, 45, ID_HOMEPAGE_BUTTON4, "健康科普");
+
+  CreateWindowsEx(page, 45, 445, 64, 64, ID_HOMEPAGE_REGS, NULL);
+  CreateWindowsEx(page, 189, 445, 64, 64, ID_HOMEPAGE_CHARGE1, NULL);
+  CreateWindowsEx(page, 333, 445, 64, 64, ID_HOMEPAGE_DIAGNOSE, NULL);
+  CreateWindowsEx(page, 477, 445, 64, 64, ID_HOMEPAGE_RESULT, NULL);
+  CreateWindowsEx(page, 621, 445, 64, 64, ID_HOMEPAGE_CHARGE2, NULL);
+  CreateWindowsEx(page, 765, 445, 64, 64, ID_HOMEPAGE_DRUG, NULL);
+  CreateWindowsEx(page, 909, 445, 64, 64, ID_HOMEPAGE_LOGISTICS, NULL);
 
   page->onPaint = OnPaint_homepage;
   page->EventHandler = EventHandler_homepage;
@@ -200,7 +243,9 @@ void OnPaint_homepage(hbasewinAttr *win, void *value)
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
 
-  Putbmp64k(x, y + 40, "data\\news\\newspic2.bmp");
+  Putbmp565(x + 50, y + 270, "data\\bmp\\ai.565");
+
+  Putbmp565(x, y + 40, "data\\news\\newspic2.565");
 
   printTextLineXY(x, y, "医院新闻", _font);
   linex_styleEx(x, y + 30, 770, winstyle->bkcolor, 2, 1);
@@ -214,54 +259,40 @@ void OnPaint_homepage(hbasewinAttr *win, void *value)
   printTextLineXY(x + 15, y + 340, "智能医导", _font);
   rectangleEx(x, y + 255, 1010, 130, 0x6BAF, 1, 1);
 
-  //Putbmp64k(x + 45, y + 445, "data\\bmp\\flow00.bmp");
-  Putbmp64k(x + 45, y + 445, "data\\bmp\\flow-11.bmp");
+  Putbmp565(x + 45, y + 445, "data\\bmp\\flow00.565");
   printTextLineXY(x + 20, y + 525, "选择医生挂号", _font);
-  // linex_styleEx(x + 120, y + 490, 50, winstyle->bkcolor1, 3, 1);
 
-  Putbmp64k(x + 126, y + 477, "data\\bmp\\arraw.bmp");
+  //Putbmp64k(x + 126, y + 477, "data\\bmp\\arraw.bmp");
 
-  Putbmp64k(x + 189, y + 445, "data\\bmp\\flow-12.bmp");
+  //Putbmp64k(x + 189, y + 445, "data\\bmp\\flow-12.bmp");
   printTextLineXY(x + 185, y + 525, "门诊缴费", _font);
 
-  Putbmp64k(x + 270, y + 477, "data\\bmp\\arraw.bmp");
+  //Putbmp64k(x + 270, y + 477, "data\\bmp\\arraw.bmp");
 
-  Putbmp64k(x + 333, y + 445, "data\\bmp\\flow-13.bmp");
+  //Putbmp64k(x + 333, y + 445, "data\\bmp\\flow-13.bmp");
   printTextLineXY(x + 330, y + 525, "医生问诊", _font);
 
-  Putbmp64k(x + 415, y + 477, "data\\bmp\\arraw.bmp");
+  //Putbmp64k(x + 415, y + 477, "data\\bmp\\arraw.bmp");
 
-  Putbmp64k(x + 477, y + 445, "data\\bmp\\flow-14.bmp");
+  //Putbmp64k(x + 477, y + 445, "data\\bmp\\flow-14.bmp");
   printTextLineXY(x + 475, y + 525, "诊断结果", _font);
 
-  Putbmp64k(x + 555, y + 477, "data\\bmp\\arraw.bmp");
+  //Putbmp64k(x + 555, y + 477, "data\\bmp\\arraw.bmp");
 
-  Putbmp64k(x + 621, y + 445, "data\\bmp\\flow-12.bmp");
+  //Putbmp64k(x + 621, y + 445, "data\\bmp\\flow-12.bmp");
   printTextLineXY(x + 620, y + 525, "处方缴费", _font);
 
-  Putbmp64k(x + 700, y + 477, "data\\bmp\\arraw.bmp");
+  //Putbmp64k(x + 700, y + 477, "data\\bmp\\arraw.bmp");
 
-  Putbmp64k(x + 765, y + 445, "data\\bmp\\flow-15.bmp");
+  //Putbmp64k(x + 765, y + 445, "data\\bmp\\flow-15.bmp");
   printTextLineXY(x + 765, y + 525, "药房发药", _font);
 
-  Putbmp64k(x + 845, y + 477, "data\\bmp\\arraw.bmp");
+  //Putbmp64k(x + 845, y + 477, "data\\bmp\\arraw.bmp");
 
-  Putbmp64k(x + 909, y + 445, "data\\bmp\\flow-16.bmp");
+  //Putbmp64k(x + 909, y + 445, "data\\bmp\\flow-16.bmp");
   printTextLineXY(x + 909, y + 525, "物流签收", _font);
 
   repaintChildren(win, value);
-
-  // rectangleEx(x + 810, y + 30, 200, 50, 0xF483, 1, 1);
-  // printTextLineXY(x + 850, y + 40, "就诊须知", _font);
-
-  // rectangleEx(x + 810, y + 90, 200, 50, 0xF483, 1, 1);
-  // printTextLineXY(x + 850, y + 100, "操作指南", _font);
-
-  // rectangleEx(x + 810, y + 150, 200, 50, 0xF483, 1, 1);
-  // printTextLineXY(x + 850, y + 160, "投诉电话", _font);
-
-  // rectangleEx(x + 810, y + 210, 200, 50, 0xF483, 1, 1);
-  // printTextLineXY(x + 850, y + 220, "交通位置", _font);
 
   freeFont(_font);
   (void)value;

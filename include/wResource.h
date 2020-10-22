@@ -54,6 +54,14 @@
 #define ID_HOMEPAGE_BUTTON3 45
 #define ID_HOMEPAGE_BUTTON4 46
 
+#define ID_HOMEPAGE_REGS 50
+#define ID_HOMEPAGE_CHARGE1 51
+#define ID_HOMEPAGE_DIAGNOSE 52
+#define ID_HOMEPAGE_RESULT 53
+#define ID_HOMEPAGE_CHARGE2 54
+#define ID_HOMEPAGE_DRUG 55
+#define ID_HOMEPAGE_LOGISTICS 56
+
 ////////////////////test page///////////////////////////////////////////////////
 #define ID_TESTPAGE 10000
 #define ID_TEST_HYPERLINK 10001
@@ -73,7 +81,5 @@
 #define ID_LOGIN_RETURN 1003
 #define ID_LOGIN_USERNAME 1004
 #define ID_LOGIN_KEY 1005
-
-
 
 #endif

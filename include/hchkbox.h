@@ -9,5 +9,6 @@ void OnPaintCheckBoxNone(hbasewinAttr *checkbox, void *value);
 void OnPaintCheckBoxRight(hbasewinAttr *checkbox, void *value);
 void OnPaintCheckBoxCross(hbasewinAttr *checkbox, void *value);
 void OnPaintCheckBox(hbasewinAttr *checkbox, void *value);
+void OnClickCheckBox(hbasewinAttr *checkbox, void *value);
 
 #endif

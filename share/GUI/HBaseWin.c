@@ -12,6 +12,40 @@
 
 #pragma warn - pia
 
+void OnLeave(hbasewinAttr *win, void *val)
+{
+  int x1, x2, y1, y2;
+  int type;
+
+  TESTNULLVOID(win);
+
+  x1 = getAbsoluteX(win);
+  y1 = getAbsoluteY(win);
+  x2 = x1 + win->nWidth;
+  y2 = y1 + win->nHeight;
+
+  //²âÊÔÓÃ£¬Ã¿¸ö´°¿ÚÌî³ä±³¾°£¬»­Ðé¿ò
+  //fillRegion(x1, y1, x2, y2, COLOR_ligtgray);
+  rectangle(x1, y1, x2, y2, 0xFFFF, 1, 2);
+}
+
+void OnClick(hbasewinAttr *win, void *val)
+{
+  int x1, x2, y1, y2;
+  int type;
+
+  TESTNULLVOID(win);
+
+  x1 = getAbsoluteX(win);
+  y1 = getAbsoluteY(win);
+  x2 = x1 + win->nWidth;
+  y2 = y1 + win->nHeight;
+
+  //²âÊÔÓÃ£¬Ã¿¸ö´°¿ÚÌî³ä±³¾°£¬»­Ðé¿ò
+  //fillRegion(x1, y1, x2, y2, COLOR_ligtgray);
+  rectangle(x1, y1, x2, y2, COLOR_darkgray, 1, 2);
+}
+
 /**
  * @brief ³õÊ¼»¯´°¿Ú»ù±¾ÐÅÏ¢¡£
  * @author 
@@ -55,6 +89,9 @@ hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
   //ÉèÖÃ´°¿ÚÇå³ýº¯ÊýÖ¸Õë
   HHOwin->onDestroy = OnDestory;
 
+  HHOwin->onClick = OnClick;
+  HHOwin->onLeave = OnLeave;
+
   HHOwin->onTheme = OnTheme;
 
   return HHOwin;
@@ -95,20 +132,21 @@ void OnDestory(hbasewinAttr *win, void *val)
  */
 void OnPaint(hbasewinAttr *win, void *val)
 {
-  int x1, x2, y1, y2;
-  int type;
+  // int x1, x2, y1, y2;
+  // int type;
 
-  TESTNULLVOID(win);
+  // TESTNULLVOID(win);
 
-  x1 = getAbsoluteX(win);
-  y1 = getAbsoluteY(win);
-  x2 = x1 + win->nWidth;
-  y2 = y1 + win->nHeight;
+  // x1 = getAbsoluteX(win);
+  // y1 = getAbsoluteY(win);
+  // x2 = x1 + win->nWidth;
+  // y2 = y1 + win->nHeight;
 
-  //²âÊÔÓÃ£¬Ã¿¸ö´°¿ÚÌî³ä±³¾°£¬»­Ðé¿ò
-  fillRegion(x1, y1, x2, y2, COLOR_ligtgray);
-  rectangle(x1, y1, x2, y2, COLOR_darkgray, 1, 2);
+  // //²âÊÔÓÃ£¬Ã¿¸ö´°¿ÚÌî³ä±³¾°£¬»­Ðé¿ò
+  // //fillRegion(x1, y1, x2, y2, COLOR_ligtgray);
+  // rectangle(x1, y1, x2, y2, COLOR_darkgray, 1, 2);
   (void)val;
+  (void)win;
 }
 
 /**
@@ -176,7 +214,7 @@ void freeWin(hbasewinAttr *win)
     free(win->title);
 
   if (win->style)
-	free(win->style);
+    free(win->style);
 
   free(win);
   win = NULL;
@@ -387,7 +425,7 @@ void OnTheme(hbasewinAttr *win, void *val)
 
   if (win->style)
   {
-	_winStyle = (WinStyle *)win->style;
+    _winStyle = (WinStyle *)win->style;
     getWinTheme(_winStyle, *(int *)val);
   }
   themeChildren(win, val);

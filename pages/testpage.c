@@ -6,6 +6,7 @@
 #include "hyperlnk.h"
 #include "hglobal.h"
 #include "htextbox.h"
+#include "hchkbox.h"
 
 #include "testpage.h"
 void EventHandler_testpage(hbasewinAttr *win, int type, void *value);
@@ -23,11 +24,10 @@ hbasewinAttr *CreateTestPage(hbasewinAttr *parent, int winID, char *title)
   CreateTextBox(testPage, 500, 100, 240, 35, ID_TEST_TEXTBOX, "测a试", 1);
   CreateTextBox(testPage, 500, 140, 240, 150, ID_TEST_TEXTBOX2, "超a23链35接华中科技4545454大小超链接华中科技大小超链接华中科技大小超链接华中科技大小超链接华中科技大小", 0);
 
-  pwd = CreateTextBox(testPage, 500, 290, 240, 100, ID_TEST_TEXTBOX2, "password",1);
+  pwd = CreateTextBox(testPage, 500, 290, 240, 100, ID_TEST_TEXTBOX2, "password", 1);
   pwd->wintype = TEXTBOX_PASSWORD;
 
-  //CreateCheckBox(testPage, 500, 50, 100,100, ID_TEST_CHECKBOX, NULL);
-
+  CreateCheckBox(testPage, 300, 50, 48, 48, ID_TEST_CHECKBOX, NULL);
   return testPage;
 }
 
@@ -49,6 +49,9 @@ void OnPaint_TestPage(hbasewinAttr *win, void *value)
   }
 
   repaintChildren(win, value);
+
+  //Putbmp565(win->x, win->y, "c:\\hho\\data\\bmp\\000.565");
+  //Putbmp64k(win->x, win->y, "c:\\hho\\data\\bmp\\000.bmp");
   (void)value;
 }
 
@@ -67,7 +70,6 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
   switch (type)
   {
   case EVENT_MOUSE:
-
     switch (hitwin->winID)
     { //鼠标在那个子窗口或本身
     case ID_TESTPAGE:
@@ -77,6 +79,7 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
 
       if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       {
+        TRACE(("winID:%d\n", hitwin->winID));
         //无激活窗口，原有textbox inactive
         if (_g->foucsedTextBox && _g->foucsedTextBox->onActivate)
           _g->foucsedTextBox->onActivate(NULL, _g);
@@ -110,6 +113,7 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
     case ID_TEST_TEXTBOX:
     case ID_TEST_TEXTBOX2:
     {
+      TRACE(("winID:%d\n", hitwin->winID));
       if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标释放
 
@@ -130,11 +134,23 @@ void EventHandler_testpage(hbasewinAttr *win, int type, void *value)
       }
     }
     break;
+    case ID_TEST_CHECKBOX:
+    {
+      TRACE(("winID:%d\n", hitwin->winID));
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      {
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+        hitwin->onPaint(hitwin, NULL);
+      }
+    }
+    break;
     default:
       break;
     }
-    break;
-  case EVENT_KEYBORAD:
     break;
   default:
     break;

@@ -1343,7 +1343,8 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
         Line[strlen(Line) - 1] = 0;
         getbmpWH(Line + 3, &width, &height);
         center = (region->right_bottom.x - region->left_top.x - width) / 2;
-        Putbmp64k(region->left_top.x + center, y0 + 20, Line + 3);
+        //Putbmp64k(region->left_top.x + center, y0 + 20, Line + 3);
+        Putbmp565(region->left_top.x + center, y0 + 20, Line + 3);
         formatHeight += height + 16;
       }
       else
@@ -1597,6 +1598,97 @@ void freeFont(hfont *_f)
     free(_f);
     _f = NULL;
   }
+}
+
+int Putbmp565(int x, int y, const char *path) //4
+{
+  /*指向图片文件的文件指针*/
+  FILE *fpbmp;
+
+  /*图片的宽度、高度、一行像素所占字节数（含补齐空字节）*/
+  long int width, height, linebytes;
+  unsigned char *buffer;
+  /*循环变量*/
+  int i, j;
+
+  /*图片位深*/
+  unsigned int bit;
+
+  /*压缩类型数*/
+  unsigned long int compression;
+
+  unsigned char page;                                                     // 要切换的页面号
+  unsigned long int offest;                                               // 对应显存地址偏移量
+  unsigned int far *const video_buffer = (unsigned int far *)0xa0000000L; // 显存指针常量，指向显存首地址，指针本身不允许修改
+
+  /*打开文件*/
+  if ((fpbmp = fopen(path, "rb")) == NULL)
+  {
+    
+    return -1;
+  }
+
+  /*读取位深*/
+  fseek(fpbmp, 28L, 0);
+  fread(&bit, 2, 1, fpbmp);
+
+  /*非24位图则退出*/
+  if (bit != 24U)
+  {
+    fclose(fpbmp);
+    return -1;
+  }
+
+  /*读取压缩类型*/
+  fseek(fpbmp, 30L, 0);
+  fread(&compression, 4, 1, fpbmp);
+
+  /*采用压缩算法则退出*/
+  if (compression != 0UL)
+  {
+    fclose(fpbmp);
+    return -1;
+  }
+
+  /*读取宽度、高度*/
+  fseek(fpbmp, 18L, 0);
+  fread(&width, 4, 1, fpbmp);
+  fread(&height, 4, 1, fpbmp);
+
+  // /*宽度超限则退出*/
+  if (width > SCR_WIDTH)
+  {
+    fclose(fpbmp);
+    return -1;
+  }
+
+  /*计算一行像素占字节数，包括补齐的空字节*/
+  linebytes = 2 * width;
+
+  /*开辟行像素数据动态储存空间*/
+  if ((buffer = (unsigned char *)malloc(linebytes)) == 0)
+  {
+    fclose(fpbmp);
+    return -1;
+  }
+
+  /*行扫描形式读取图片数据并显示*/
+  fseek(fpbmp, 54L, 0);
+  for (i = 1; i < height; i++)
+  {
+    fseek(fpbmp, -linebytes * i, SEEK_END);
+    fread(buffer, linebytes, 1, fpbmp); /*读取一行像素数据*/
+
+    /* 计算显存地址偏移量和对应的页面号，做换页操作 */
+    offest = ((unsigned long int)(y + i) << 10) + x;
+    page = offest >> 15; /* 32k个点一换页，除以32k的替代算法 */
+    selectpage(page);
+    memcpy(video_buffer + offest, buffer, linebytes);   
+  }
+
+  free(buffer);
+  fclose(fpbmp);
+  return height;
 }
 
 void hsvgatest()

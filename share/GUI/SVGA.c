@@ -142,10 +142,12 @@ void getbmpWH(char *path, long *width, long *height)
   {
     return;
   }
-   /*读取宽度、高度*/
+  /*读取宽度、高度*/
   fseek(fpbmp, 18L, 0);
   fread(width, 4, 1, fpbmp);
   fread(height, 4, 1, fpbmp);
+  
+  fclose(fpbmp);
   return;
 }
 
@@ -162,6 +164,7 @@ int Putbmp64k(int x, int y, const char *path) //4
 
   /*循环变量*/
   int i, j;
+  int k = 1;
 
   /*图片位深*/
   unsigned int bit;
@@ -230,24 +233,8 @@ int Putbmp64k(int x, int y, const char *path) //4
 
   /*行扫描形式读取图片数据并显示*/
   fseek(fpbmp, 54L, 0);
-  // for (i = height - 1; i > -1; i--)
-  // {
-  //   fread(buffer, linebytes, 1, fpbmp); /*读取一行像素数据*/
-
-  //   /*一行像素的数据处理和画出*/
-  //   for (j = 0; j < width; j++)
-  //   {
-  //     /*0x117模式下，原图红绿蓝各8位分别近似为5位、6位、5位*/
-  //     buffer[j].R >>= 3;
-  //     buffer[j].G >>= 2;
-  //     buffer[j].B >>= 3;
-  //     putpixel64k(j + x, i + y,
-  //                 ((((unsigned int)buffer[j].R) << 11) | (((unsigned int)buffer[j].G) << 5) | ((unsigned int)buffer[j].B))); /*计算最终颜色，红绿蓝从高位到低位排列*/
-  //   }
-  // }
-  for (i = 1; i < height; i++)
+  for (i = height - 1; i > -1; i--)
   {
-    fseek(fpbmp, -linebytes * i, SEEK_END);
     fread(buffer, linebytes, 1, fpbmp); /*读取一行像素数据*/
 
     /*一行像素的数据处理和画出*/
@@ -257,11 +244,30 @@ int Putbmp64k(int x, int y, const char *path) //4
       buffer[j].R >>= 3;
       buffer[j].G >>= 2;
       buffer[j].B >>= 3;
-      putpixel64k(j + x, i + y, ((((unsigned int)buffer[j].R) << 11) | (((unsigned int)buffer[j].G) << 5) | ((unsigned int)buffer[j].B))); /*计算最终颜色，红绿蓝从高位到低位排列*/
+      putpixel64k(j + x, i + y,
+                  ((((unsigned int)buffer[j].R) << 11) | (((unsigned int)buffer[j].G) << 5) | ((unsigned int)buffer[j].B))); /*计算最终颜色，红绿蓝从高位到低位排列*/
     }
   }
+  // for (i = 1; i < height; i++)
+  // {
+  //   fseek(fpbmp, -linebytes * i, SEEK_END);
+  //   fread(buffer, linebytes, 1, fpbmp); /*读取一行像素数据*/
+
+  //   /*一行像素的数据处理和画出*/
+  //   for (j = 0; j < width; j++)
+  //   {
+  //     /*0x117模式下，原图红绿蓝各8位分别近似为5位、6位、5位*/
+  //     buffer[j].R >>= 3;
+  //     buffer[j].G >>= 2;
+  //     buffer[j].B >>= 3;
+  //     putpixel64k(j + x, i + y, ((((unsigned int)buffer[j].R) << 11) | (((unsigned int)buffer[j].G) << 5) | ((unsigned int)buffer[j].B))); /*计算最终颜色，红绿蓝从高位到低位排列*/
+  //   }
+  // }
 
   free(buffer);
-  fclose(fpbmp);
+  k = fclose(fpbmp);
+
+  TRACE(("close file(%s)=%d\n", path, k));
+
   return height;
 }
