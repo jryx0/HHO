@@ -61,6 +61,11 @@
 #define ID_TEST_TEXTBOX 10003
 #define ID_TEST_TEXTBOX2 10004
 
+//////////////////////News page defined////////////////////////////////
+#define ID_NEWSPAGE 500
+#define ID_NEWS_RETURN 503
+#define ID_NEWS_TEXT 505
+
 //////////////////////Login windows defined////////////////////////////////
 #define ID_LOGINPAGE 1000
 #define ID_LOGIN_REGISTER 1001
@@ -68,5 +73,7 @@
 #define ID_LOGIN_RETURN 1003
 #define ID_LOGIN_USERNAME 1004
 #define ID_LOGIN_KEY 1005
+
+
 
 #endif

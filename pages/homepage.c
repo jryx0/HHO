@@ -30,12 +30,41 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
     {                                                                              //homepage 处理鼠标移动理鼠标移动
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow;
+    }
+    break;
+  case ID_HOMEPAGE_BUTTON1:
+  case ID_HOMEPAGE_BUTTON2:
+  case ID_HOMEPAGE_BUTTON3:
+  case ID_HOMEPAGE_BUTTON4:
+  case ID_HOMEPAGE_LINK1:
+  case ID_HOMEPAGE_LINK2:
+  case ID_HOMEPAGE_LINK3:
+  case ID_HOMEPAGE_LINK4:
+  case ID_HOMEPAGE_LINK5:
+  case ID_HOMEPAGE_LINK6:
+  case ID_HOMEPAGE_LINK7:
+  case ID_HOMEPAGE_LINK8:
+    if (type == EVENT_MOUSE)
+    {                                                                             //homepage 处理鼠标移动理鼠标移动
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
 
-      if (_g->mouse.rightClickState == MOUSE_BUTTON_UP)
-      {
-        // hbasewinAttr *child = CreateLabel(hitwin, random(800), random(600), 300, 150, ID_LABEL_3, NULL);
-        // if (child)
-        //   child->onPaint(child, NULL);
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标释放
+        if (hitwin->onLeave)
+          hitwin->onLeave(hitwin, NULL);
+        //转跳homepage
+        if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+        {
+          _g->activePageID = ID_NEWSPAGE;
+          _g->data = hitwin->winID; //页面之间数据交换
+          win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+        }
       }
     }
     break;
@@ -112,7 +141,7 @@ void EventHandler_homepage(hbasewinAttr *win, int type, void *value)
 hbasewinAttr *CreateHomepage(hbasewinAttr *parent, int winID)
 {
   hbasewinAttr *page = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, "homepage");
-  //hbasewinAttr *label;
+  hbasewinAttr *ctrl;
   TESTNULL(page, NULL);
 
   // CreateLabel(page, 15, 90, 300, 150, ID_LABEL_1, "readme");
@@ -120,14 +149,23 @@ hbasewinAttr *CreateHomepage(hbasewinAttr *parent, int winID)
   // label = CreateLabel(page, 15 + 700, 90, 300, 150, ID_LABEL_3, NULL);
   // label->value = malloc(10);
   // strcpy((char *)label->value, "test");
-  Createhyperlink(page, 310, 40, 450, 30, ID_HOMEPAGE_LINK1, "校医院职工大会强调：党建引领 练内功 做服务 办特色");
-  Createhyperlink(page, 310, 40 + 26, 450, 30, ID_HOMEPAGE_LINK2, "【抗击新冠肺炎 华中大在行动】校医院临时后勤团队为一线人员提供坚实保障");
-  Createhyperlink(page, 310, 40 + 26 * 2, 450, 30, ID_HOMEPAGE_LINK3, "【战疫坚守一线】校医院线上问诊送药到家，做师生健康守门人");
-  Createhyperlink(page, 310, 40 + 26 * 3, 450, 30, ID_HOMEPAGE_LINK4, "【战疫坚守一线】校医院为教职工安全复岗保驾护航");
-  Createhyperlink(page, 310, 40 + 26 * 4, 450, 30, ID_HOMEPAGE_LINK5, "校医院线上健康教育课启发学生新感受");
-  Createhyperlink(page, 310, 40 + 26 * 5, 450, 30, ID_HOMEPAGE_LINK6, "校医院暖心服务高考阅卷");
-  Createhyperlink(page, 310, 40 + 26 * 6, 450, 30, ID_HOMEPAGE_LINK7, "【别样毕业季】校医院为毕业生返校保驾护航");
-  Createhyperlink(page, 310, 40 + 26 * 7, 450, 30, ID_HOMEPAGE_LINK8, "大“疫”当前 急诊人显担当");
+  ctrl = Createhyperlink(page, 310, 40, 450, 30, ID_HOMEPAGE_LINK1, "校医院职工大会强调：党建引领 练内功 做服务 办特色");
+  ctrl->data = ID_HOMEPAGE_LINK1;
+  ctrl = Createhyperlink(page, 310, 40 + 26, 450, 30, ID_HOMEPAGE_LINK2, "【抗击新冠肺炎 华中大在行动】校医院临时后勤团队为一线人员提供坚实保障");
+  ctrl->data = ID_HOMEPAGE_LINK2;
+  ctrl = Createhyperlink(page, 310, 40 + 26 * 2, 450, 30, ID_HOMEPAGE_LINK3, "【战疫坚守一线】校医院线上问诊送药到家，做师生健康守门人");
+  ctrl->data = ID_HOMEPAGE_LINK3;
+  ctrl = Createhyperlink(page, 310, 40 + 26 * 3, 450, 30, ID_HOMEPAGE_LINK4, "【战疫坚守一线】校医院为教职工安全复岗保驾护航");
+  ctrl->data = ID_HOMEPAGE_LINK4;
+  ctrl = Createhyperlink(page, 310, 40 + 26 * 4, 450, 30, ID_HOMEPAGE_LINK5, "校医院线上健康教育课启发学生新感受");
+  ctrl->data = ID_HOMEPAGE_LINK5;
+  ctrl = Createhyperlink(page, 310, 40 + 26 * 5, 450, 30, ID_HOMEPAGE_LINK6, "校医院暖心服务高考阅卷");
+  ctrl->data = ID_HOMEPAGE_LINK6;
+  ctrl = Createhyperlink(page, 310, 40 + 26 * 6, 450, 30, ID_HOMEPAGE_LINK7, "【别样毕业季】校医院为毕业生返校保驾护航");
+  ctrl->data = ID_HOMEPAGE_LINK7;
+  ctrl = Createhyperlink(page, 310, 40 + 26 * 7, 450, 30, ID_HOMEPAGE_LINK8, "大“疫”当前 急诊人显担当");
+  ctrl->data = ID_HOMEPAGE_LINK8;
+
   CreateTextBox(page, 90, 330, 779, 32, ID_HOMEPAGE_AISEARCH, "", 1);
   CreateButton(page, 870, 330, 130, 32, ID_HOMEPAGE_AIBUTTON, "立即咨询");
 
@@ -174,7 +212,7 @@ void OnPaint_homepage(hbasewinAttr *win, void *value)
   _font = getFont(SIMHEI, 16, 0x3244);
 
   printTextLineXY(x + 15, y + 340, "智能医导", _font);
-  rectangleEx(x, y + 250, 1010, 130, 0x6BAF, 1, 1);
+  rectangleEx(x, y + 255, 1010, 130, 0x6BAF, 1, 1);
 
   //Putbmp64k(x + 45, y + 445, "data\\bmp\\flow00.bmp");
   Putbmp64k(x + 45, y + 445, "data\\bmp\\flow-11.bmp");
@@ -210,8 +248,6 @@ void OnPaint_homepage(hbasewinAttr *win, void *value)
 
   Putbmp64k(x + 909, y + 445, "data\\bmp\\flow-16.bmp");
   printTextLineXY(x + 909, y + 525, "物流签收", _font);
-
-  
 
   repaintChildren(win, value);
 

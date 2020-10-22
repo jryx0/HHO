@@ -15,4 +15,11 @@ void selectpage(register char page);
 void putpixel64k(int x, int y, unsigned int color);
 unsigned int getpixel64k(int x, int y);
 int Putbmp64k(int x, int y, const char *path);
+/**
+ * @brief 获取图片的宽度和高度
+ * 
+ * @return width 图片宽度
+ * @return height 图片高度
+ */
+void getbmpWH(char *path, long *width, long *height);
 #endif

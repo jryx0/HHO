@@ -85,7 +85,9 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
     //printTextLineXY(x, y, link->title, _font);
     wid = calcPrintTextLenght(link->title, _font);
     if (wid < link->nWidth)
-      link->nWidth = wid;
+      link->nWidth = wid + 1;
+    if (lnkStyle->fontsize < link->nHeight)
+      link->nHeight = lnkStyle->fontsize + 3;
 
     region.right_bottom.x = x + link->nWidth;
     region.right_bottom.y = y + link->nHeight;

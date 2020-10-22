@@ -17,15 +17,14 @@
 hbasewinAttr *CreateLabel(hbasewinAttr *parent, int x, int y, int nWidth,
                           int nHeight, int winID, const char *title)
 {
-  WinStyle *labelStyle = NULL;
   hbasewinAttr *label;
 
   label = CreateWindowsEx(parent, x, y, nWidth, nHeight, winID, title);
   label->onPaint = OnPaint_Label;
 
-  labelStyle = malloc(sizeof(WinStyle));
-  label->style = labelStyle;
-  labelStyle->type = LABEL_TITLE;
+  label->style = malloc(sizeof(WinStyle));
+  memset(label->style, 0, sizeof(WinStyle));
+  getWinTheme(label->style, 1);
 
   return label;
 }
@@ -65,6 +64,7 @@ void OnPaint_Label_File(hbasewinAttr *label, void *value)
 
   TESTNULLVOID(label);
   TESTNULLVOID(label->title)
+  TESTNULLVOID(label->style);
   style = label->style;
 
   if (style)
@@ -77,13 +77,18 @@ void OnPaint_Label_File(hbasewinAttr *label, void *value)
   _region.right_bottom.x = _region.left_top.x + label->nWidth;
   _region.right_bottom.y = _region.left_top.y + label->nHeight;
 
-  fpFile = fopen(label ->title, "r");
-  if(fpFile)
-    printTextFile(&_region, fpFile, fpfont);
+  fpFile = fopen(label->title, "r");
+  if (fpFile)
+    printTextFileV6(&_region, fpFile, fpfont);
 
   freeFont(fpfont);
   fclose(fpFile);
   (void)value;
+}
+
+void OnPaint_Label_FileFormat(hbasewinAttr *label, void *value)
+{
+
 }
 
 void OnPaint_Label_Img(hbasewinAttr *label, void *value)
@@ -95,7 +100,6 @@ void OnPaint_Label_Img(hbasewinAttr *label, void *value)
   (void)value;
 }
 
-
 /**
  *  
  * »æÖÆlabel
@@ -103,38 +107,21 @@ void OnPaint_Label_Img(hbasewinAttr *label, void *value)
  */
 void OnPaint_Label(hbasewinAttr *label, void *value)
 {
-  hfont *fpFont;
-  FILE *fptemp;
-  hregion _region;
-  char str[30];
-
-  OnPaint(label, NULL);
-
-  TESTNULLVOID(label);
-  TESTNULLVOID(label->title);
-
-  //if (value == NULL)
-  fptemp = fopen(label->title, "r");
-
-  if (fptemp == NULL)
+  switch (label->wintype)
   {
-    return;
+  case LABEL_TITLE:
+    OnPaint_Label_Title(label, value);
+    break;
+  case LABEL_FILE_TXT:
+    OnPaint_Label_File(label, value);
+    break;
+  case LABEL_FILE_IMG:
+    OnPaint_Label_Img(label, value);
+    break;
+
+  default:
+    break;
   }
-
-  fpFont = getFont(SIMYOU, 16, 0x00);
-
-  _region.left_top.x = getAbsoluteX(label);
-  _region.left_top.y = getAbsoluteY(label);
-  _region.right_bottom.x = _region.left_top.x + label->nWidth;
-  _region.right_bottom.y = _region.left_top.y + label->nHeight;
-
-  printTextFile(&_region, fptemp, fpFont);
-
-  freeFont(fpFont);
-  fclose(fptemp);
-
-  fpFont = NULL;
-  fptemp = NULL;
 
   // x = getAbsoluteX(label);
   // y = getAbsoluteY(label);

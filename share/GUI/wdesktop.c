@@ -13,7 +13,9 @@
 #include "testpage.h"
 #include "homepage.h"
 #include "lginpage.h"
+#include "hnews.h"
 #include <memory.h>
+#include <string.h>
 
 #define INPUTWINHEIGHT 38
 
@@ -228,7 +230,7 @@ hbasewinAttr *CreateDesktop(void)
  * Desktop专用函数，为desktop创建页面
  * 
  */
-hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID)
+hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
 { //page的创建函数名称不一样、参数不一样，但返回值一样，本函数对外统一函数，创建page
   hbasewinAttr *newpage = NULL;
 
@@ -244,6 +246,13 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID)
     break;
   case ID_LOGINPAGE:
     newpage = Createloginpage(desktop, ID_LOGINPAGE);
+    break;
+  case ID_NEWSPAGE:
+    {
+      char title[40];
+      sprintf(title, "%s\\news%02d.txt", NEWSPATH, _g->data);
+      newpage = CreateNewspage(desktop, ID_NEWSPAGE, title);
+    }
     break;
   /* case : 
    */
@@ -279,7 +288,9 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, globaldef *_g)
 
   if (activePage == NULL)
   { //并创建homepage
-    activePage = pageFactory(desktop, pageID);
+    activePage = pageFactory(desktop, pageID, _g);
+    //页面间数据传递
+    activePage->data = _g->data;
     if (activePage == NULL)
     {
       TRACE(("%s(%d):Desktop_changePage(), 创建窗口失败！\n", __FILE__, __LINE__));

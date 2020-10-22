@@ -125,6 +125,30 @@ unsigned int getpixel64k(int x, int y) // 4
   return video_buffer[page];
 }
 
+/**
+ * @brief 获取图片的宽度和高度
+ * 
+ * @return width 图片宽度
+ * @return height 图片高度
+ */
+void getbmpWH(char *path, long *width, long *height)
+{
+  /*指向图片文件的文件指针*/
+  FILE *fpbmp;
+  *width = 0;
+  *height = 0;
+  /*打开文件*/
+  if ((fpbmp = fopen(path, "rb")) == NULL)
+  {
+    return;
+  }
+   /*读取宽度、高度*/
+  fseek(fpbmp, 18L, 0);
+  fread(width, 4, 1, fpbmp);
+  fread(height, 4, 1, fpbmp);
+  return;
+}
+
 int Putbmp64k(int x, int y, const char *path) //4
 {
   /*指向图片文件的文件指针*/
@@ -239,5 +263,5 @@ int Putbmp64k(int x, int y, const char *path) //4
 
   free(buffer);
   fclose(fpbmp);
-  return 0;
+  return height;
 }

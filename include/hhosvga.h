@@ -352,6 +352,21 @@ void printTextEx4(hregion *region, char *text, hfont *_font, int *x, int *y);
 int printTextEx5(hregion *region, char *text, hfont *_font, int *index, int *x, int *y, char isprint);
 
 /**
+ * @version v6 输出文本函数版本6
+ * @author 
+ * @brief 读取文件,并对文件进行格式化,在一个区域中显示
+ * @brief # 以标题形式显示居中, 大一号字体, 黑体
+ * @brief // 首行注释, 整行不显示
+ * @brief ## 副标题, 居中, 幼圆
+ * @brief #- 直线
+ * @brief @imgpath 显示bmp图片
+ * @param region  要显示的区域  
+ * @param fp 文件指针
+ * @param _font 字体设置
+ * @return 无
+ */
+void printTextFileV6(hregion *region, FILE *fp, hfont *_font);
+/**
  * 释放font信息
  * 
  */

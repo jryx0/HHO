@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <string.h>
 #include <mem.h>
 
 unsigned int RGB565(int r, int g, int b)
@@ -893,6 +894,7 @@ void printTextFile(hregion *region, FILE *fp, hfont *_font)
   char isOutofRange = FALSE;
 
   char isFirstLine = TRUE; //是否是段落首行，首行空两个字宽度
+  int halfhz = 0;
 
   TESTNULLVOID(region);
   TESTNULLVOID(_font);
@@ -909,9 +911,12 @@ void printTextFile(hregion *region, FILE *fp, hfont *_font)
   // }
 
   x0 = region->left_top.x;
-  while (fgets(Line, sizeof(Line), fp) && !isOutofRange)
+  memset(Line, 0, sizeof(Line));
+  while (fgets(Line + halfhz, sizeof(Line) - 2, fp) && !isOutofRange)
   { //fgets 不过滤0a
+    TRACE(("line(%d):%s\n", strlen(Line), Line));
     c = Line;
+    halfhz = 0;
     while (*c)
     {
       if (isFirstLine)
@@ -934,6 +939,11 @@ void printTextFile(hregion *region, FILE *fp, hfont *_font)
 
         x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
         c += 2;                                     //下一个汉字
+      }
+      else if (c[0] >= 0xa0 && c[1] == 0)
+      { //半个汉字
+        halfhz = 1;
+        break;
       }
       else
       { //打印字符
@@ -1254,6 +1264,189 @@ int printTextEx5(hregion *region, char *text, hfont *_font, int *index, int *x, 
   free(buffer);
 
   return maxCol;
+}
+
+/**
+ * @version v6 输出文本函数版本6
+ * @author 
+ * @brief 读取文件,并对文件进行格式化,在一个区域中显示
+ * @brief # 以标题形式显示居中, 大一号字体, 黑体
+ * @brief // 首行注释, 整行不显示
+ * @brief #+ 副标题, 居中, 幼圆
+ * @brief #- 直线
+ * @brief @imgpath 显示bmp图片
+ * @param region  要显示的区域  
+ * @param fp 文件指针
+ * @param _font 字体设置
+ * @return 无
+ */
+void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
+{
+#define BUFFEESIZE 256
+  unsigned char Line[BUFFEESIZE];
+  unsigned char *c;
+  int x0, y0 = 0;            //每个汉字起始点
+  unsigned char quma, weima; //定义汉字的区码和位码
+  unsigned long offset;
+  unsigned char *buffer;
+  int linenum = 0;
+  char isNewLine = FALSE;
+  char isOutofRange = FALSE;
+
+  char isFirstLine = TRUE; //是否是段落首行，首行空两个字宽度
+  int halfhz = 0;
+
+  hfont *headfont;
+  int formatHeight = 0;
+
+  TESTNULLVOID(region);
+  TESTNULLVOID(_font);
+  TESTNULLVOID(fp);
+
+  buffer = (unsigned char *)malloc(_font->totalbytes);
+  TESTNULLVOID(buffer);
+
+  //判断高度和宽度是否足够
+  // if ((region->left_top.x + _font->currentFontSize) > region->right_bottom.x ||
+  //     (region->left_top.y + _font->currentFontSize) > region->right_bottom.y)
+  // {
+  //   return;
+  // }
+
+  x0 = region->left_top.x;
+  y0 = region->left_top.y;
+  memset(Line, 0, sizeof(Line));
+  while (fgets(Line + halfhz, sizeof(Line) - 2, fp) && !isOutofRange)
+  { //fgets 不过滤0a
+    //TRACE(("line(%d):%s\n", strlen(Line), Line));
+    if (Line[0] == '#')
+    { //特殊格式处理
+      int center;
+      if (Line[1] == '+')
+      { //副标题
+        headfont = getFont(SIMYOU, 16, _font->fontcolor);
+        center = (region->right_bottom.x - region->left_top.x - calcPrintTextLenght(Line + 1, headfont)) / 2;
+        printTextLineXY(region->left_top.x + center, y0 + formatHeight, Line + 2, _font);
+        freeFont(headfont);
+        formatHeight += 20;
+      }
+      else if (Line[1] == '-')
+      { //划线
+        linex_styleEx(region->left_top.x, y0 + formatHeight, PAGE_W, 0x0000, 2, 1);
+        formatHeight += 24;
+      }
+      else if (Line[1] == 'i' && Line[2] == ' ')
+      { //图片
+        long width;
+        long height;
+        //除去'\n'
+        Line[strlen(Line) - 1] = 0;
+        getbmpWH(Line + 3, &width, &height);
+        center = (region->right_bottom.x - region->left_top.x - width) / 2;
+        Putbmp64k(region->left_top.x + center, y0 + 20, Line + 3);
+        formatHeight += height + 16;
+      }
+      else
+      { //标题//居中显示
+
+        headfont = getFont(SIMHEI, 24, _font->fontcolor);
+        center = (region->right_bottom.x - region->left_top.x - calcPrintTextLenght(Line + 1, headfont)) / 2;
+        formatHeight += 24;
+        printTextLineXY(region->left_top.x + center, y0 + formatHeight, (char *)(Line + 1), headfont);
+        freeFont(headfont);
+
+        formatHeight += 24 * 2;
+      }
+      continue;
+    }
+
+    if(Line[0] == '/' && Line[1] == '/')
+    {
+      // 注释忽略
+      continue;
+    }
+
+    c = Line;
+    halfhz = 0;
+    while (*c)
+    {
+      if (isFirstLine)
+      { //段落首行空两个字。
+        x0 += _font->currentFontSize * 2;
+        isFirstLine = FALSE;
+      }
+
+      y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap + formatHeight; //计算高度 y + 行数*字符高度 + 行间距
+
+      if (((unsigned char)c[0] >= 0xa0) &&
+          ((unsigned char)c[1] >= 0xa0))
+      {                                                            //打印中文
+        quma = c[0] - 0xa1;                                        //求出区码
+        weima = c[1] - 0xa1;                                       //求出位码
+        offset = (94L * (quma) + (weima)) * _font->totalbytes;     //求出要显示的汉字在字库文件中的偏移
+        fseek(_font->fpCurrentFont, offset, SEEK_SET);             //重定位文件指针
+        fread(buffer, _font->totalbytes, 1, _font->fpCurrentFont); //读出该汉字的具体点阵数据,1为要读入的项数
+
+        printHZWord(x0, y0, buffer, _font); //输出单个汉字
+
+        x0 += _font->currentFontSize + _font->xgap; //偏移一个汉字宽度+字间距
+        c += 2;                                     //下一个汉字
+      }
+      else if (c[0] >= 0xa0 && c[1] == 0)
+      { //半个汉字
+        halfhz = 1;
+        break;
+      }
+      else
+      { //打印字符
+        if (*c == '\r' || *c == '\n')
+        {                     //换行处理
+          isFirstLine = TRUE; //有回车换行符说明是新的一段
+          c++;
+          if (*(c + 1) != 0) //不是最后一个字符
+            if (*(c + 1) == '\r' || (*(c + 1) == '\n'))
+              c++; //处理\r\n情况
+
+          isNewLine = TRUE;
+        }
+        else
+        {                                            //字符
+          printASC(x0, y0 - _font->ascy, *c, _font); //输出单个字符
+
+          x0 += _font->ascSize + _font->xgap; //偏移一个字符宽度+字间距
+          c++;                                //下一个字符
+        }
+      }
+
+      if ((unsigned char)c[0] < 0xa0)
+      { //字符用字符宽度判断
+        if (x0 + _font->ascSize > region->right_bottom.x)
+          isNewLine = TRUE;
+      }
+      else
+      { //汉字用汉字宽度判断
+        if (x0 + _font->currentFontSize > region->right_bottom.x)
+          isNewLine = TRUE;
+      }
+
+      if (isNewLine)
+      {
+        linenum++;
+        isNewLine = FALSE;
+
+        if ((region->left_top.y + (linenum + 1) * _font->currentFontSize + _font->ygap) > region->right_bottom.y)
+        { //判断是否超高度，退出 高度截断
+          isOutofRange = TRUE;
+          break;
+        }
+
+        x0 = region->left_top.x;
+      }
+    }
+    //printf("%s", Line);
+  }
+
+  free(buffer);
 }
 
 /**

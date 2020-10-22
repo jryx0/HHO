@@ -40,6 +40,7 @@ hbasewinAttr *CreateWindowsEx(hbasewinAttr *parent, int x, int y, int nWidth,
   HHOwin->y = y;
   HHOwin->nWidth = nWidth;
   HHOwin->nHeight = nHeight;
+  HHOwin->title = NULL;
   if (title != NULL)
   {
     HHOwin->title = malloc(strlen(title) + 1);

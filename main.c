@@ -85,7 +85,7 @@ int main(void)
       /* Determine if shift keys are used */
       modifiers = _bios_keybrd(_KEYBRD_SHIFTSTATUS);
 
-      TRACE(("key = %x, %x, '%c', modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
+      //TRACE(("key = %x, %x, '%c', modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
 
       if (0x6100 == key) //&& modifiers == 0x224)
       {                  //ÍË³ö  ctrl + F4

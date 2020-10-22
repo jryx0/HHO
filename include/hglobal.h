@@ -39,6 +39,7 @@ typedef struct _globaldef
   char *hzstring;   //ºòÑ¡ºº×Ö
   pyInput *pinyin;
   int theme;
+  int data;
 } globaldef;
 
 globaldef *initGlobalSetting(void);
