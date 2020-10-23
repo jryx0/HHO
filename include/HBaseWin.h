@@ -72,7 +72,7 @@ typedef struct winstruct
   //void far *value;
   void far *style;
 
-  int data;
+  int data; //page data用于页面间数据交换
 
   //响应鼠标事件函数指针单击,左键按下，左键按起，鼠标离开，鼠标进入
   hhoevent onClick, onLeave; //, onLeftUp, onLeftDown, onEnter;

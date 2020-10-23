@@ -17,138 +17,138 @@ typedef struct
 
 typedef struct
 {
-  unsigned int id;     //ç”¨æˆ·å”¯ä¸€ç¼–ç 
-  char name[10];       //ç”¨æˆ·å§“å,æœ€é•¿4ä¸ªæ±‰å­—
-  char sex;            //æ€§åˆ«,1ä¸ºç”·,0ä¸ºå¥³
-  char marriagestatus; //å©šå§»å²,0ä¸ºæœªå©š,1ä¸ºå·²å©š,2ä¸ºç¦»å¼‚
-  char id_number[19];  //18ä½èº«ä»½è¯å·
-  int year;            //å‡ºç”Ÿå¹´ä»½
-  char month;         //å‡ºç”Ÿæœˆä»½
-  char telenum[12];    //ç”µè¯å·ç 
-  char addr[32];       //ä½å€,15å­—ä»¥å†…
-  char allergy[16];    //è¿‡æ•å²,7å­—ä»¥å†…
+  unsigned int id;     //ÓÃ»§Î¨Ò»±àÂë
+  char name[10];       //ÓÃ»§ĞÕÃû,×î³¤4¸öºº×Ö
+  char sex;            //ĞÔ±ğ,1ÎªÄĞ,0ÎªÅ®
+  char marriagestatus; //»éÒöÊ·,0ÎªÎ´»é,1ÎªÒÑ»é,2ÎªÀëÒì
+  char id_number[19];  //18Î»Éí·İÖ¤ºÅ
+  int year;            //³öÉúÄê·İ
+  char month;         //³öÉúÔÂ·İ
+  char telenum[12];    //µç»°ºÅÂë
+  char addr[32];       //×¡Ö·,15×ÖÒÔÄÚ
+  char allergy[16];    //¹ıÃôÊ·,7×ÖÒÔÄÚ
 
-  long money; //ä½™é¢,ä»¥åˆ†ä¸ºå•ä½
+  long money; //Óà¶î,ÒÔ·ÖÎªµ¥Î»
 } PatientInfo;
 
 typedef struct
 {
-  unsigned int id;    //ç§‘å®¤å”¯ä¸€ç¼–ç 
-  char deptname[16];  //ç§‘å®¤åç§°
-  char deptintro[64]; //ç§‘å®¤ç®€ä»‹
+  unsigned int id;    //¿ÆÊÒÎ¨Ò»±àÂë
+  char deptname[16];  //¿ÆÊÒÃû³Æ
+  char deptintro[64]; //¿ÆÊÒ¼ò½é
 } DeptInfo;
 
 typedef struct
 {
-  unsigned int id;   //åŒ»ç”Ÿå”¯ä¸€ç¼–ç 
-  char name[10];     //ç”¨æˆ·å§“å,æœ€é•¿4ä¸ªæ±‰å­—
-  char sex;          //æ€§åˆ«,1ä¸ºç”·,0ä¸ºå¥³
-  int deptid;        //æ‰€å±ç§‘å®¤id
-  char intro[50];    //åŒ»ç”Ÿç®€ä»‹
-  char title;        //0=æ™®é€šåŒ»ç”Ÿ,1=å‰¯ä¸»ä»»åŒ»å¸ˆ,2=ä¸»ä»»åŒ»å¸ˆ
+  unsigned int id;   //Ò½ÉúÎ¨Ò»±àÂë
+  char name[10];     //ÓÃ»§ĞÕÃû,×î³¤4¸öºº×Ö
+  char sex;          //ĞÔ±ğ,1ÎªÄĞ,0ÎªÅ®
+  int deptid;        //ËùÊô¿ÆÊÒid
+  char intro[50];    //Ò½Éú¼ò½é
+  char title;        //0=ÆÕÍ¨Ò½Éú,1=¸±Ö÷ÈÎÒ½Ê¦,2=Ö÷ÈÎÒ½Ê¦
 } DoctorInfo;
 
 typedef struct
 {
-  unsigned int id; //è¯å“å”¯ä¸€ç¼–ç 
-  char name[32];   //è¯å“åç§°,15å­—ä»¥å†…
-  float price;     //è¯å“ä»·æ ¼
+  unsigned int id; //Ò©Æ·Î¨Ò»±àÂë
+  char name[32];   //Ò©Æ·Ãû³Æ,15×ÖÒÔÄÚ
+  float price;     //Ò©Æ·¼Û¸ñ
 } DrugItem;
 
 typedef struct
 {
-  unsigned char id; //ä»“åº“å”¯ä¸€ç¼–ç 
-  char addr[32];    //ä»“åº“åœ°å€,ä¸è¶…è¿‡15å­—
-  char name[15];    //ä»“åº“åç§°,ä¸è¶…è¿‡7å­—
+  unsigned char id; //²Ö¿âÎ¨Ò»±àÂë
+  char addr[32];    //²Ö¿âµØÖ·,²»³¬¹ı15×Ö
+  char name[15];    //²Ö¿âÃû³Æ,²»³¬¹ı7×Ö
 } Warehouse;
 // typedef struct
 // {
-//   DrugItem drug;   //è¯å“ä¿¡æ¯
-//   int num;         //è¯å“æ•°é‡
-//   DrugList *pnext; //æŒ‡å‘ä¸‹ä¸€è¯å“
+//   DrugItem drug;   //Ò©Æ·ĞÅÏ¢
+//   int num;         //Ò©Æ·ÊıÁ¿
+//   DrugList *pnext; //Ö¸ÏòÏÂÒ»Ò©Æ·
 // } DrugList;
 
 // typedef struct
 // {
-//   Warehouse warehouse; //ä»“åº“ä¿¡æ¯
-//   DrugList *head;      //è¯å“åº“å­˜å¤´æŒ‡é’ˆ
+//   Warehouse warehouse; //²Ö¿âĞÅÏ¢
+//   DrugList *head;      //Ò©Æ·¿â´æÍ·Ö¸Õë
 // } Storage;
 
 typedef struct
 {
-  unsigned int id;       //å¤„æ–¹å”¯ä¸€ç¼–ç 
-  unsigned int userid;   //ç”¨æˆ·å”¯ä¸€ç¼–ç 
-  PatientInfo *puser;    //æŒ‡å‘ç”¨æˆ·
-  unsigned int doctorid; //åŒ»ç”Ÿå”¯ä¸€ç¼–ç 
-  DoctorInfo *pdoctor;   //æŒ‡å‘åŒ»ç”Ÿ
-  time_t datetime;       //å¤„æ–¹ç”Ÿæˆæ—¶é—´
-  //DrugList *head;        //è¯å“æ¸…å•å¤´æŒ‡é’ˆ
+  unsigned int id;       //´¦·½Î¨Ò»±àÂë
+  unsigned int userid;   //ÓÃ»§Î¨Ò»±àÂë
+  PatientInfo *puser;    //Ö¸ÏòÓÃ»§
+  unsigned int doctorid; //Ò½ÉúÎ¨Ò»±àÂë
+  DoctorInfo *pdoctor;   //Ö¸ÏòÒ½Éú
+  time_t datetime;       //´¦·½Éú³ÉÊ±¼ä
+  //DrugList *head;        //Ò©Æ·Çåµ¥Í·Ö¸Õë
   //list_t * Druglist;
 } Prescription;
 
 typedef struct
 {
-  unsigned int id;       //æŒ‚å·å•å”¯ä¸€ç¼–ç 
-  unsigned int userid;   //ç”¨æˆ·å”¯ä¸€ç¼–ç 
-  PatientInfo *puser;    //æŒ‡å‘ç”¨æˆ·
-  unsigned int doctorid; //åŒ»ç”Ÿå”¯ä¸€ç¼–ç 
-  DoctorInfo *pdoctor;   //æŒ‡å‘åŒ»ç”Ÿ
-  time_t datetime;       //æŒ‚å·å•ç”Ÿæˆæ—¶é—´
-  unsigned char serial;  //æµæ°´å·
-  char state;            //æŒ‚å·å•çŠ¶æ€,0æœªçœ‹ç—…,1çœ‹ç—…ä¸­,2å·²çœ‹å®Œ
+  unsigned int id;       //¹ÒºÅµ¥Î¨Ò»±àÂë
+  unsigned int userid;   //ÓÃ»§Î¨Ò»±àÂë
+  PatientInfo *puser;    //Ö¸ÏòÓÃ»§
+  unsigned int doctorid; //Ò½ÉúÎ¨Ò»±àÂë
+  DoctorInfo *pdoctor;   //Ö¸ÏòÒ½Éú
+  time_t datetime;       //¹ÒºÅµ¥Éú³ÉÊ±¼ä
+  unsigned char serial;  //Á÷Ë®ºÅ
+  char state;            //¹ÒºÅµ¥×´Ì¬,0Î´¿´²¡,1¿´²¡ÖĞ,2ÒÑ¿´Íê
 } RegisterInfo;
 
 typedef struct
 {
-  unsigned int id;             //ç—…å†å”¯ä¸€ç¼–ç 
-  unsigned int regid;          //æŒ‚å·å•å”¯ä¸€ç¼–ç 
-  RegisterInfo *bookinfo;      //æŒ‚å·å•
-  time_t recordtime;           //ç—…å†ç”Ÿæˆæ—¶é—´
-  char illness[50];            //ä¸»è¯‰
-  char diagnosis[50];          //ç—…æƒ…è¯Šæ–­
-  char advice;                 //å¤„ç½®å»ºè®®
-  unsigned int prescriptionid; //å¤„æ–¹å”¯ä¸€ç¼–ç 
-  Prescription *pprescription; //æŒ‡å‘å¤„æ–¹
+  unsigned int id;             //²¡ÀúÎ¨Ò»±àÂë
+  unsigned int regid;          //¹ÒºÅµ¥Î¨Ò»±àÂë
+  RegisterInfo *bookinfo;      //¹ÒºÅµ¥
+  time_t recordtime;           //²¡ÀúÉú³ÉÊ±¼ä
+  char illness[50];            //Ö÷Ëß
+  char diagnosis[50];          //²¡ÇéÕï¶Ï
+  char advice;                 //´¦ÖÃ½¨Òé
+  unsigned int prescriptionid; //´¦·½Î¨Ò»±àÂë
+  Prescription *pprescription; //Ö¸Ïò´¦·½
 } MedicalRecord;
 
 typedef struct
 {
-  unsigned int id;             //è®¢å•å”¯ä¸€ç¼–ç 
-  time_t recordtime;           //è®¢å•ç”Ÿæˆæ—¶é—´
-  unsigned int prescriptionid; //å¤„æ–¹å”¯ä¸€ç¼–ç 
-  Prescription *pprescription; //æŒ‡å‘å¤„æ–¹
+  unsigned int id;             //¶©µ¥Î¨Ò»±àÂë
+  time_t recordtime;           //¶©µ¥Éú³ÉÊ±¼ä
+  unsigned int prescriptionid; //´¦·½Î¨Ò»±àÂë
+  Prescription *pprescription; //Ö¸Ïò´¦·½
   //Location *locationlist;
-  char state; //è®¢å•çŠ¶æ€,0æœªå‡ºåº“,1è¿é€ä¸­,2å·²ç­¾æ”¶
+  char state; //¶©µ¥×´Ì¬,0Î´³ö¿â,1ÔËËÍÖĞ,2ÒÑÇ©ÊÕ
 } Order;
 
-/*ä»filenameä»£è¡¨çš„æ–‡ä»¶ä¸­è¯»å‡ºç”¨æˆ·ä¿¡æ¯å¹¶å°†ä¿¡æ¯ä»¥é“¾è¡¨å½¢å¼å­˜å…¥å†…å­˜ï¼Œè¿”å›è¡¨å¤´*/
+/*´Ófilename´ú±íµÄÎÄ¼şÖĞ¶Á³öÓÃ»§ĞÅÏ¢²¢½«ĞÅÏ¢ÒÔÁ´±íĞÎÊ½´æÈëÄÚ´æ£¬·µ»Ø±íÍ·*/
 list_t* ReadUserInfo(const char* filename);
-/*å°†userinfoé“¾è¡¨ä¸­å­˜å‚¨çš„ç”¨æˆ·ä¿¡æ¯å†™å…¥filenameä»£è¡¨çš„æ–‡ä»¶ä¸­*/
+/*½«userinfoÁ´±íÖĞ´æ´¢µÄÓÃ»§ĞÅÏ¢Ğ´Èëfilename´ú±íµÄÎÄ¼şÖĞ*/
 void SaveUserInfo(list_t* userinfo, char* filename);
-/*é€šè¿‡ç”¨æˆ·å”¯ä¸€ç¼–ç idæ‰¾åˆ°ç”¨æˆ·ä¿¡æ¯userinfoé“¾è¡¨ä¸­å¯¹åº”çš„ç”¨æˆ·ï¼Œå¹¶è¿”å›æŒ‡å‘è¯¥ä¿¡æ¯çš„æŒ‡é’ˆ*/
+/*Í¨¹ıÓÃ»§Î¨Ò»±àÂëidÕÒµ½ÓÃ»§ĞÅÏ¢userinfoÁ´±íÖĞ¶ÔÓ¦µÄÓÃ»§£¬²¢·µ»ØÖ¸Ïò¸ÃĞÅÏ¢µÄÖ¸Õë*/
 userInfo* FindUserInfo(list_t* userinfo, int id);
 
 userInfo *fFindUserInfo(const char *filename, char *username, char *password);
 
-/*ä»filenameä»£è¡¨çš„æ–‡ä»¶ä¸­è¯»å‡ºç—…äººä¿¡æ¯å¹¶å°†ä¿¡æ¯ä»¥é“¾è¡¨å½¢å¼å­˜å…¥å†…å­˜ï¼Œè¿”å›è¡¨å¤´*/
+/*´Ófilename´ú±íµÄÎÄ¼şÖĞ¶Á³ö²¡ÈËĞÅÏ¢²¢½«ĞÅÏ¢ÒÔÁ´±íĞÎÊ½´æÈëÄÚ´æ£¬·µ»Ø±íÍ·*/
 list_t* ReadPatientInfo(const char* filename);
-/*å°†patientinfoé“¾è¡¨ä¸­å­˜å‚¨çš„ç—…äººä¿¡æ¯å†™å…¥filenameä»£è¡¨çš„æ–‡ä»¶ä¸­*/
+/*½«patientinfoÁ´±íÖĞ´æ´¢µÄ²¡ÈËĞÅÏ¢Ğ´Èëfilename´ú±íµÄÎÄ¼şÖĞ*/
 void SavePatientInfo(list_t* patientinfo, char* filename);
-/*é€šè¿‡ç—…äººå”¯ä¸€ç¼–ç idæ‰¾åˆ°ç—…äººä¿¡æ¯patientinfoé“¾è¡¨ä¸­å¯¹åº”çš„ç”¨æˆ·ï¼Œå¹¶è¿”å›æŒ‡å‘è¯¥ä¿¡æ¯çš„æŒ‡é’ˆ*/
+/*Í¨¹ı²¡ÈËÎ¨Ò»±àÂëidÕÒµ½²¡ÈËĞÅÏ¢patientinfoÁ´±íÖĞ¶ÔÓ¦µÄÓÃ»§£¬²¢·µ»ØÖ¸Ïò¸ÃĞÅÏ¢µÄÖ¸Õë*/
 PatientInfo* FindPatientInfo(list_t* patientinfo, int id);
 
-/*ä»filenameä»£è¡¨çš„æ–‡ä»¶ä¸­è¯»å‡ºç§‘å®¤ä¿¡æ¯å¹¶å°†ä¿¡æ¯ä»¥é“¾è¡¨å½¢å¼å­˜å…¥å†…å­˜ï¼Œè¿”å›è¡¨å¤´*/
+/*´Ófilename´ú±íµÄÎÄ¼şÖĞ¶Á³ö¿ÆÊÒĞÅÏ¢²¢½«ĞÅÏ¢ÒÔÁ´±íĞÎÊ½´æÈëÄÚ´æ£¬·µ»Ø±íÍ·*/
 list_t* ReadDeptInfo(const char* filename);
-/*å°†deptinfoé“¾è¡¨ä¸­å­˜å‚¨çš„ç§‘å®¤ä¿¡æ¯å†™å…¥filenameä»£è¡¨çš„æ–‡ä»¶ä¸­*/
+/*½«deptinfoÁ´±íÖĞ´æ´¢µÄ¿ÆÊÒĞÅÏ¢Ğ´Èëfilename´ú±íµÄÎÄ¼şÖĞ*/
 void SaveDeptInfo(list_t* deptinfo, char* filename);
-/*é€šè¿‡ç§‘å®¤å”¯ä¸€ç¼–ç idæ‰¾åˆ°ç§‘å®¤ä¿¡æ¯deptinfoé“¾è¡¨ä¸­å¯¹åº”çš„ç”¨æˆ·ï¼Œå¹¶è¿”å›æŒ‡å‘è¯¥ä¿¡æ¯çš„æŒ‡é’ˆ*/
+/*Í¨¹ı¿ÆÊÒÎ¨Ò»±àÂëidÕÒµ½¿ÆÊÒĞÅÏ¢deptinfoÁ´±íÖĞ¶ÔÓ¦µÄÓÃ»§£¬²¢·µ»ØÖ¸Ïò¸ÃĞÅÏ¢µÄÖ¸Õë*/
 DeptInfo* FindDeptInfo(list_t* deptinfo, int id);
 
-/*ä»filenameä»£è¡¨çš„æ–‡ä»¶ä¸­è¯»å‡ºåŒ»ç”Ÿä¿¡æ¯å¹¶å°†ä¿¡æ¯ä»¥é“¾è¡¨å½¢å¼å­˜å…¥å†…å­˜ï¼Œè¿”å›è¡¨å¤´*/
+/*´Ófilename´ú±íµÄÎÄ¼şÖĞ¶Á³öÒ½ÉúĞÅÏ¢²¢½«ĞÅÏ¢ÒÔÁ´±íĞÎÊ½´æÈëÄÚ´æ£¬·µ»Ø±íÍ·*/
 list_t* ReadDoctorInfo(const char* filename);
-/*å°†doctorinfoé“¾è¡¨ä¸­å­˜å‚¨çš„åŒ»ç”Ÿä¿¡æ¯å†™å…¥filenameä»£è¡¨çš„æ–‡ä»¶ä¸­*/
+/*½«doctorinfoÁ´±íÖĞ´æ´¢µÄÒ½ÉúĞÅÏ¢Ğ´Èëfilename´ú±íµÄÎÄ¼şÖĞ*/
 void SaveDoctorInfo(list_t* doctorinfo, char* filename);
-/*é€šè¿‡åŒ»ç”Ÿå”¯ä¸€ç¼–ç idæ‰¾åˆ°åŒ»ç”Ÿä¿¡æ¯doctorinfoé“¾è¡¨ä¸­å¯¹åº”çš„ç”¨æˆ·ï¼Œå¹¶è¿”å›æŒ‡å‘è¯¥ä¿¡æ¯çš„æŒ‡é’ˆ*/
+/*Í¨¹ıÒ½ÉúÎ¨Ò»±àÂëidÕÒµ½Ò½ÉúĞÅÏ¢doctorinfoÁ´±íÖĞ¶ÔÓ¦µÄÓÃ»§£¬²¢·µ»ØÖ¸Ïò¸ÃĞÅÏ¢µÄÖ¸Õë*/
 DoctorInfo* FindDoctorInfo(list_t* doctorinfo, int id);
 
 #endif

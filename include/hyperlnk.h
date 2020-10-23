@@ -6,7 +6,7 @@
 
 #define UNDERLINE 1
 #define NONE 0
-
+#define BACKGROUND 2
 /**
  * 创建超链接控件
  * 

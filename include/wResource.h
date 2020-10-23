@@ -20,9 +20,10 @@
 //////////////////////Desktop windows defined////////////////////////////////
 #define ID_DESKTOP 0
 #define ID_MENU_LOG 11      //label
-#define ID_MENU_HOMEPAGE 12 //button
-#define ID_MENU_TESTPAGE 13 //button
-#define ID_MENU_LOGIN 14    //右上角登录状态
+#define ID_MENU_HOMEPAGE 12 //首页button
+#define ID_MENU_TESTPAGE 13 //测试button
+#define ID_MENU_DEPTPAGE 14 //科室简介button
+#define ID_MENU_LOGIN 18    //右上角登录状态
 
 #define ID_MENU_PY 19
 #define ID_MENU_EXIT 20 // 退出
@@ -74,6 +75,12 @@
 #define ID_NEWS_RETURN 503
 #define ID_NEWS_TEXT 505
 
+////////////////////////////Dept Info page//////////////////////////////////////////////
+#define ID_DEPTPAGE 600
+#define ID_DEPT_RETURN 601
+#define ID_DEPT_TEXT 602
+#define ID_DEPT_LINK 610
+
 //////////////////////Login windows defined////////////////////////////////
 #define ID_LOGINPAGE 1000
 #define ID_LOGIN_REGISTER 1001
@@ -85,13 +92,13 @@
 ////////////////////////////registerpage//////////////////////////////////////////////
 #define ID_REGISTERPAGE 2000
 #define ID_REGISTER_RETURN 2001
-#define ID_REGISTER_DEPT_MEDICINE 2002 //内科
-#define ID_REGISTER_DEPT_SURGERY 2003 //外科
-#define ID_REGISTER_DEPT_PAEDIATRICS 2004 //儿科
-#define ID_REGISTER_DEPT_GYNAECOLOGY 2005 //妇科
+#define ID_REGISTER_DEPT_MEDICINE 2002      //内科
+#define ID_REGISTER_DEPT_SURGERY 2003       //外科
+#define ID_REGISTER_DEPT_PAEDIATRICS 2004   //儿科
+#define ID_REGISTER_DEPT_GYNAECOLOGY 2005   //妇科
 #define ID_REGISTER_DEPT_OPHTHALMOLOGY 2006 //眼科
-#define ID_REGISTER_DEPT_ENT 2007 //耳鼻喉科
-#define ID_REGISTER_DEPT_STOMATOLOGY 2008 //口腔科
-#define ID_REGISTER_DEPT_DERMATOLOGY 2009 //皮肤科
+#define ID_REGISTER_DEPT_ENT 2007           //耳鼻喉科
+#define ID_REGISTER_DEPT_STOMATOLOGY 2008   //口腔科
+#define ID_REGISTER_DEPT_DERMATOLOGY 2009   //皮肤科
 
 #endif

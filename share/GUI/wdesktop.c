@@ -15,6 +15,7 @@
 #include "lginpage.h"
 #include "hnews.h"
 #include "regspage.h"
+#include "hdept.h"
 #include <memory.h>
 #include <string.h>
 
@@ -210,9 +211,10 @@ hbasewinAttr *CreateDesktop(void)
   //登陆状态
   Createhyperlink(desktop, 900, (HEADER_HEIGHT - 44) / 2 - 10, 100, 25, ID_MENU_LOGIN, "[登  录]");
   //创建菜单,切换页面,临时使用
-  CreateButton(desktop, 450, HEADER_HEIGHT - 44, 120, 44, ID_MENU_HOMEPAGE, "首页");
-  CreateButton(desktop, 600, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "测试页");
-  CreateButton(desktop, 850, HEADER_HEIGHT - 44, 150, 44, ID_MENU_EXIT, "退出");
+  CreateButton(desktop, 400, HEADER_HEIGHT - 44, 120, 44, ID_MENU_HOMEPAGE, "首页");
+  CreateButton(desktop, 520, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "测试页");
+  CreateButton(desktop, 670, HEADER_HEIGHT - 44, 150, 44, ID_MENU_DEPTPAGE, "科室简介");
+  CreateButton(desktop, 900, HEADER_HEIGHT - 44, 120, 44, ID_MENU_EXIT, "退出");
 
   //创建首页
   CreateHomepage(desktop, ID_HOMEPAGE);
@@ -256,8 +258,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
     newpage = CreateNewspage(desktop, ID_NEWSPAGE, title);
   }
   break;
-  /* case : 
-   */
+  case ID_DEPTPAGE:
+    newpage = CreateDeptpage(desktop, ID_DEPTPAGE, "科室简介");
+    break;
   case ID_REGISTERPAGE:
     newpage = Createregisterpage(desktop, ID_REGISTERPAGE);
     break;
@@ -429,6 +432,26 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
           _g->isLogin = 0;
           Desktop_changePage(win->parent, ID_HOMEPAGE, _g);
         }
+      }
+      break;
+    case ID_MENU_DEPTPAGE:
+      /* 改变鼠标形状、改变背景颜色 */
+      //.....
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (win->onClick)
+          win->onClick(win, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标弹起
+        //切换页面
+        if (win->onLeave)
+          win->onLeave(win, NULL);
+
+        Desktop_changePage(win->parent, ID_DEPTPAGE, _g); //->activePage);
       }
       break;
     default:
