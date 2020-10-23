@@ -14,6 +14,7 @@
 #include "homepage.h"
 #include "lginpage.h"
 #include "hnews.h"
+#include "regspage.h"
 #include <memory.h>
 #include <string.h>
 
@@ -257,6 +258,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
   break;
   /* case : 
    */
+  case ID_REGISTERPAGE:
+    newpage = Createregisterpage(desktop, ID_REGISTERPAGE);
+    break;
   default:
     break;
   }
@@ -361,7 +365,7 @@ void eventhandlerdesktop(hbasewinAttr *win, int type, void *value)
         //ÇÐ»»Ò³Ãæ
         if (win->onLeave)
           win->onLeave(win, NULL);
-        Desktop_changePage(win->parent, ID_TESTPAGE, _g);
+        Desktop_changePage(win->parent, ID_REGISTERPAGE, _g);
       }
       break;
 

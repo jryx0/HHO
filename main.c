@@ -19,7 +19,7 @@
 int main(void)
 {
   char kbchar = 0;
-  int key, modifiers;
+  int key;//, modifiers;
   char candiateHZString[256] = {0};
 
   globaldef *_global;
@@ -83,7 +83,7 @@ int main(void)
       key = _bios_keybrd(_KEYBRD_READ);
       kbchar = key & 0xFF;
       /* Determine if shift keys are used */
-      modifiers = _bios_keybrd(_KEYBRD_SHIFTSTATUS);
+      //modifiers = _bios_keybrd(_KEYBRD_SHIFTSTATUS);
 
       //TRACE(("key = %x, %x, '%c', modifiers= %x\n", key, key & 0xFF, key & 0xFF, modifiers));
 

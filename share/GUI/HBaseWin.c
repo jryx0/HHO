@@ -27,6 +27,7 @@ void OnLeave(hbasewinAttr *win, void *val)
   //测试用，每个窗口填充背景，画虚框
   //fillRegion(x1, y1, x2, y2, COLOR_ligtgray);
   rectangle(x1, y1, x2, y2, 0xFFFF, 1, 2);
+  (void)val;
 }
 
 void OnClick(hbasewinAttr *win, void *val)
@@ -44,6 +45,7 @@ void OnClick(hbasewinAttr *win, void *val)
   //测试用，每个窗口填充背景，画虚框
   //fillRegion(x1, y1, x2, y2, COLOR_ligtgray);
   rectangle(x1, y1, x2, y2, COLOR_darkgray, 1, 2);
+  (void)val;
 }
 
 /**

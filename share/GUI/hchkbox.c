@@ -18,7 +18,7 @@ hbasewinAttr *CreateCheckBox(hbasewinAttr *parent, int x, int y, int nWidth,
 
 void OnPaintCheckBoxNone(hbasewinAttr *checkbox, void *value)
 {
-  int x0, y0, x1, y1, x2, y2, type = 3;
+  int x0, y0, x1, y1, x2, y2;//, type = 3;
   if (checkbox == NULL)
     return;
   //OnPaint(checkbox, &type);
@@ -32,11 +32,12 @@ void OnPaintCheckBoxNone(hbasewinAttr *checkbox, void *value)
   y1 = y0 + checkbox->nHeight;
   fillRegion(x0, y0, x1, y1, 0xFFFF);
   rectangle(x0 - 1, y0 - 1, x1 + 1, y1 + 1, 0x0000, 1, 1);
+  (void) value;
 }
 
 void OnPaintCheckBoxRight(hbasewinAttr *checkbox, void *value)
 {
-  int x0, y0, x1, y1, x2, y2, type = 3;
+  int x0, y0, x1, y1, x2, y2;//, type = 3;
   if (checkbox == NULL)
     return;
   //OnPaint(checkbox, &type);
@@ -50,11 +51,12 @@ void OnPaintCheckBoxRight(hbasewinAttr *checkbox, void *value)
   rectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 0x0000, 1, 1);
   line(x1, y1 + 5, x1 + 5, y2, 0);
   line(x1 + 5, y2, x2, y1, 0);
+  (void) value;
 }
 
 void OnPaintCheckBoxCross(hbasewinAttr *checkbox, void *value)
 {
-  int x0, y0, x1, y1, x2, y2, type = 3;
+  int x0, y0, x1, y1, x2, y2;//, type = 3;
   if (checkbox == NULL)
     return;
   //OnPaint(checkbox, &type);
@@ -68,6 +70,7 @@ void OnPaintCheckBoxCross(hbasewinAttr *checkbox, void *value)
   rectangle(x1 - 1, y1 - 1, x2 + 1, y2 + 1, 0x0000, 1, 1);
   line(x1, y1, x2, y2, 0);
   line(x1, y2, x2, y1, 0);
+  (void) value;
 }
 
 void OnClickCheckBox(hbasewinAttr *checkbox, void *value)
@@ -76,6 +79,7 @@ void OnClickCheckBox(hbasewinAttr *checkbox, void *value)
 
   if (++checkbox->data >= 3)
     checkbox->data = 0;
+    (void)value;
 }
 
 void OnPaintCheckBox(hbasewinAttr *checkbox, void *value)
