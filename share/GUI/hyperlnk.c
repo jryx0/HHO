@@ -72,6 +72,8 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
   TESTNULLVOID(link);
   TESTNULLVOID(link->style);
 
+  
+
   lnkStyle = (WinStyle *)link->style;
 
   if (link->title != NULL)

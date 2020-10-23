@@ -79,6 +79,7 @@
 #define ID_DEPTPAGE 600
 #define ID_DEPT_RETURN 601
 #define ID_DEPT_TEXT 602
+#define ID_DEPT_DOCLINK 603 //×ªÌøÒ½Éú¹ÒºÅ
 #define ID_DEPT_LINK 610
 
 //////////////////////Login windows defined////////////////////////////////

@@ -25,7 +25,7 @@ void CreateDept(hbasewinAttr *parent)
   TESTNULLVOID(parent);
 
   x = 15;
-  y = 35;
+  y = 45;
 
   for (i = 0; i < deptlist->len; i++)
   {
@@ -34,8 +34,8 @@ void CreateDept(hbasewinAttr *parent)
     {
       dept = (DeptInfo *)node->val;
       //Createhyperlink(parent, x, y + 30 * i, 65, 25, ID_DEPT_LINK + i, dept->deptname);
-      btn = CreateButton(parent, x, y + 70 * i, 125, 45, ID_DEPT_LINK + i, dept->deptname);
-      btn->data = ID_DEPT_LINK + i;
+      btn = CreateButton(parent, x, y + 65 * i, 125, 45, ID_DEPT_LINK + i, dept->deptname);
+      btn->data = dept->id;
     }
   }
 
@@ -46,14 +46,19 @@ hbasewinAttr *CreateDeptpage(hbasewinAttr *parent, int winID, char *title)
 {
   hbasewinAttr *page = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, title);
   hbasewinAttr *ctrl;
+  WinStyle *style;
 
   Createhyperlink(page, 20, 10, 65, 25, ID_DEPT_RETURN, "[首 页]");
-  // ctrl = CreateLabel(page, 20, 25, PAGE_W - 40, PAGE_H, ID_DEPT_TEXT, title);
-  // ctrl->wintype = LABEL_FILE_TXT; //设置label 从文件中读取文本,并显示
+  Createhyperlink(page, 170, PAGE_H - 50, 165, 25, ID_DEPT_DOCLINK, NULL);
+
+  ctrl = CreateLabel(page, 160, 25, PAGE_W - 220, PAGE_H - 100, ID_DEPT_TEXT, NULL);
+  ctrl->wintype = LABEL_FILE_TXT; //设置label 从文件中读取文本,并显示
 
   page->onPaint = OnPaint_Dept;
   page->onDestroy = OnDestory_Dept;
   page->EventHandler = EventHandler_deptpage;
+  page->style = malloc(sizeof(WinStyle));
+  getWinTheme((WinStyle *)page->style, 1);
 
   CreateDept(page);
 
@@ -67,6 +72,8 @@ void OnDestory_Dept(hbasewinAttr *win, void *val)
 void OnPaint_Dept(hbasewinAttr *win, void *val)
 {
   int x, y;
+  WinStyle *style;
+  hfont *_h;
 
   DeptInfo *dept;
   list_node_t *node;
@@ -76,10 +83,15 @@ void OnPaint_Dept(hbasewinAttr *win, void *val)
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
 
+  style = (WinStyle *)win->style;
+  _h = getFont(style->fonttype, style->fontsize, 0x0000);
+  printTextLineXY(x + style->fontsize * 6, y + 10, "- 科室简介", _h);
+  freeFont(_h);
+
   repaintChildren(win, val);
 
-  rectangleEx(x, y + 35, 300, PAGE_H, 0x0000, 1, 2);
-  rectangleEx(x + 305, y + 35, PAGE_W - 310, PAGE_H, 0x0000, 1, 2);
+  // rectangleEx(x + 15, y + 35, 140, PAGE_H - 10, 0x0000, 1, 2);
+  // rectangleEx(x + 160, y + 25, PAGE_W - 250, PAGE_H - 100, 0x0000, 1, 2);
 }
 
 void EventHandler_deptpage(hbasewinAttr *win, int type, void *val)
@@ -134,10 +146,32 @@ void EventHandler_deptpage(hbasewinAttr *win, int type, void *val)
         }
         else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
         { //鼠标释放
+          hbasewinAttr *ctrl = findWinByID(win, ID_DEPT_TEXT);
           if (hitwin->onLeave)
             hitwin->onLeave(hitwin, NULL);
           TRACE(("deptpage:mouse in button id = %d\n", hitwin->winID));
-          //转跳homepage
+          //label中显示 内容
+          if (ctrl)
+          {
+            ctrl->wintype = LABEL_FILE_TXT;
+            if (ctrl->title != NULL)
+              free(ctrl->title);
+
+            ctrl->title = malloc(64);
+            sprintf(ctrl->title, "%sdatabase\\dept\\%d.txt", DATAPATH, hitwin->data);
+            ctrl->onPaint(ctrl, NULL);
+          }
+          //转跳医生挂号
+          ctrl = findWinByID(win, ID_DEPT_DOCLINK);
+          if (ctrl)
+          {
+            if (ctrl->title)
+              free(ctrl->title);
+            ctrl->title = malloc(24);
+            sprintf(ctrl->title, "[选择%s医生挂号]", hitwin->title);
+            ctrl->onPaint(ctrl, NULL);
+            ctrl->data = hitwin->data; // 科室编号 内科 = 901
+          }
         }
       }
       break;

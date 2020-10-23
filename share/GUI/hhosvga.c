@@ -1332,20 +1332,32 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
       }
       else if (Line[1] == '-')
       { //划线
-        linex_styleEx(region->left_top.x, y0 + formatHeight, PAGE_W, 0x0000, 2, 1);
+        linex_styleEx(region->left_top.x, y0 + formatHeight, region->right_bottom.x - region->left_top.x, 0x0000, 2, 1);
         formatHeight += 24;
       }
-      else if (Line[1] == 'i' && Line[2] == ' ')
+      else if (Line[1] == 'i')
       { //图片
         long width;
         long height;
         //除去'\n'
         Line[strlen(Line) - 1] = 0;
-        getbmpWH(Line + 3, &width, &height);
-        center = (region->right_bottom.x - region->left_top.x - width) / 2;
-        //Putbmp64k(region->left_top.x + center, y0 + 20, Line + 3);
-        Putbmp565(region->left_top.x + center, y0 + 20, Line + 3);
-        formatHeight += height + 16;
+
+        if (Line[2] == ' ')
+        {
+          getbmpWH(Line + 3, &width, &height);
+          center = (region->right_bottom.x - region->left_top.x - width) / 2;
+          //Putbmp64k(region->left_top.x + center, y0 + 20, Line + 3);
+          Putbmp565(region->left_top.x + center, y0 + formatHeight, Line + 3);
+          formatHeight += height + 16;
+        }
+        else if (Line[2] == 'l')
+        {
+          getbmpWH(Line + 4, &width, &height);
+          //文字在图片右方
+          Putbmp565(region->left_top.x, y0 + formatHeight, Line + 4);
+          region->left_top.x += width + 10;
+          x0 = region->left_top.x;
+        }
       }
       else
       { //标题//居中显示
@@ -1361,7 +1373,7 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
       continue;
     }
 
-    if(Line[0] == '/' && Line[1] == '/')
+    if (Line[0] == '/' && Line[1] == '/')
     {
       // 注释忽略
       continue;
@@ -1624,7 +1636,7 @@ int Putbmp565(int x, int y, const char *path) //4
   /*打开文件*/
   if ((fpbmp = fopen(path, "rb")) == NULL)
   {
-    
+
     return -1;
   }
 
@@ -1683,7 +1695,7 @@ int Putbmp565(int x, int y, const char *path) //4
     offest = ((unsigned long int)(y + i) << 10) + x;
     page = offest >> 15; /* 32k个点一换页，除以32k的替代算法 */
     selectpage(page);
-    memcpy(video_buffer + offest, buffer, linebytes);   
+    memcpy(video_buffer + offest, buffer, linebytes);
   }
 
   free(buffer);
