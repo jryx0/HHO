@@ -4,7 +4,7 @@
 #include <string.h>
 
 /***********逻辑模块************/
-
+#pragma warn - pia
 list_t *GetUserList()
 {
 	// list_t *pUserlist = ReadUserFile(USERINFOFILE);
@@ -66,7 +66,7 @@ list_t *ReadUserInfo(const char *filename)
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
 		printf("unable to open %s\r\n", filename);
-		return;
+		return NULL;
 	}
 
 	while (fgets(line, 32, fp))
@@ -150,7 +150,7 @@ userInfo *fFindUserInfo(const char *filename, char *username, char *password)
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
 		printf("unable to open %s\r\n", filename);
-		return;
+		return NULL;
 	}
 	Infotemp = malloc(sizeof(userInfo));
 	while (fgets(line, 32, fp))
@@ -178,7 +178,7 @@ list_t *ReadPatientInfo(const char *filename)
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
 		printf("unable to open %s\r\n", filename);
-		return;
+		return NULL;
 	}
 
 	while (fgets(line, 130, fp))
@@ -255,7 +255,7 @@ list_t *ReadDeptInfo(const char *filename)
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
 		printf("unable to open %s\r\n", filename);
-		return;
+		return NULL;
 	}
 
 	while (fgets(line, 90, fp))
@@ -326,7 +326,7 @@ list_t *ReadDoctorInfo(const char *filename)
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
 		printf("unable to open %s\r\n", filename);
-		return;
+		return NULL;
 	}
 
 	while (fgets(line, 85, fp))

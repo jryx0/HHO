@@ -1,11 +1,7 @@
 #ifndef __USER_H__
 #define __USER_H__
+#include "macrodef.h"
 
-//用户类型宏定义
-#define PATIENT 1
-#define DOCTOR 2
-#define PHARMCY 3
-#define LOGISTIC 4
 
 #include <time.h>
 #include "list.h"

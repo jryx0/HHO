@@ -69,6 +69,12 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
       }
     }
     break;
+  case ID_HOMEPAGE_AISEARCH:
+    if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      if (hitwin->onActivate)
+        hitwin->onActivate(hitwin, _g);
+    break;
+    break;
   case ID_HOMEPAGE_CHARGE1:
   case ID_HOMEPAGE_CHARGE2:
   case ID_HOMEPAGE_DIAGNOSE:
@@ -94,7 +100,10 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
 
         if (_g->isLogin == 1)
         {
-          
+          if (_g->usertype == PATIENT)
+          {
+              
+          }
         }
         else
         {

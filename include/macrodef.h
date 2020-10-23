@@ -55,8 +55,11 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #define PAGE_W (SCR_WIDTH - 10)
 #define PAGE_H ((SCR_HEIGHT - (HEADER_HEIGHT + FOOTER_HEIGHT + 10)) - 20)
 
-// #define SVGA32K
-// #define SVGA800x600
+//用户类型宏定义
+#define PATIENT 1
+#define DOCTOR 2
+#define PHARMCY 3
+#define LOGISTIC 4
 
 //-------------------------全局文件路径--------------------------------
 //数据文件夹定义
