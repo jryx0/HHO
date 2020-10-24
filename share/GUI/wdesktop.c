@@ -302,9 +302,18 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, globaldef *_g)
 
   login = findWinByID(desktop, ID_MENU_LOGIN);
   if (_g->isLogin == 1)
+  {
+    hfont* _h=getFont(SIMSUN,16,0);
     strcpy(login->title, "[×¢  Ïú]");
+    printTextLineXY(760,35,"»¶Ó­",_h);
+    printTextLineXY(810,35,_g->username,_h);
+    freeFont(_h);
+  }
   else
+  {
+    fillRegionEx(760,35,150,20,0xFFFF);
     strcpy(login->title, "[µÇ  Â¼]");
+  }
   login->onPaint(login, NULL);
 }
 

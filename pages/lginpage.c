@@ -142,6 +142,7 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
             _g->userid = infotemp->userID;
             _g->usertype = infotemp->userType;
             _g->isLogin = 1;
+            strcpy(_g->username,username->title);
             switch (_g->usertype)
             {
             case PATIENT:
@@ -172,6 +173,17 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
       }
       break;
 
+    case ID_LOGIN_REGISTER:
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在窗口部分显示手型鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      {}
     default:
       break;
     }

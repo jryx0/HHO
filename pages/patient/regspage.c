@@ -257,6 +257,7 @@ void EventHandler_registerpage(hbasewinAttr *win, int type, void *value)
     default:
       break;
     }
+    break;
   default:
     break;
   }
