@@ -23,69 +23,98 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
   //确定是否是子窗口事件，非子窗口事件返回本身
   hitwin = checkmousewin(win, &_g->mouse);
 
-  switch (hitwin->winID)
-  {                 //鼠标在那个子窗口或本身
-  case ID_HOMEPAGE: //本身
-    if (type == EVENT_MOUSE)
-    {                                                                              //homepage 处理鼠标移动理鼠标移动
+  switch (type)
+  {
+  case EVENT_MOUSE:
+    switch (hitwin->winID)
+    {
+    case ID_HOMEPAGE:
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow;
+      break;
 
-      if (_g->mouse.rightClickState == MOUSE_BUTTON_UP)
-      {
-        // hbasewinAttr *child = CreateLabel(hitwin, random(800), random(600), 300, 150, ID_LABEL_3, NULL);
-        // if (child)
-        //   child->onPaint(child, NULL);
-      }
-    }
-    break;
-    /*
-  case ID_LABEL_1: //label1
-    if (type == EVENT_MOUSE)
-    {                                                                             //label1 处理鼠标移动理鼠标移动
+    case ID_HOMEPAGE_LINK1:
+    case ID_HOMEPAGE_LINK2:
+    case ID_HOMEPAGE_LINK3:
+    case ID_HOMEPAGE_LINK4:
+    case ID_HOMEPAGE_LINK5:
+    case ID_HOMEPAGE_LINK6:
+    case ID_HOMEPAGE_LINK7:
+    case ID_HOMEPAGE_LINK8:
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
-
-      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-      { //改变显示 鼠标左键释放
-        if (hitwin && hitwin->onPaint)
-          hitwin->onPaint(hitwin, "c:\\hho\\data\\news\\1.txt");
-      }
+      break;
+    default:
+      break;
     }
     break;
 
-  case ID_LABEL_2: //label2
-    if (type == EVENT_MOUSE)
-    {                                                                             //label1 处理鼠标移动理鼠标移动
-      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
-        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
-
-      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-      { //改变显示
-        if (hitwin && hitwin->onPaint)
-          hitwin->onPaint(hitwin, "main.c");
-      }
-    }
-    break;
-  case ID_LABEL_3: //label3
-    if (type == EVENT_MOUSE)
-    { //不改变鼠标形状
-      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-      {
-        list_node_t *n;
-        //删除label
-        int x = getAbsoluteX(hitwin);
-        int y = getAbsoluteY(hitwin);
-        fillRegionEx(x, y, hitwin->nWidth + 1, hitwin->nHeight + 1, 0xFFFF); //清除子窗口区域
-
-        TRACE(("%s(%d): 删除label%u\n", __FILE__, __LINE__, hitwin->winID));
-        hitwin->onDestroy(hitwin, NULL);
-      }
-    }
-    break;*/
   default:
     break;
   }
+  // switch (hitwin->winID)
+  // {                 //鼠标在那个子窗口或本身
+  // case ID_HOMEPAGE: //本身
+  //   if (type == EVENT_MOUSE)
+  //   {                                                                              //homepage 处理鼠标移动理鼠标移动
+  //     if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow) //在homepage窗口部分显示标准鼠标
+  //       _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow;
+
+  //     // if (_g->mouse.rightClickState == MOUSE_BUTTON_UP)
+  //     // {
+  //     //   hbasewinAttr *child = CreateLabel(hitwin, random(800), random(600), 300, 150, ID_LABEL_3, NULL);
+  //     //   if (child)
+  //     //     child->onPaint(child, NULL);
+  //     // }
+  //   }
+  //   break;
+  //   /*
+  // case ID_LABEL_1: //label1
+  //   if (type == EVENT_MOUSE)
+  //   {                                                                             //label1 处理鼠标移动理鼠标移动
+  //     if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
+  //       _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+  //     if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+  //     { //改变显示 鼠标左键释放
+  //       if (hitwin && hitwin->onPaint)
+  //         hitwin->onPaint(hitwin, "c:\\hho\\data\\news\\1.txt");
+  //     }
+  //   }
+  //   break;
+
+  // case ID_LABEL_2: //label2
+  //   if (type == EVENT_MOUSE)
+  //   {                                                                             //label1 处理鼠标移动理鼠标移动
+  //     if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
+  //       _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+  //     if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+  //     { //改变显示
+  //       if (hitwin && hitwin->onPaint)
+  //         hitwin->onPaint(hitwin, "main.c");
+  //     }
+  //   }
+  //   break;
+  // case ID_LABEL_3: //label3
+  //   if (type == EVENT_MOUSE)
+  //   { //不改变鼠标形状
+  //     if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+  //     {
+  //       list_node_t *n;
+  //       //删除label
+  //       int x = getAbsoluteX(hitwin);
+  //       int y = getAbsoluteY(hitwin);
+  //       fillRegionEx(x, y, hitwin->nWidth + 1, hitwin->nHeight + 1, 0xFFFF); //清除子窗口区域
+
+  //       TRACE(("%s(%d): 删除label%u\n", __FILE__, __LINE__, hitwin->winID));
+  //       hitwin->onDestroy(hitwin, NULL);
+  //     }
+  //   }
+  //   break;*/
+  // default:
+  //   break;
+  // }
 }
 
 void EventHandler_homepage(hbasewinAttr *win, int type, void *value)
@@ -210,8 +239,6 @@ void OnPaint_homepage(hbasewinAttr *win, void *value)
 
   Putbmp64k(x + 909, y + 445, "data\\bmp\\flow-16.bmp");
   printTextLineXY(x + 909, y + 525, "物流签收", _font);
-
-  
 
   repaintChildren(win, value);
 
