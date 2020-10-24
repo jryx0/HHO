@@ -4,6 +4,7 @@
 #include "hglobal.h"
 #define UNDERLINE 1
 #define NONE 0
+#define BACKGROUND
 
 /**
  * 创建超链接控件
@@ -71,8 +72,6 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
 
   TESTNULLVOID(link);
   TESTNULLVOID(link->style);
-
-  
 
   lnkStyle = (WinStyle *)link->style;
 

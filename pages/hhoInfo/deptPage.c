@@ -55,7 +55,7 @@ hbasewinAttr *CreateDeptpage(hbasewinAttr *parent, int winID, char *title)
   ctrl->wintype = LABEL_FILE_TXT; //设置label 从文件中读取文本,并显示
 
   page->onPaint = OnPaint_Dept;
-  page->onDestroy = OnDestory_Dept;
+  //page->onDestroy = OnDestory_Dept;
   page->EventHandler = EventHandler_deptpage;
   page->style = malloc(sizeof(WinStyle));
   getWinTheme((WinStyle *)page->style, 1);
@@ -65,9 +65,9 @@ hbasewinAttr *CreateDeptpage(hbasewinAttr *parent, int winID, char *title)
   return page;
 }
 
-void OnDestory_Dept(hbasewinAttr *win, void *val)
-{
-}
+// void OnDestory_Dept(hbasewinAttr *win, void *val)
+// {
+// }
 
 void OnPaint_Dept(hbasewinAttr *win, void *val)
 {
@@ -130,6 +130,31 @@ void EventHandler_deptpage(hbasewinAttr *win, int type, void *val)
         if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
         {
           _g->activePageID = ID_HOMEPAGE;
+          win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+        }
+      }
+      break;
+    case ID_DEPT_DOCLINK:
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标释放
+        if (hitwin->onLeave)
+          hitwin->onLeave(hitwin, NULL);
+
+        //转跳login
+        if (_g->isLogin)
+        {
+        }
+        else if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+        {
+          _g->activePageID = ID_LOGINPAGE;
           win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
         }
       }

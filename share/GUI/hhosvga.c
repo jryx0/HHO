@@ -1297,7 +1297,7 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
   int halfhz = 0;
 
   hfont *headfont;
-  int formatHeight = 0;
+  //int formatHeight = 0;
 
   TESTNULLVOID(region);
   TESTNULLVOID(_font);
@@ -1326,14 +1326,14 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
       { //副标题
         headfont = getFont(SIMYOU, 16, _font->fontcolor);
         center = (region->right_bottom.x - region->left_top.x - calcPrintTextLenght(Line + 1, headfont)) / 2;
-        printTextLineXY(region->left_top.x + center, y0 + formatHeight, Line + 2, _font);
+        printTextLineXY(region->left_top.x + center, y0, Line + 2, _font);
         freeFont(headfont);
-        formatHeight += 20;
+        y0 += 20;
       }
       else if (Line[1] == '-')
       { //划线
-        linex_styleEx(region->left_top.x, y0 + formatHeight, region->right_bottom.x - region->left_top.x, 0x0000, 2, 1);
-        formatHeight += 24;
+        linex_styleEx(region->left_top.x, y0, region->right_bottom.x - region->left_top.x, 0x0000, 2, 1);
+        y0 += 24;
       }
       else if (Line[1] == 'i')
       { //图片
@@ -1347,15 +1347,23 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
           getbmpWH(Line + 3, &width, &height);
           center = (region->right_bottom.x - region->left_top.x - width) / 2;
           //Putbmp64k(region->left_top.x + center, y0 + 20, Line + 3);
-          Putbmp565(region->left_top.x + center, y0 + formatHeight, Line + 3);
-          formatHeight += height + 16;
+          Putbmp565(region->left_top.x + center, y0, Line + 3);
+          y0 += height + 16;
         }
-        else if (Line[2] == 'l')
+        else if (Line[2] == 'l' && Line[3] == ' ')
         {
           getbmpWH(Line + 4, &width, &height);
           //文字在图片右方
-          Putbmp565(region->left_top.x, y0 + formatHeight, Line + 4);
+          Putbmp565(region->left_top.x, y0, Line + 4);
           region->left_top.x += width + 10;
+          x0 = region->left_top.x;
+        }
+        else if (Line[2] == 'r' && Line[3] == ' ')
+        {
+          getbmpWH(Line + 4, &width, &height);
+          //文字在图片左方
+          Putbmp565(region->right_bottom.x - width, y0, Line + 4);
+          region->right_bottom.x -= width + 10;
           x0 = region->left_top.x;
         }
       }
@@ -1364,11 +1372,11 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
 
         headfont = getFont(SIMHEI, 24, _font->fontcolor);
         center = (region->right_bottom.x - region->left_top.x - calcPrintTextLenght(Line + 1, headfont)) / 2;
-        formatHeight += 24;
-        printTextLineXY(region->left_top.x + center, y0 + formatHeight, (char *)(Line + 1), headfont);
+        //formatHeight += 24;
+        printTextLineXY(region->left_top.x + center, y0, (char *)(Line + 1), headfont);
         freeFont(headfont);
 
-        formatHeight += 24 * 2;
+        y0 += 24 * 2;
       }
       continue;
     }
@@ -1381,6 +1389,7 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
 
     c = Line;
     halfhz = 0;
+
     while (*c)
     {
       if (isFirstLine)
@@ -1389,7 +1398,7 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
         isFirstLine = FALSE;
       }
 
-      y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap + formatHeight; //计算高度 y + 行数*字符高度 + 行间距
+      //y0 = region->left_top.y + linenum * _font->currentFontSize + _font->ygap + formatHeight; //计算高度 y + 行数*字符高度 + 行间距
 
       if (((unsigned char)c[0] >= 0xa0) &&
           ((unsigned char)c[1] >= 0xa0))
@@ -1452,11 +1461,12 @@ void printTextFileV6(hregion *region, FILE *fp, hfont *_font)
           isOutofRange = TRUE;
           break;
         }
-
+        y0 += _font->currentFontSize + _font->ygap;
         x0 = region->left_top.x;
       }
     }
     //printf("%s", Line);
+    //y0 -= formatHeight;
   }
 
   free(buffer);
