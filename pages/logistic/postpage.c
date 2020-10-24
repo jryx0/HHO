@@ -19,7 +19,7 @@
 #define COL7 (COL6 + 160)
 #define COL8 120
 
-void createPostinfo(hbasewinAttr *parent)
+void createPostinfo(hbasewinAttr *parent, int userid)
 {
   int i;
   list_node_t *node;
@@ -48,9 +48,19 @@ void createPostinfo(hbasewinAttr *parent)
               pi->receiver, pi->receiveraddr, pi->tel,
               pi->shipper, pi->shipperaddr, pi->shiptime,
               pi->status);
-      lnk = Createhyperlink(parent, x, y + 30 * i, PAGE_W, 25, ID_POST_LINK + i, info);
-      lnk->data = pi->postid;
-      lnk->wintype = HYPERLINK_BK;
+
+      if (userid == -1)
+      { //物流人员可以查看所有运单
+        lnk = Createhyperlink(parent, x, y + 30 * i, PAGE_W, 25, ID_POST_LINK + i, info);
+        lnk->data = pi->postid;
+        lnk->wintype = HYPERLINK_BK;
+      }
+      else if (userid == pi->userid)
+      {
+        lnk = Createhyperlink(parent, x, y + 30 * i, PAGE_W, 25, ID_POST_LINK + i, info);
+        lnk->data = pi->postid;
+        lnk->wintype = HYPERLINK_BK;
+      }
       //btn = CreateButton(parent, x, y + 50 * i, 125, 45, ID_DEPT_LINK + i, dept->deptname);
       //btn->data = dept->id;
     }
@@ -140,7 +150,7 @@ void showPostInfo(hbasewinAttr *win, int postid)
   }
 }
 
-hbasewinAttr *CreatePostpage(hbasewinAttr *parent, int winID)
+hbasewinAttr *CreatePostpage(hbasewinAttr *parent, int winID, int userid)
 {
   hbasewinAttr *page = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, NULL);
   page->onPaint = OnPaint_Post;
@@ -163,7 +173,7 @@ hbasewinAttr *CreatePostpage(hbasewinAttr *parent, int winID)
   CreateTextBox(page, 580, 465, 150, 20, ID_POST_UPDATEADDR, NULL, 1);
   CreateTextBox(page, 805, 465, 150, 20, ID_POST_UPDATESTATUS, NULL, 1);
 
-  createPostinfo(page);
+  createPostinfo(page, userid);
 
   return page;
 }

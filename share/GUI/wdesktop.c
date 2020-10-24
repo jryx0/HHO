@@ -266,7 +266,14 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
     newpage = Createregisterpage(desktop, ID_REGISTERPAGE);
     break;
   case ID_POSTPAGE:
-    newpage = CreatePostpage(desktop, ID_POSTPAGE);
+    if (_g->isLogin)
+    {
+      if (_g->usertype == LOGISTIC)
+        newpage = CreatePostpage(desktop, ID_POSTPAGE, -1);
+      else
+        newpage = CreatePostpage(desktop, ID_POSTPAGE, _g->userid);
+    }
+
     break;
   default:
     break;

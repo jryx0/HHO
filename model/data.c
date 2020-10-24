@@ -82,7 +82,7 @@ list_t *ReadUserInfo(const char *filename)
 			list->free = Nonemallocfree;
 		}
 		//用sscanf将line中的各数据读入对应的变量中
-		sscanf(line, "%d\t%s\t%s\t%c", &(Infotemp->userID), Infotemp->username, Infotemp->password, &(Infotemp->userType));
+		sscanf(line, "%d\t%s\t%s\t%d", &(Infotemp->userID), Infotemp->username, Infotemp->password, &(Infotemp->userType));
 		list_rpush(list, list_node_new(Infotemp));
 	}
 
@@ -111,7 +111,7 @@ void SaveUserInfo(list_t *userinfo, char *filename)
 	while ((node = list_iterator_next(it)))
 	{
 		Infotemp = (userInfo *)node->val; //将空指针转换为userInfo以在之后的fprintf中利用->
-		fprintf(fp, "%d\t%s\t%s\t%c\n", Infotemp->userID, Infotemp->username, Infotemp->password, Infotemp->userType);
+		fprintf(fp, "%d\t%s\t%s\t%d\n", Infotemp->userID, Infotemp->username, Infotemp->password, Infotemp->userType);
 		//用fprintf向文件输出
 	}
 
@@ -160,7 +160,7 @@ userInfo *fFindUserInfo(const char *filename, char *username, char *password)
 	{ //用sscanf将line中的各数据读入对应的变量中
 		if (line[0] == '#')
 			continue;
-		sscanf(line, "%d\t%s\t%s\t%c", &(Infotemp->userID), Infotemp->username, Infotemp->password, &(Infotemp->userType));
+		sscanf(line, "%d\t%s\t%s\t%d", &(Infotemp->userID), Infotemp->username, Infotemp->password, &(Infotemp->userType));
 		if (strcmpi(username, Infotemp->username) == 0 && 0 == strcmpi(password, Infotemp->password))
 		{ //忽略大小写
 			fclose(fp);

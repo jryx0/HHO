@@ -11,7 +11,7 @@ typedef struct
   char username[10];
   char password[11];
 
-  char userType;
+  int userType;
 } userInfo;
 
 typedef struct
