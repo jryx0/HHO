@@ -4,7 +4,6 @@
 #include "hglobal.h"
 #define UNDERLINE 1
 #define NONE 0
-#define BACKGROUND
 
 /**
  * 创建超链接控件
@@ -64,7 +63,7 @@ void OnLeave_hyperlink(hbasewinAttr *btn, void *val)
  * 设置超链接屏幕输出显示
  * 
  */
-void OnPaint_hyperlink(hbasewinAttr *link, void *val)
+void OnPaint_hyperlink_Line(hbasewinAttr *link, void *val)
 {
   int x = 0, y = 0;
   WinStyle *lnkStyle = NULL;
@@ -116,6 +115,69 @@ void OnPaint_hyperlink(hbasewinAttr *link, void *val)
   (void)val;
 }
 
+/**
+ * 设置超链接屏幕输出显示
+ * 
+ */
+void OnPaint_hyperlink_BK(hbasewinAttr *link, void *val)
+{
+  int x = 0, y = 0;
+  WinStyle *lnkStyle = NULL;
+  hfont *_font;
+
+  TESTNULLVOID(link);
+  TESTNULLVOID(link->style);
+
+  lnkStyle = (WinStyle *)link->style;
+
+  if (link->title != NULL)
+  {
+    hregion region;
+    int wid;
+
+    x = getAbsoluteX(link);
+    y = getAbsoluteY(link);
+    // fillRegionEx(x, y, link->nWidth, link->nHeight, 0xffff);
+    if (lnkStyle->fontsize < link->nHeight)
+      link->nHeight = lnkStyle->fontsize + 6;
+
+    region.left_top.x = x;
+    region.left_top.y = y + (link->nHeight - lnkStyle->fontsize) / 2;    
+
+    region.right_bottom.x = x + link->nWidth;
+    region.right_bottom.y = y + link->nHeight;
+
+    if (lnkStyle->type == UNDERLINE)
+    {
+      _font = getFont(lnkStyle->fonttype, lnkStyle->fontsize, 0xFFFF);
+      fillRegionEx(x, y, link->nWidth, link->nHeight, lnkStyle->bkcolor);
+      //linex_styleEx(x, y + lnkStyle->fontsize + 2, link->nWidth, lnkStyle->bkcolor1, 2, 1);
+      //rectangle(x, y, region.right_bottom.x, region.right_bottom.y, lnkStyle->bkcolor1, 1, 2);
+      //rectangleEx(x, y, link->nWidth, link->nHeight, lnkStyle->bkcolor2, 1, 2);
+    }
+    else
+    {
+      _font = getFont(lnkStyle->fonttype, lnkStyle->fontsize, 0x0000);
+      fillRegionEx(x, y, link->nWidth, link->nHeight, 0xFFFF);
+      //linex_styleEx(x, y + lnkStyle->fontsize + 2, link->nWidth, 0xFFFF, 2, 1);
+      rectangleEx(x, y, link->nWidth, link->nHeight, 0xFFFF, 1, 2);
+    }
+
+    printTextEx(&region, link->title, _font);
+    freeFont(_font);
+  }
+  (void)val;
+}
+
+void OnPaint_hyperlink(hbasewinAttr *link, void *value)
+{
+  TESTNULLVOID(link);
+
+  if (link->wintype == HYPERLINK)
+    OnPaint_hyperlink_Line(link, value);
+  else
+    OnPaint_hyperlink_BK(link, value);
+}
 /**
  * 构造缺省按钮参数
  * 默认标准按钮

@@ -73,7 +73,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
     if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       if (hitwin->onActivate)
         hitwin->onActivate(hitwin, _g);
-    break;    
+    break;
   case ID_HOMEPAGE_CHARGE1:
   case ID_HOMEPAGE_CHARGE2:
   case ID_HOMEPAGE_DIAGNOSE:
@@ -99,9 +99,15 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
 
         if (_g->isLogin == 1)
         {
-          if (_g->usertype == PATIENT)
+          /*转跳页面*/
+          //homepage中顺序 50 - 55
+          if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
           {
-              
+            _g->activePageID = ID_LOGINPAGE;
+            if (hitwin->winID == ID_HOMEPAGE_LOGISTICS)
+              _g->activePageID = ID_POSTPAGE; //物流页面
+
+            win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
           }
         }
         else
@@ -116,6 +122,7 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
       }
     }
     break;
+
     /*
   case ID_LABEL_1: //label1
     if (type == EVENT_MOUSE)

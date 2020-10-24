@@ -16,6 +16,7 @@
 #include "hnews.h"
 #include "regspage.h"
 #include "hdept.h"
+#include "postpage.h"
 #include <memory.h>
 #include <string.h>
 
@@ -264,6 +265,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
   case ID_REGISTERPAGE:
     newpage = Createregisterpage(desktop, ID_REGISTERPAGE);
     break;
+  case ID_POSTPAGE:
+    newpage = CreatePostpage(desktop, ID_POSTPAGE);
+    break;
   default:
     break;
   }
@@ -283,7 +287,8 @@ void Desktop_changePage(hbasewinAttr *desktop, int pageID, globaldef *_g)
   TESTNULLVOID(desktop);
   if (activePage && activePage->winID != pageID)
   { //当前活动page不是pageID页面，则删除其他页面
-    clearWinRegion(activePage, 0xFFFF);
+    //clearWinRegion(activePage, 0xFFFF);
+    clearRegion(0, PAGE_Y, 1023, PAGE_H + HEADER_HEIGHT, 0xFFFF);
     // if (_g->foucsedTextBox && _g->foucsedTextBox->onActivate)
     //   _g->foucsedTextBox->onActivate(NULL, _g);
 

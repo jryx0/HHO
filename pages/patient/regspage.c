@@ -43,7 +43,7 @@ void OnPaint_registerpage(hbasewinAttr *win, void *value)
 
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
-  printTextLineXY(x + style->fontsize * 6, y + 10, "- นาบล", _h);
+  printTextLineXY(x + style->fontsize * 6, y + 12, "- นาบล", _h);
   printTextLineXY(x + 16, y + 45, "ว๋ักิ๑ฟฦสาฃบ", _h);
 
   repaintChildren(win, value);

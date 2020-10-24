@@ -45,7 +45,7 @@ void OnPaint_loginpage(hbasewinAttr *win, void *value)
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
 
-  Putbmp565(x, y + 30, DATAPATH "bmp\\login.565");
+  Putbmp565(x - 4, y + 30, DATAPATH "bmp\\login.565");
 
   linex_styleEx(x + PAGE_W / 2 - 200 - 30, y + PAGE_H / 2 - 100, 450, 0x6BAF, 1, 1);
   rectangleEx(x + PAGE_W / 2 - 200 - 30 - 1, y + PAGE_H / 2 - 100 - 40 - 1, 451, 301, 0x6BAF, 1, 1);
@@ -54,7 +54,7 @@ void OnPaint_loginpage(hbasewinAttr *win, void *value)
 
   printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2 - 60, "用户名：", _h);
   printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2 + 10, "密  码：", _h);
-  printTextLineXY(x + style->fontsize * 6, y + 10, "- 用户登录", _h);
+  printTextLineXY(x + style->fontsize * 6, y + 12, "- 用户登录", _h);
 
   _h->fontcolor = 0xFFFF;
   printTextLineXY(x + PAGE_W / 2 - 200 - 30 + 5, y + PAGE_H / 2 - 100 - 40 + 13, "请输入用户名和密码:", _h);

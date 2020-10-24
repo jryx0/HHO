@@ -41,7 +41,7 @@ void OnPaint_newpage(hbasewinAttr *win, void *val)
 
   style = (WinStyle *)win->style;
   _h = getFont(style->fonttype, style->fontsize, 0x0000);
-  printTextLineXY(x + style->fontsize * 6, y + 10, "- 新闻公告", _h);
+  printTextLineXY(x + style->fontsize * 6, y + 12, "- 新闻公告", _h);
   freeFont(_h);
 }
 

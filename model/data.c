@@ -71,6 +71,9 @@ list_t *ReadUserInfo(const char *filename)
 
 	while (fgets(line, 32, fp))
 	{
+		if(line[0] == '#')
+			continue;
+			
 		Infotemp = malloc(sizeof(userInfo));
 		if (NULL == list)
 		{
@@ -156,8 +159,8 @@ userInfo *fFindUserInfo(const char *filename, char *username, char *password)
 	while (fgets(line, 32, fp))
 	{ //用sscanf将line中的各数据读入对应的变量中
 		sscanf(line, "%d\t%s\t%s\t%c", &(Infotemp->userID), Infotemp->username, Infotemp->password, &(Infotemp->userType));
-		if (strcmp(username, Infotemp->username) == 0 && 0 == strcmp(password, Infotemp->password))
-		{
+		if (strcmpi(username, Infotemp->username) == 0 && 0 == strcmpi(password, Infotemp->password))
+		{//忽略大小写
 			fclose(fp);
 			return Infotemp;
 		}
@@ -183,6 +186,9 @@ list_t *ReadPatientInfo(const char *filename)
 
 	while (fgets(line, 130, fp))
 	{
+		if(line[0] == '#')
+			continue;
+
 		Infotemp = malloc(sizeof(PatientInfo));
 		if (NULL == list)
 		{
@@ -260,6 +266,9 @@ list_t *ReadDeptInfo(const char *filename)
 
 	while (fgets(line, 90, fp))
 	{
+		if(line[0] == '#')
+			continue;
+
 		Infotemp = malloc(sizeof(DeptInfo));
 		if (NULL == list)
 		{
@@ -331,6 +340,9 @@ list_t *ReadDoctorInfo(const char *filename)
 
 	while (fgets(line, 85, fp))
 	{
+		if(line[0] == '#')
+			continue;
+
 		Infotemp = malloc(sizeof(DoctorInfo));
 		if (NULL == list)
 		{

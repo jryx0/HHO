@@ -102,4 +102,17 @@
 #define ID_REGISTER_DEPT_STOMATOLOGY 2008   //口腔科
 #define ID_REGISTER_DEPT_DERMATOLOGY 2009   //皮肤科
 
+////////////////////////////物流 page//////////////////////////////////////////////
+#define ID_POSTPAGE 2500
+#define ID_POST_RETURN 2501
+#define ID_POST_PREV 2502
+#define ID_POST_NEXT 2503
+
+#define ID_POST_QUERY_BILLNUM 2510
+#define ID_POST_QUERY_SHIPPER 2511 
+#define ID_POST_QUERY_SHIPPERTEL 2512
+#define ID_POST_QUERY_RECEIVER 2513
+ 
+
+#define ID_POST_LINK 2550
 #endif

@@ -34,7 +34,7 @@ void CreateDept(hbasewinAttr *parent)
     {
       dept = (DeptInfo *)node->val;
       //Createhyperlink(parent, x, y + 30 * i, 65, 25, ID_DEPT_LINK + i, dept->deptname);
-      btn = CreateButton(parent, x, y + 65 * i, 125, 45, ID_DEPT_LINK + i, dept->deptname);
+      btn = CreateButton(parent, x, y + 50 * i, 125, 45, ID_DEPT_LINK + i, dept->deptname);
       btn->data = dept->id;
     }
   }
@@ -75,8 +75,8 @@ void OnPaint_Dept(hbasewinAttr *win, void *val)
   WinStyle *style;
   hfont *_h;
 
-  DeptInfo *dept;
-  list_node_t *node;
+  // DeptInfo *dept;
+  // list_node_t *node;
 
   TESTNULLVOID(win);
 
@@ -85,7 +85,7 @@ void OnPaint_Dept(hbasewinAttr *win, void *val)
 
   style = (WinStyle *)win->style;
   _h = getFont(style->fonttype, style->fontsize, 0x0000);
-  printTextLineXY(x + style->fontsize * 6, y + 10, "- ø∆ “ºÚΩÈ", _h);
+  printTextLineXY(x + style->fontsize * 6, y + 12, "- ø∆ “ºÚΩÈ", _h);
   freeFont(_h);
 
   repaintChildren(win, val);
