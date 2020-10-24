@@ -40,7 +40,7 @@ hbasewinAttr *CreateTextBox(hbasewinAttr *parent, int x, int y, int nWidth,
     tb->nHeight = ti->textStyle->height;
 
   ti->r.left_top.x = getAbsoluteX(tb) + 6;
-  ti->r.left_top.y = getAbsoluteY(tb) + 8;
+  ti->r.left_top.y = getAbsoluteY(tb) + 7;
   ti->r.right_bottom.x = ti->r.left_top.x + tb->nWidth - 6 - 2;
   ti->r.right_bottom.y = ti->r.left_top.y + tb->nHeight - 6 - 2;
   ti->active = INACTIVE;

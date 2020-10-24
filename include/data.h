@@ -123,27 +123,26 @@ typedef struct
 //运单主表信息
 typedef struct
 {
-  unsigned int userid;   //用户信息
-  unsigned int orderid;  //订单号
-  unsigned int billid;   //运单号
+  unsigned int userid; //用户信息
+  unsigned int postid; //运单号
+  char shipper[32];      //发货人
+  char shipperaddr[32];  //发货地址
+  char shiptime[20];       //发货时间
   char receiver[16];     //收货人
   char receiveraddr[32]; //收货地址
   char tel[12];          //收货人电话
-  char shipper[32];      //发货人
-  char shipperaddr[32];  //发货地址
-  time_t shiptime;       //发货时间
-  unsigned char status;  //运单状态
-} wallbill;
+
+  char status[8]; //运单状态
+} postInfo;
 
 //物流过程信息
-typedef struct billitem
-{
-  unsigned int itemid;  // 编号
+typedef struct postitem
+{  
   unsigned int billid;  //运单编号
-  time_t arrivedtime;   //到达时间
+  char arrivedtime[20];   //到达时间
   char arrivedaddr[32]; //到达地址
-  char *postman[16];    //运送人
-} billitem;
+  char status[16]; //配送状态
+} postitem;
 
 /*从filename代表的文件中读出用户信息并将信息以链表形式存入内存，返回表头*/
 list_t *ReadUserInfo(const char *filename);
@@ -174,5 +173,9 @@ list_t *ReadDoctorInfo(const char *filename);
 void SaveDoctorInfo(list_t *doctorinfo, char *filename);
 /*通过医生唯一编码id找到医生信息doctorinfo链表中对应的用户，并返回指向该信息的指针*/
 DoctorInfo *FindDoctorInfo(list_t *doctorinfo, int id);
+
+/*获取物流信息*/
+list_t *ReadPostInfo(const char *filename);
+postInfo *fFindPostInfo(const char *filename, int postid);
 
 #endif

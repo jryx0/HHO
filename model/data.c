@@ -71,9 +71,9 @@ list_t *ReadUserInfo(const char *filename)
 
 	while (fgets(line, 32, fp))
 	{
-		if(line[0] == '#')
+		if (line[0] == '#')
 			continue;
-			
+
 		Infotemp = malloc(sizeof(userInfo));
 		if (NULL == list)
 		{
@@ -158,9 +158,11 @@ userInfo *fFindUserInfo(const char *filename, char *username, char *password)
 	Infotemp = malloc(sizeof(userInfo));
 	while (fgets(line, 32, fp))
 	{ //用sscanf将line中的各数据读入对应的变量中
+		if (line[0] == '#')
+			continue;
 		sscanf(line, "%d\t%s\t%s\t%c", &(Infotemp->userID), Infotemp->username, Infotemp->password, &(Infotemp->userType));
 		if (strcmpi(username, Infotemp->username) == 0 && 0 == strcmpi(password, Infotemp->password))
-		{//忽略大小写
+		{ //忽略大小写
 			fclose(fp);
 			return Infotemp;
 		}
@@ -186,7 +188,7 @@ list_t *ReadPatientInfo(const char *filename)
 
 	while (fgets(line, 130, fp))
 	{
-		if(line[0] == '#')
+		if (line[0] == '#')
 			continue;
 
 		Infotemp = malloc(sizeof(PatientInfo));
@@ -266,7 +268,7 @@ list_t *ReadDeptInfo(const char *filename)
 
 	while (fgets(line, 90, fp))
 	{
-		if(line[0] == '#')
+		if (line[0] == '#')
 			continue;
 
 		Infotemp = malloc(sizeof(DeptInfo));
@@ -340,7 +342,7 @@ list_t *ReadDoctorInfo(const char *filename)
 
 	while (fgets(line, 85, fp))
 	{
-		if(line[0] == '#')
+		if (line[0] == '#')
 			continue;
 
 		Infotemp = malloc(sizeof(DoctorInfo));
@@ -399,4 +401,83 @@ DoctorInfo *FindDoctorInfo(list_t *doctorinfo, int id)
 
 	list_iterator_destroy(it);
 	return Infotemp;
+}
+
+//----------------物流信息----------------------------//
+
+list_t *ReadPostInfo(const char *filename)
+{
+	FILE *fp;
+	list_t *list = NULL;
+	char line[256];
+	postInfo *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		printf("unable to open %s\r\n", filename);
+		return NULL;
+	}
+
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		Infotemp = malloc(sizeof(postInfo));
+		if (NULL == list)
+		{
+			list = list_new();
+			list->match = DoctorInfomatch;
+			list->free = Nonemallocfree;
+		}
+		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
+					 &Infotemp->userid, &Infotemp->postid,
+					 Infotemp->shipper, Infotemp->shipperaddr,
+					 Infotemp->shiptime,
+					 Infotemp->receiver,
+					 Infotemp->receiveraddr,
+					 Infotemp->tel,
+					 &Infotemp->status);
+		list_rpush(list, list_node_new(Infotemp));
+	}
+
+	fclose(fp);
+	return list;
+}
+
+postInfo *fFindPostInfo(const char *filename, int postid)
+{
+	FILE *fp;
+	char line[256];
+	postInfo *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		printf("unable to open %s\r\n", filename);
+		return NULL;
+	}
+
+	Infotemp = malloc(sizeof(postInfo));
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
+					 &Infotemp->userid, &Infotemp->postid,
+					 Infotemp->shipper, Infotemp->shipperaddr,
+					 Infotemp->shiptime,
+					 Infotemp->receiver,
+					 Infotemp->receiveraddr,
+					 Infotemp->tel,
+					 Infotemp->status);
+		if (postid == Infotemp->postid)
+		{
+			fclose(fp);
+			return Infotemp;
+		}
+	}
+
+	free(Infotemp);
+	fclose(fp);
+	return NULL;
 }
