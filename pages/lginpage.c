@@ -183,7 +183,16 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
           hitwin->onClick(hitwin, NULL);
       }
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-      {}
+      {
+        if (hitwin->onLeave)
+          hitwin->onLeave(hitwin, NULL);
+
+        if (win->parent && win->parent->winID == ID_DESKTOP) //ÕÒµ½desktop
+        {
+          _g->activePageID = ID_HOMEPAGE;
+          win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+        }
+      }
     default:
       break;
     }
