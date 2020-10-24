@@ -20,7 +20,7 @@ hbasewinAttr *CreateNewspage(hbasewinAttr *parent, int winID, char *title)
   getWinTheme((WinStyle *)page->style, 1);
 
   Createhyperlink(page, 20, 10, 65, 25, ID_NEWS_RETURN, "[首 页]");
-  label = CreateLabel(page, 20, 25, PAGE_W - 40, PAGE_H, ID_NEWS_TEXT, title);
+  label = CreateLabel(page, 20, 30, PAGE_W - 40, PAGE_H - 5, ID_NEWS_TEXT, title);
   label->wintype = LABEL_FILE_TXT; //设置label 从文件中读取文本,并显示
 
   return page;
