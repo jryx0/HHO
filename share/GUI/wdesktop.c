@@ -273,7 +273,15 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
       else
         newpage = CreatePostpage(desktop, ID_POSTPAGE, _g->userid);
     }
-
+    break;
+  case ID_PHARMACYPAGE:
+    if (_g->isLogin)
+    {
+      if (_g->usertype == PHARMCY)
+        newpage = CreatePostpage(desktop, ID_POSTPAGE, -1);
+      else if(_g->usertype == PATIENT)
+        newpage = CreatePostpage(desktop, ID_POSTPAGE, _g->userid);
+    }
     break;
   default:
     break;
