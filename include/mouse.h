@@ -10,6 +10,7 @@ typedef struct _mouse
 	unsigned char oldLeftDown, oldRightDown;
 	char leftClickState, rightClickState;
 	char moveState;
+	int mouse_down_x, mouse_down_y, mouse_up_x, mouse_up_y; //鼠标点击，抬起位置记录
 
 	unsigned int cursorBK[MOUSE_HEIGHT][MOUSE_WIDTH]; //鼠标背景缓存
 	unsigned char (*currentCur)[MOUSE_WIDTH];

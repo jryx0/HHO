@@ -36,7 +36,7 @@ void OnLeave_button(hbasewinAttr *btn, void *value)
   TESTNULLVOID(btn);
   TESTNULLVOID(btn->style);
   btnStyle = (WinStyle *)btn->style;
-  btnStyle->bkcolor = btnStyle->bkcolor2; //颜色变深
+  btnStyle->bkcolor = btnStyle->bkcolor2; //颜色变浅
 
   OnPaint_button(btn, value);
 }

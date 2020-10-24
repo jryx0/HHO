@@ -147,7 +147,7 @@ void printCandiateHZ(int x, int y, char *text, hfont *_font)
   TESTNULLVOID(_font);
 
   buffer = (unsigned char *)malloc(_font->totalbytes);
-  TESTNULL(buffer, );
+  TESTNULLVOID(buffer);
 
   x0 = x;
   while (*text)
@@ -239,7 +239,6 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID)
   case ID_HOMEPAGE:
     newpage = CreateHomepage(desktop, ID_HOMEPAGE);
     break;
-
   case ID_TESTPAGE:
     newpage = CreateTestPage(desktop, ID_TESTPAGE, "测试页面-建设中.....");
     break;

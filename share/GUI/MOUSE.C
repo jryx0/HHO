@@ -103,9 +103,17 @@ void UpdateMouseStatus(mousestatus *status)
 
   //¼ì²âÊó±ê×´Ì¬
   if ((status->leftDown == 1) && (status->oldLeftDown == 0))
+  {
     status->leftClickState = MOUSE_BUTTON_DOWN;
+    status->mouse_down_x = xPos;
+    status->mouse_down_y = yPos;
+  }
   if ((status->leftDown == 0) && (status->oldLeftDown == 1))
+  {
     status->leftClickState = MOUSE_BUTTON_UP;
+    status->mouse_up_x = xPos;
+    status->mouse_up_y = yPos;
+  }
   if ((status->leftDown == 1) && (status->oldLeftDown == 1))
     status->leftClickState = MOUSE_BUTTON_STILL_DOWN;
   if ((status->leftDown == 0) && (status->oldLeftDown == 0))
