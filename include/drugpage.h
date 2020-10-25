@@ -7,5 +7,6 @@ hbasewinAttr *CreateDrugpage(hbasewinAttr *parent, int winID, int userid);
 void OnPaint_Drugpage(hbasewinAttr *win, void *val);
 void Eventhandler_drugpage(hbasewinAttr *win, int type, void *val);
 void createDrugList(hbasewinAttr *win, int id);
+void createPrescription(hbasewinAttr *win, int userid);
 
 #endif

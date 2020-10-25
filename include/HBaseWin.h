@@ -34,7 +34,7 @@ typedef void (*hhoeventhandler)(struct winstruct *win, int type, void *value);
 
 typedef struct _style
 {
-  char type;
+  int type;
   char textalign;
 
   char fontsize;

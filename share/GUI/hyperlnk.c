@@ -37,7 +37,7 @@ void OnClick_hyperlink(hbasewinAttr *link, void *val)
   lnkStyle = (WinStyle *)link->style;
   if (val)
   {
-    lnkStyle->type = *(char *)val;
+    lnkStyle->type = *(int *)val;
   }
   else
     lnkStyle->type = UNDERLINE;

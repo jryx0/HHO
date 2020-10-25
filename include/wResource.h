@@ -124,8 +124,17 @@
 #define ID_DRUGPAGE 3000 //取药-发药页面
 #define ID_DRUG_RETURN 3001
 
+#define ID_DRUG_PSCHK  3400
+#define ID_DRUG_PSLINK 3500
+#define ID_DRUG_PREV 3550
+#define ID_DRUG_NEXT 3551
 
+#define ID_DRUG_STOCK 3552 //查看库存
+#define ID_DRUG_SHIP 3553  //发货
+#define ID_DRUG_PAY 3553  //缴费
 
+// #define ID_DRUG_ADDITEM 3552
+// #define ID_DRUG_DELITEM 3553
 
 ///////////////未授权页面/////////////////////////////
 // #define ID_DENYPAGE 60000 

@@ -539,14 +539,50 @@ list_t *ReadPrescription(const char *filename)
 			list->match = DoctorInfomatch;
 			list->free = Nonemallocfree;
 		}
-		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
+		sscanf(line, "%d\t%s\t%d\t%d\t%s\t%ld\t%s",
 					 &Infotemp->id, Infotemp->date,
 					 &Infotemp->userid, &Infotemp->doctorid,
-					 Infotemp->dept, &Infotemp->amout,
+					 Infotemp->dept, &Infotemp->amount,
 					 Infotemp->status);
 		list_rpush(list, list_node_new(Infotemp));
 	}
 
 	fclose(fp);
 	return list;
+}
+
+////////////////////////药品///////////////////////////
+DrugItem *fFindDrugItem(const char *filename, int drugid)
+{
+	FILE *fp;
+	char line[256];
+	DrugItem *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("%s(%d):unable to open %s\r\n", __FILE__, __LINE__, filename));
+		return NULL;
+	}
+
+	Infotemp = malloc(sizeof(postInfo));
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+		sscanf(line, "%d\t%s\t%s\t%s\t%s\t%ld\t%s\t%s\t%d",
+					 &Infotemp->id, Infotemp->name, Infotemp->type,
+					 Infotemp->unit, Infotemp->kind,
+					 &Infotemp->price, Infotemp->supler, Infotemp->date,
+					 &Infotemp->supler);
+
+		if (drugid == Infotemp->id)
+		{
+			fclose(fp);
+			return Infotemp;
+		}
+	}
+
+	free(Infotemp);
+	fclose(fp);
+	return NULL;
 }

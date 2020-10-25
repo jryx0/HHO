@@ -51,7 +51,13 @@ typedef struct
 {
   unsigned int id; //药品唯一编码
   char name[32];   //药品名称,15字以内
-  float price;     //药品价格
+  char type[10];   //剂型
+  char unit[3];    //单位
+  char kind[16];   //规格
+  long price;      //价格
+  char supler[32]; //供应商
+  char date[20];   // 生产日期
+  int stock;       //库存数量
 } DrugItem;
 
 typedef struct
@@ -84,9 +90,16 @@ typedef struct
   char date[20];
   char dept[12];  //科室
   char status[8]; //处方状态
-  long amout;     //金额
-
+  long amount;    //金额
 } Prescription;
+
+typedef struct 
+{
+  unsigned int prescriptionid;
+  unsigned int drugItemid;
+  unsigned int amount;
+}PrescriptionDrugItem;
+
 
 typedef struct
 {
@@ -182,8 +195,10 @@ DoctorInfo *FindDoctorInfo(list_t *doctorinfo, int id);
 list_t *ReadPostInfo(const char *filename);
 postInfo *fFindPostInfo(const char *filename, int postid);
 
-
 /*获取处方信息*/
 list_t *ReadPrescription(const char *filename);
+
+/*查找药品*/
+DrugItem *fFindDrugItem(const char *filename, int drugid);
 
 #endif
