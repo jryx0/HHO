@@ -27,10 +27,11 @@ void createPostinfo(hbasewinAttr *parent, int userid)
   int x, y;
   hbasewinAttr *lnk;
   char info[256];
-  list_t *postlist = ReadPostInfo(DATAPATH "database\\logistic\\postinfo.txt");
+  list_t *postlist;
 
   TESTNULLVOID(parent);
   TESTNULLVOID(postlist);
+  postlist = ReadPostInfo(DATAPATH "database\\logistic\\postinfo.txt");
 
   x = 20;
   y = 110;

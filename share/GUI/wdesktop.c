@@ -17,6 +17,7 @@
 #include "regspage.h"
 #include "hdept.h"
 #include "postpage.h"
+#include "drugpage.h"
 #include <memory.h>
 #include <string.h>
 
@@ -269,18 +270,22 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
     if (_g->isLogin)
     {
       if (_g->usertype == LOGISTIC)
-        newpage = CreatePostpage(desktop, ID_POSTPAGE, -1);
+        newpage = CreatePostpage(desktop, ID_POSTPAGE, -1); //物流任意
+      else if (_g->usertype == PATIENT)
+        newpage = CreatePostpage(desktop, ID_POSTPAGE, _g->userid); //普通患者
       else
-        newpage = CreatePostpage(desktop, ID_POSTPAGE, _g->userid);
+        newpage = CreateHomepage(desktop, ID_HOMEPAGE); //其他人转跳homepage   //CreateWindowsEx(desktop, ID_DENYPAGE, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, "未授权登录");
     }
     break;
-  case ID_PHARMACYPAGE:
+  case ID_DRUGPAGE:
     if (_g->isLogin)
     {
       if (_g->usertype == PHARMCY)
-        newpage = CreatePostpage(desktop, ID_POSTPAGE, -1);
-      else if(_g->usertype == PATIENT)
-        newpage = CreatePostpage(desktop, ID_POSTPAGE, _g->userid);
+        newpage = CreateDrugpage(desktop, ID_DRUGPAGE, -1); //进入发药管理 id = -1  可以看到全部药方
+      else if (_g->usertype == PATIENT)
+        newpage = CreateDrugpage(desktop, ID_DRUGPAGE, _g->userid); //进入药房取药 id = userid
+      else
+        newpage = CreateHomepage(desktop, ID_HOMEPAGE); //CreateWindowsEx(desktop, ID_DENYPAGE, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, "未授权登录");
     }
     break;
   default:

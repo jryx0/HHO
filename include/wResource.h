@@ -27,6 +27,7 @@
 
 #define ID_MENU_PY 19
 #define ID_MENU_EXIT 20 // 退出
+
 //是否点击desktop控件最大值，用于判断是否点击desktop控件
 #define ID_DESKTOP_MAX 30
 ///拼音输入法
@@ -120,7 +121,13 @@
 #define ID_POST_LINK 2550
 
 ////////////////////////////药房 page//////////////////////////////////////////////
-#define ID_PHARMACYPAGE 3000
+#define ID_DRUGPAGE 3000 //取药-发药页面
+#define ID_DRUG_RETURN 3001
 
+
+
+
+///////////////未授权页面/////////////////////////////
+// #define ID_DENYPAGE 60000 
 
 #endif

@@ -65,7 +65,7 @@ list_t *ReadUserInfo(const char *filename)
 
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return NULL;
 	}
 
@@ -104,7 +104,7 @@ void SaveUserInfo(list_t *userinfo, char *filename)
 
 	if ((fp = fopen(filename, "wt")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return;
 	}
 
@@ -152,7 +152,7 @@ userInfo *fFindUserInfo(const char *filename, char *username, char *password)
 
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return NULL;
 	}
 	Infotemp = malloc(sizeof(userInfo));
@@ -182,7 +182,7 @@ list_t *ReadPatientInfo(const char *filename)
 
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return NULL;
 	}
 
@@ -219,7 +219,7 @@ void SavePatientInfo(list_t *patientinfo, char *filename)
 
 	if ((fp = fopen(filename, "wt")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return;
 	}
 
@@ -252,6 +252,7 @@ PatientInfo *FindPatientInfo(list_t *patientinfo, int id)
 	list_iterator_destroy(it);
 	return Infotemp;
 }
+
 //---------------Department-----------------//
 list_t *ReadDeptInfo(const char *filename)
 {
@@ -262,7 +263,7 @@ list_t *ReadDeptInfo(const char *filename)
 
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return NULL;
 	}
 
@@ -296,7 +297,7 @@ void SaveDeptInfo(list_t *deptinfo, char *filename)
 
 	if ((fp = fopen(filename, "wt")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return;
 	}
 
@@ -326,6 +327,36 @@ DeptInfo *FindDeptInfo(list_t *deptinfo, int id)
 	list_iterator_destroy(it);
 	return Infotemp;
 }
+
+DeptInfo *fFindDeptInfo(const char *filename, int id)
+{
+	FILE *fp;
+	char line[90];
+	DeptInfo *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	Infotemp = malloc(sizeof(DeptInfo));
+	while (fgets(line, 90, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		sscanf(line, "%d\t%s\t%s", &(Infotemp->id), Infotemp->deptname, Infotemp->deptintro);
+
+		if (id == Infotemp->id)
+			return Infotemp;
+	}
+
+	free(Infotemp);
+	fclose(fp);
+	return NULL;
+}
+
 //---------------Doctor-----------------//
 list_t *ReadDoctorInfo(const char *filename)
 {
@@ -336,7 +367,7 @@ list_t *ReadDoctorInfo(const char *filename)
 
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return NULL;
 	}
 
@@ -371,7 +402,7 @@ void SaveDoctorInfo(list_t *doctorinfo, char *filename)
 
 	if ((fp = fopen(filename, "wt")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return;
 	}
 
@@ -414,7 +445,7 @@ list_t *ReadPostInfo(const char *filename)
 
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return NULL;
 	}
 
@@ -437,7 +468,7 @@ list_t *ReadPostInfo(const char *filename)
 					 Infotemp->receiver,
 					 Infotemp->receiveraddr,
 					 Infotemp->tel,
-					 &Infotemp->status);
+					 Infotemp->status);
 		list_rpush(list, list_node_new(Infotemp));
 	}
 
@@ -453,7 +484,7 @@ postInfo *fFindPostInfo(const char *filename, int postid)
 
 	if ((fp = fopen(filename, "r")) == NULL)
 	{
-		printf("unable to open %s\r\n", filename);
+		TRACE(("unable to open %s\r\n", filename));
 		return NULL;
 	}
 
@@ -480,4 +511,42 @@ postInfo *fFindPostInfo(const char *filename, int postid)
 	free(Infotemp);
 	fclose(fp);
 	return NULL;
+}
+
+//----------------处方信息----------------------------//
+list_t *ReadPrescription(const char *filename)
+{
+	FILE *fp;
+	list_t *list = NULL;
+	char line[256];
+	Prescription *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		Infotemp = malloc(sizeof(postInfo));
+		if (NULL == list)
+		{
+			list = list_new();
+			list->match = DoctorInfomatch;
+			list->free = Nonemallocfree;
+		}
+		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
+					 &Infotemp->id, Infotemp->date,
+					 &Infotemp->userid, &Infotemp->doctorid,
+					 Infotemp->dept, &Infotemp->amout,
+					 Infotemp->status);
+		list_rpush(list, list_node_new(Infotemp));
+	}
+
+	fclose(fp);
+	return list;
 }

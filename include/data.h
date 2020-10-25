@@ -60,6 +60,7 @@ typedef struct
   char addr[32];    //仓库地址,不超过15字
   char name[15];    //仓库名称,不超过7字
 } Warehouse;
+
 // typedef struct
 // {
 //   DrugItem drug;   //药品信息
@@ -75,14 +76,16 @@ typedef struct
 
 typedef struct
 {
-  unsigned int id;       //处方唯一编码
-  unsigned int userid;   //用户唯一编码
-  PatientInfo *puser;    //指向用户
+  unsigned int id;     //处方唯一编码
+  unsigned int userid; //用户唯一编码
+  PatientInfo *patient;
   unsigned int doctorid; //医生唯一编码
-  DoctorInfo *pdoctor;   //指向医生
-  time_t datetime;       //处方生成时间
-  //DrugList *head;        //药品清单头指针
-  //list_t * Druglist;
+  DoctorInfo *doctor;
+  char date[20];
+  char dept[12];  //科室
+  char status[8]; //处方状态
+  long amout;     //金额
+
 } Prescription;
 
 typedef struct
@@ -123,11 +126,11 @@ typedef struct
 //运单主表信息
 typedef struct
 {
-  unsigned int userid; //用户信息
-  unsigned int postid; //运单号
+  unsigned int userid;   //用户信息
+  unsigned int postid;   //运单号
   char shipper[32];      //发货人
   char shipperaddr[32];  //发货地址
-  char shiptime[20];       //发货时间
+  char shiptime[20];     //发货时间
   char receiver[16];     //收货人
   char receiveraddr[32]; //收货地址
   char tel[12];          //收货人电话
@@ -137,11 +140,11 @@ typedef struct
 
 //物流过程信息
 typedef struct postitem
-{  
+{
   unsigned int billid;  //运单编号
-  char arrivedtime[20];   //到达时间
+  char arrivedtime[20]; //到达时间
   char arrivedaddr[32]; //到达地址
-  char status[16]; //配送状态
+  char status[16];      //配送状态
 } postitem;
 
 /*从filename代表的文件中读出用户信息并将信息以链表形式存入内存，返回表头*/
@@ -166,6 +169,7 @@ list_t *ReadDeptInfo(const char *filename);
 void SaveDeptInfo(list_t *deptinfo, char *filename);
 /*通过科室唯一编码id找到科室信息deptinfo链表中对应的用户，并返回指向该信息的指针*/
 DeptInfo *FindDeptInfo(list_t *deptinfo, int id);
+DeptInfo *fFindDeptInfo(const char *filename, int id);
 
 /*从filename代表的文件中读出医生信息并将信息以链表形式存入内存，返回表头*/
 list_t *ReadDoctorInfo(const char *filename);
@@ -177,5 +181,9 @@ DoctorInfo *FindDoctorInfo(list_t *doctorinfo, int id);
 /*获取物流信息*/
 list_t *ReadPostInfo(const char *filename);
 postInfo *fFindPostInfo(const char *filename, int postid);
+
+
+/*获取处方信息*/
+list_t *ReadPrescription(const char *filename);
 
 #endif

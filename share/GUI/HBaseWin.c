@@ -134,13 +134,16 @@ void OnDestory(hbasewinAttr *win, void *val)
  */
 void OnPaint(hbasewinAttr *win, void *val)
 {
-  // int x1, x2, y1, y2;
-  // int type;
 
+  // hfont *_h;
   // TESTNULLVOID(win);
 
-  // x1 = getAbsoluteX(win);
-  // y1 = getAbsoluteY(win);
+  // if (win->title)
+  // {
+  //   _h = getFont(SIMHEI, 24, 0x0000);
+  //   printTextLineXY(getAbsoluteX(win), getAbsoluteY(win), win->title, _h);
+  //   freeFont(_h);
+  // }
   // x2 = x1 + win->nWidth;
   // y2 = y1 + win->nHeight;
 

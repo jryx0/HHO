@@ -49,7 +49,7 @@ hbasewinAttr *CreateDeptpage(hbasewinAttr *parent, int winID, char *title)
   WinStyle *style;
 
   Createhyperlink(page, 20, 10, 65, 25, ID_DEPT_RETURN, "[首 页]");
-  Createhyperlink(page, 170, PAGE_H - 50, 165, 25, ID_DEPT_DOCLINK, NULL);
+  Createhyperlink(page, 170, PAGE_H - 50, 200, 25, ID_DEPT_DOCLINK, NULL);
 
   ctrl = CreateLabel(page, 160, 25, PAGE_W - 220, PAGE_H - 100, ID_DEPT_TEXT, NULL);
   ctrl->wintype = LABEL_FILE_TXT; //设置label 从文件中读取文本,并显示
@@ -174,7 +174,7 @@ void EventHandler_deptpage(hbasewinAttr *win, int type, void *val)
           hbasewinAttr *ctrl = findWinByID(win, ID_DEPT_TEXT);
           if (hitwin->onLeave)
             hitwin->onLeave(hitwin, NULL);
-          TRACE(("deptpage:mouse in button id = %d\n", hitwin->winID));
+          //TRACE(("deptpage:mouse in button id = %d\n", hitwin->winID));
           //label中显示 内容
           if (ctrl)
           {
@@ -192,8 +192,8 @@ void EventHandler_deptpage(hbasewinAttr *win, int type, void *val)
           {
             if (ctrl->title)
               free(ctrl->title);
-            ctrl->title = malloc(24);
-            sprintf(ctrl->title, "[选择%s医生挂号]", hitwin->title);
+            ctrl->title = malloc(32);
+            sprintf(ctrl->title, "[选择%s医生挂号]     ", hitwin->title);
             ctrl->onPaint(ctrl, NULL);
             ctrl->data = hitwin->data; // 科室编号 内科 = 901
           }

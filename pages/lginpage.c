@@ -155,7 +155,7 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
               _g->activePageID = ID_HOMEPAGE;
               break;
             case PHARMCY:
-              _g->activePageID = ID_HOMEPAGE;
+              _g->activePageID = ID_DRUGPAGE;
               break;
             case LOGISTIC:
               _g->activePageID = ID_HOMEPAGE;
