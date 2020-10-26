@@ -18,6 +18,7 @@
 #include "hdept.h"
 #include "postpage.h"
 #include "drugpage.h"
+#include "paydrug.h"
 #include <memory.h>
 #include <string.h>
 
@@ -287,6 +288,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
       else
         newpage = CreateHomepage(desktop, ID_HOMEPAGE); //CreateWindowsEx(desktop, ID_DENYPAGE, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, "Î´ÊÚÈ¨µÇÂ¼");
     }
+    break;
+  case ID_PAYPSPAGE:
+    newpage = CreatePayDrugpage(desktop, ID_PAYPSPAGE, _g->userid);
     break;
   default:
     break;

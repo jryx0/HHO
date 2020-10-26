@@ -165,6 +165,7 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
               break;
             }
             win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+            free(infotemp);
           }
           else
           {

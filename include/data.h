@@ -91,15 +91,15 @@ typedef struct
   char dept[12];  //科室
   char status[8]; //处方状态
   long amount;    //金额
+  int postid;
 } Prescription;
 
-typedef struct 
+typedef struct
 {
   unsigned int prescriptionid;
   unsigned int drugItemid;
   unsigned int amount;
-}PrescriptionDrugItem;
-
+} PrescriptionDrugItem;
 
 typedef struct
 {
@@ -175,6 +175,7 @@ list_t *ReadPatientInfo(const char *filename);
 void SavePatientInfo(list_t *patientinfo, char *filename);
 /*通过病人唯一编码id找到病人信息patientinfo链表中对应的用户，并返回指向该信息的指针*/
 PatientInfo *FindPatientInfo(list_t *patientinfo, int id);
+PatientInfo *fFindPatientInfo(const char *filename, int id);
 
 /*从filename代表的文件中读出科室信息并将信息以链表形式存入内存，返回表头*/
 list_t *ReadDeptInfo(const char *filename);
@@ -194,10 +195,13 @@ DoctorInfo *FindDoctorInfo(list_t *doctorinfo, int id);
 /*获取物流信息*/
 list_t *ReadPostInfo(const char *filename);
 postInfo *fFindPostInfo(const char *filename, int postid);
+void SavePostInfo(const char *filename, list_t *polist);
 
 /*获取处方信息*/
 list_t *ReadPrescription(const char *filename);
-
+Prescription *FindPrescription(list_t *ps, int id);
+Prescription *fFindPrescription(const char *filename, int psid);
+void SavePrescription(const char *filename, list_t *pslist);
 /*查找药品*/
 DrugItem *fFindDrugItem(const char *filename, int drugid);
 

@@ -108,6 +108,8 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
               _g->activePageID = ID_POSTPAGE; //物流页面
             else if (hitwin->winID == ID_HOMEPAGE_DRUG)
               _g->activePageID = ID_DRUGPAGE; //药房页面
+            else if (hitwin->winID == ID_HOMEPAGE_CHARGE2)
+              _g->activePageID = ID_PAYPSPAGE; //处方缴费页面
             // else
             //   _g->activePageID = ID_DENYPAGE;
 

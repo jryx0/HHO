@@ -16,7 +16,7 @@
 #define COL4 (COL3 + 120)
 #define COL5 (COL4 + 80)
 #define COL6 (COL5 + 180)
-#define COL7 (COL6 + 160)
+#define COL7 (COL6 + 170)
 #define COL8 120
 
 void createPostinfo(hbasewinAttr *parent, int userid)
@@ -31,7 +31,8 @@ void createPostinfo(hbasewinAttr *parent, int userid)
 
   TESTNULLVOID(parent);
   TESTNULLVOID(postlist);
-  postlist = ReadPostInfo(DATAPATH "database\\logistic\\postinfo.txt");
+  //postlist = ReadPostInfo(DATAPATH "database\\logistic\\postinfo.txt");
+  postlist = ReadPostInfo(POSTFILE);
 
   x = 20;
   y = 110;
@@ -44,7 +45,7 @@ void createPostinfo(hbasewinAttr *parent, int userid)
 
       pi = (postInfo *)node->val;
 
-      sprintf(info, "%d       %s       %s    %s     %s   %s    %s    %s",
+      sprintf(info, "%-12d%-10s%-18s%-15s%-8s%-21s%-20s%s",
               pi->postid,
               pi->receiver, pi->receiveraddr, pi->tel,
               pi->shipper, pi->shipperaddr, pi->shiptime,
@@ -82,37 +83,39 @@ void showPostInfo(hbasewinAttr *win, int postid)
   char infostr[64];
   hfont *_h;
   WinStyle *style;
-  postInfo *pi;
+  postInfo *postinfo;
   FILE *fp;
   int i = 0;
   int x, y;
 
   TESTNULLVOID(win);
-  pi = fFindPostInfo(DATAPATH "database\\logistic\\postinfo.txt", postid);
+  //pi = fFindPostInfo(DATAPATH "database\\logistic\\postinfo.txt", postid);
+  //ffind需要释放
+  postinfo = fFindPostInfo(POSTFILE, postid);
 
-  if (pi)
+  if (postinfo)
   {
     style = win->style;
     _h = getFont(SIMHEI, style->fontsize, 0x0000);
     //运单号
-    sprintf(infostr, "%d", pi->postid);
+    sprintf(infostr, "%d", postinfo->postid);
     fillRegionEx(win->x + 570, win->y + 350, 100, 20, 0xFFFF);
     printTextLineXY(win->x + 570, win->y + 350, infostr, _h);
     //发货人
-    sprintf(infostr, "%s", pi->shipper);
+    sprintf(infostr, "%s", postinfo->shipper);
     fillRegionEx(win->x + 745, win->y + 350, 100, 20, 0xFFFF);
     printTextLineXY(win->x + 745, win->y + 350, infostr, _h);
     //收货人
-    sprintf(infostr, "%s", pi->receiver);
+    sprintf(infostr, "%s", postinfo->receiver);
     fillRegionEx(win->x + 920, win->y + 350, 100, 20, 0xFFFF);
     printTextLineXY(win->x + 920, win->y + 350, infostr, _h);
     //收货人地址
-    sprintf(infostr, "%s", pi->receiveraddr);
+    sprintf(infostr, "%s", postinfo->receiveraddr);
     fillRegionEx(win->x + 630, win->y + 390, 150, 20, 0xFFFF);
     printTextLineXY(win->x + 630, win->y + 390, infostr, _h);
 
     //收货人电话
-    sprintf(infostr, "%s", pi->tel);
+    sprintf(infostr, "%s", postinfo->tel);
     fillRegionEx(win->x + 630, win->y + 430, 150, 20, 0xFFFF);
     printTextLineXY(win->x + 630, win->y + 430, infostr, _h);
 
@@ -148,6 +151,8 @@ void showPostInfo(hbasewinAttr *win, int postid)
     lineyEx(x + COL5, y + 80, PAGE_H / 2 - 50, 0x6BAF);
     lineyEx(x + COL6, y + 80, PAGE_H / 2 - 50, 0x6BAF);
     lineyEx(x + COL7, y + 80, PAGE_H / 2 - 50, 0x6BAF);
+
+    free(postinfo);
   }
 }
 

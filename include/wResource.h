@@ -131,10 +131,23 @@
 
 #define ID_DRUG_STOCK 3552 //查看库存
 #define ID_DRUG_SHIP 3553  //发货
-#define ID_DRUG_PAY 3553  //缴费
+#define ID_DRUG_CONFIRM 3554  //缴费
 
 // #define ID_DRUG_ADDITEM 3552
 // #define ID_DRUG_DELITEM 3553
+
+////////////////////////////处方缴费 page//////////////////////////////////////////////
+#define ID_PAYPSPAGE 4000 //取药-发药页面
+#define ID_PAYPS_RETURN 4001
+
+#define ID_PAYPS_PSCHK  4400
+#define ID_PAYPS_PSLINK 4500
+#define ID_PAYPS_PREV 4550
+#define ID_PAYPS_NEXT 4551
+
+//#define ID_PAYPS_STOCK 4552 //查看库存
+//#define ID_PAYPS_SHIP 4553  //发货
+#define ID_PAYPS_CONFIRM 4554  //缴费
 
 ///////////////未授权页面/////////////////////////////
 // #define ID_DENYPAGE 60000 
