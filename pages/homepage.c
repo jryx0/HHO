@@ -103,13 +103,9 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
           //homepage中顺序 50 - 55
           if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
           {
-            _g->activePageID = ID_HOMEPAGE;
+            _g->activePageID = ID_LOGINPAGE;
             if (hitwin->winID == ID_HOMEPAGE_LOGISTICS)
               _g->activePageID = ID_POSTPAGE; //物流页面
-            else if (hitwin->winID == ID_HOMEPAGE_DRUG)
-              _g->activePageID = ID_DRUGPAGE; //药房页面
-            // else
-            //   _g->activePageID = ID_DENYPAGE;
 
             win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
           }

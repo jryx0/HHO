@@ -23,7 +23,7 @@ hbasewinAttr *Createloginpage(hbasewinAttr *parent, int winID)
   pwd->wintype = TEXTBOX_PASSWORD;
   Createhyperlink(page, 20, 10, 65, 25, ID_LOGIN_RETURN, "[首 页]");
   CreateButton(page, PAGE_W / 2 + 30, PAGE_H - 200, 120, 40, ID_LOGIN_LOGIN, "登 录");
-  CreateButton(page, PAGE_W / 2 - 120, PAGE_H - 200, 120, 40, ID_LOGIN_REGISTER, "注 册");
+  CreateButton(page, PAGE_W / 2 - 120, PAGE_H - 200, 120, 40, ID_LOGIN_SIGNIN, "注 册");
 
   page->style = malloc(sizeof(WinStyle));
   getWinTheme((WinStyle *)page->style, 1);
@@ -176,6 +176,23 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
       }
       break;
 
+    case ID_LOGIN_SIGNIN:
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在窗口部分显示手型鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+      }
+       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标释放
+        if (hitwin->onLeave)
+          hitwin->onLeave(hitwin, NULL);
+        
+        _g->activePageID = ID_SIGNINPAGE;
+        win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+      }
     default:
       break;
     }

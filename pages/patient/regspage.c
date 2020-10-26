@@ -17,14 +17,12 @@ hbasewinAttr *Createregisterpage(hbasewinAttr *parent, int winID)
   page->EventHandler = EventHandler_registerpage;
 
   Createhyperlink(page, 20, 10, 65, 25, ID_REGISTER_RETURN, "[首 页]");
-  CreateButton(page, 20, 70, 100, 35, ID_REGISTER_DEPT_MEDICINE, "内科"); //内科、外科、儿科、妇科、眼科、耳鼻喉科、口腔科、皮肤科
-  CreateButton(page, 150, 70, 100, 35, ID_REGISTER_DEPT_SURGERY, "外科");
-  CreateButton(page, 20, 120, 100, 35, ID_REGISTER_DEPT_PAEDIATRICS, "儿科");
-  CreateButton(page, 150, 120, 100, 35, ID_REGISTER_DEPT_GYNAECOLOGY, "妇科");
-  CreateButton(page, 20, 170, 100, 35, ID_REGISTER_DEPT_OPHTHALMOLOGY, "眼科");
-  CreateButton(page, 150, 170, 100, 35, ID_REGISTER_DEPT_ENT, "耳鼻喉科");
-  CreateButton(page, 20, 220, 100, 35, ID_REGISTER_DEPT_STOMATOLOGY, "口腔科");
-  CreateButton(page, 150, 220, 100, 35, ID_REGISTER_DEPT_DERMATOLOGY, "皮肤科");
+  CreateButton(page, 15, 55, 125, 45, ID_REGISTER_DEPT_MEDICINE, "内科");
+  CreateButton(page, 15, 105, 125, 45, ID_REGISTER_DEPT_SURGERY, "外科");
+  CreateButton(page, 15, 155, 125, 45, ID_REGISTER_DEPT_PAEDIATRICS, "儿科");
+  CreateButton(page, 15, 205, 125, 45, ID_REGISTER_DEPT_GYNAECOLOGY, "妇科");
+  CreateButton(page, 15, 255, 125, 45, ID_REGISTER_DEPT_ENT, "耳鼻喉科");
+  CreateButton(page, 15, 305, 125, 45, ID_REGISTER_DEPT_STOMATOLOGY, "口腔科");
 
   page->style = malloc(sizeof(WinStyle));
   getWinTheme((WinStyle *)page->style, 1);
@@ -102,10 +100,8 @@ void EventHandler_registerpage(hbasewinAttr *win, int type, void *value)
     case ID_REGISTER_DEPT_SURGERY:
     case ID_REGISTER_DEPT_PAEDIATRICS:
     case ID_REGISTER_DEPT_GYNAECOLOGY:
-    case ID_REGISTER_DEPT_OPHTHALMOLOGY:
     case ID_REGISTER_DEPT_ENT:
     case ID_REGISTER_DEPT_STOMATOLOGY:
-    case ID_REGISTER_DEPT_DERMATOLOGY:
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
 

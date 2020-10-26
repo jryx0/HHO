@@ -14,6 +14,7 @@
 #include "homepage.h"
 #include "lginpage.h"
 #include "hnews.h"
+#include "signpage.h"
 #include "regspage.h"
 #include "hdept.h"
 #include "postpage.h"
@@ -252,6 +253,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
     break;
   case ID_LOGINPAGE:
     newpage = Createloginpage(desktop, ID_LOGINPAGE);
+    break;
+  case ID_SIGNINPAGE:
+    newpage = Createsignpage(desktop, ID_SIGNINPAGE);
     break;
   case ID_NEWSPAGE:
   {

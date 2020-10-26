@@ -85,7 +85,7 @@
 
 //////////////////////Login windows defined////////////////////////////////
 #define ID_LOGINPAGE 1000
-#define ID_LOGIN_REGISTER 1001
+#define ID_LOGIN_SIGNIN 1001
 #define ID_LOGIN_LOGIN 1002
 #define ID_LOGIN_RETURN 1003
 #define ID_LOGIN_USERNAME 1004
@@ -98,10 +98,8 @@
 #define ID_REGISTER_DEPT_SURGERY 2003       //外科
 #define ID_REGISTER_DEPT_PAEDIATRICS 2004   //儿科
 #define ID_REGISTER_DEPT_GYNAECOLOGY 2005   //妇科
-#define ID_REGISTER_DEPT_OPHTHALMOLOGY 2006 //眼科
-#define ID_REGISTER_DEPT_ENT 2007           //耳鼻喉科
-#define ID_REGISTER_DEPT_STOMATOLOGY 2008   //口腔科
-#define ID_REGISTER_DEPT_DERMATOLOGY 2009   //皮肤科
+#define ID_REGISTER_DEPT_ENT 2006           //耳鼻喉科
+#define ID_REGISTER_DEPT_STOMATOLOGY 2007   //口腔科
 
 ////////////////////////////物流 page//////////////////////////////////////////////
 #define ID_POSTPAGE 2500
@@ -132,6 +130,10 @@
 #define ID_DRUG_STOCK 3552 //查看库存
 #define ID_DRUG_SHIP 3553  //发货
 #define ID_DRUG_PAY 3553  //缴费
+
+////////////////////////////registerpage//////////////////////////////////////////////
+#define ID_SIGNINPAGE 4000
+
 
 // #define ID_DRUG_ADDITEM 3552
 // #define ID_DRUG_DELITEM 3553
