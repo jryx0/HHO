@@ -417,7 +417,7 @@ list_t *ReadDoctorInfo(const char *filename)
 		if (NULL == list)
 		{
 			list = list_new();
-			list->match = DoctorInfomatch;
+			//list->match = DoctorInfomatch;
 			list->free = Nonemallocfree;
 		}
 		sscanf(line, "%d\t%s\t%c\t%d\t%s\t%c", &(Infotemp->id), Infotemp->name, &(Infotemp->sex),
@@ -470,6 +470,39 @@ DoctorInfo *FindDoctorInfo(list_t *doctorinfo, int id)
 	list_iterator_destroy(it);
 	return Infotemp;
 }
+DoctorInfo *fFindDoctorInfo(const char *filename, int docid)
+{
+	FILE *fp;
+	char line[256];
+	DoctorInfo *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	Infotemp = malloc(sizeof(DoctorInfo));
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		sscanf(line, "%d\t%s\t%c\t%d\t%s\t%c", &(Infotemp->id), Infotemp->name, &(Infotemp->sex),
+					 &(Infotemp->deptid), Infotemp->intro, &(Infotemp->title));
+
+		if (Infotemp->id == docid)
+		{
+			fclose(fp);
+			return Infotemp;
+		}
+	}
+
+	fclose(fp);
+	free(Infotemp);
+	TRACE(("not find\n"));
+	return NULL;
+}
 
 //----------------物流信息----------------------------//
 
@@ -495,7 +528,7 @@ list_t *ReadPostInfo(const char *filename)
 		if (NULL == list)
 		{
 			list = list_new();
-			list->match = DoctorInfomatch;
+			//list->match = DoctorInfomatch;
 			list->free = Nonemallocfree;
 		}
 		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%s\t%s\t%s\t%s",
@@ -647,7 +680,7 @@ list_t *ReadPrescription(const char *filename)
 		if (NULL == list)
 		{
 			list = list_new();
-			list->match = DoctorInfomatch;
+			//list->match = DoctorInfomatch;
 			list->free = Nonemallocfree;
 		}
 		sscanf(line, "%d\t%s\t%d\t%d\t%s\t%ld\t%s\t%d",
@@ -746,6 +779,70 @@ void SavePrescription(const char *filename, list_t *pslist)
 	fclose(fp);
 }
 
+//------------------挂号信息---------------------//
+list_t *ReadRegistration(const char *filename)
+{
+	FILE *fp;
+	list_t *list = NULL;
+	char line[256];
+	RegisterInfo *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		Infotemp = malloc(sizeof(RegisterInfo));
+		if (NULL == list)
+		{
+			list = list_new();
+			//list->match = DoctorInfomatch;
+			list->free = Nonemallocfree;
+		}
+		sscanf(line, "%d\t%d\t%d\t%s\t%s\t%d\t%d",
+					 &Infotemp->id, &Infotemp->userid, &Infotemp->doctorid,
+					 Infotemp->dept, Infotemp->datetime, &Infotemp->serial,
+					 &Infotemp->status);
+		list_rpush(list, list_node_new(Infotemp));
+	}
+
+	fclose(fp);
+	return list;
+}
+void SaveRegistration(const char *filename, list_t *rlist)
+{
+	FILE *fp;
+	list_node_t *node;
+	RegisterInfo *Infotemp;
+	list_iterator_t *it;
+
+	if ((fp = fopen(filename, "wt")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return;
+	}
+	fprintf(fp, "#挂号单号  患者id 医生id 科室 时间 流水号 状态\n");
+	it = list_iterator_new(rlist, LIST_HEAD);
+	while ((node = list_iterator_next(it)))
+	{
+		Infotemp = (RegisterInfo *)node->val;
+		fprintf(fp, "%d\t%d\t%d\t%s\t%s\t%d\t%d",
+						Infotemp->id, Infotemp->userid, Infotemp->doctorid,
+						Infotemp->dept, Infotemp->datetime, Infotemp->serial,
+						Infotemp->status);
+	}
+
+	list_iterator_destroy(it);
+	fflush(fp);
+	fclose(fp);
+}
+
 ////////////////////////药品///////////////////////////
 DrugItem *fFindDrugItem(const char *filename, int drugid)
 {
@@ -780,4 +877,51 @@ DrugItem *fFindDrugItem(const char *filename, int drugid)
 	free(Infotemp);
 	fclose(fp);
 	return NULL;
+}
+
+list_t *ReadDrugItembyName(const char *filename, char *name)
+{
+	FILE *fp;
+	list_t *list = NULL;
+	char line[256];
+	DrugItem *Infotemp;
+	int i = 0;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		Infotemp = malloc(sizeof(DrugItem));
+		if (NULL == list)
+		{
+			list = list_new();
+			//list->match = DoctorInfomatch;
+			list->free = Nonemallocfree;
+		}
+
+		sscanf(line, "%d\t%s\t%s\t%s\t%s\t%ld\t%s\t%s\t%d",
+					 &Infotemp->id, Infotemp->name, Infotemp->type,
+					 Infotemp->unit, Infotemp->kind,
+					 &Infotemp->price, Infotemp->supler, Infotemp->date,
+					 &Infotemp->supler);
+
+		if (strstr(Infotemp->name, name) != NULL)
+		{
+			list_rpush(list, list_node_new(Infotemp));
+			if (++i > 5)
+				break;
+		}
+		else
+			free(Infotemp);
+	}
+
+	fclose(fp);
+	return list;
 }

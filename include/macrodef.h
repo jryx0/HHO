@@ -10,7 +10,7 @@
 //     fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
 //     return Y;                                             \
 //   }
- 
+
 #define TESTNULL(X, Y) \
   if (X == NULL)       \
   {                    \
@@ -83,6 +83,12 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 
 //处方信息存储文件
 #define PRESCRITIONFILE DATAPATH "database\\ps\\psinfo.txt"
+
+//挂号存储文件
+#define REGISTRATIONFILE DATAPATH "database\\regs\\regs.txt"
+
+//药品文件
+#define DRUGFILE DATAPATH "database\\drug\\druglist.txt"
 
 //pinyin files
 #define FILE_PYINDEX DATAPATH "pinyin\\index.txt"

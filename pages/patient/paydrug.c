@@ -27,7 +27,7 @@ hbasewinAttr *CreatePayDrugpage(hbasewinAttr *parent, int winID, int userid)
 {
   hbasewinAttr *page = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, NULL);
   page->onPaint = OnPaint_PayDrugpage;
-  Createhyperlink(page, 20, 10, 65, 25, ID_PAYPS_RETURN, "[首 页]");
+  // Createhyperlink(page, 20, 10, 65, 25, ID_PAYPS_RETURN, "[首 页]");
   page->EventHandler = Eventhandler_paydrugpage;
 
   page->style = malloc(sizeof(WinStyle));
@@ -258,7 +258,7 @@ void drawPostInfo_pay(hbasewinAttr *win, int psid)
   }
   freeFont(_h);
 }
-
+/*
 void generatePostInfo_pay(hbasewinAttr *win, int psid)
 {
   hbasewinAttr *lnk;
@@ -332,7 +332,7 @@ void generatePostInfo_pay(hbasewinAttr *win, int psid)
   free(patient);
   TRACE(("%s(%d): save2\n", __FILE__, __LINE__));
 }
-
+*/
 //返回checkbox选择的hyperlink
 hbasewinAttr *getcheckedlink_pay(hbasewinAttr *win)
 {
@@ -408,6 +408,28 @@ void Eventhandler_paydrugpage(hbasewinAttr *win, int type, void *val)
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow;
     }
     break;
+  case ID_PAYPS_RETURN:
+    if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
+      _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+    if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+    { //鼠标按下
+      if (hitwin->onClick)
+        hitwin->onClick(hitwin, NULL);
+    }
+    else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+    { //鼠标释放
+      if (hitwin->onLeave)
+        hitwin->onLeave(hitwin, NULL);
+
+      //转跳homepage
+      if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+      {
+        _g->activePageID = ID_HOMEPAGE;
+        win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+      }
+    }
+    break;
   case ID_PAYPS_CONFIRM:
     if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
       _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
@@ -444,7 +466,7 @@ void Eventhandler_paydrugpage(hbasewinAttr *win, int type, void *val)
 
               fillPrescription_pay(win, 0);
               repaintChildren(win, NULL);
-              drawPrescription(win->x, win->y);
+              drawPrescription_pay(win->x, win->y);
             }
           }
           list_destroy(tmplist);

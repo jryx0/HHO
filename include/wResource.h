@@ -113,10 +113,9 @@
 #define ID_POST_UPDATESTATUS 2506
 
 #define ID_POST_QUERY_BILLNUM 2510
-#define ID_POST_QUERY_SHIPPER 2511 
+#define ID_POST_QUERY_SHIPPER 2511
 #define ID_POST_QUERY_SHIPPERTEL 2512
 #define ID_POST_QUERY_RECEIVER 2513
- 
 
 #define ID_POST_LINK 2550
 
@@ -124,14 +123,14 @@
 #define ID_DRUGPAGE 3000 //取药-发药页面
 #define ID_DRUG_RETURN 3001
 
-#define ID_DRUG_PSCHK  3400
+#define ID_DRUG_PSCHK 3400
 #define ID_DRUG_PSLINK 3500
 #define ID_DRUG_PREV 3550
 #define ID_DRUG_NEXT 3551
 
-#define ID_DRUG_STOCK 3552 //查看库存
-#define ID_DRUG_SHIP 3553  //发货
-#define ID_DRUG_CONFIRM 3554  //缴费
+#define ID_DRUG_STOCK 3552   //查看库存
+#define ID_DRUG_SHIP 3553    //发货
+#define ID_DRUG_CONFIRM 3554 //缴费
 
 // #define ID_DRUG_ADDITEM 3552
 // #define ID_DRUG_DELITEM 3553
@@ -140,16 +139,36 @@
 #define ID_PAYPSPAGE 4000 //取药-发药页面
 #define ID_PAYPS_RETURN 4001
 
-#define ID_PAYPS_PSCHK  4400
+#define ID_PAYPS_PSCHK 4400
 #define ID_PAYPS_PSLINK 4500
 #define ID_PAYPS_PREV 4550
 #define ID_PAYPS_NEXT 4551
 
+#define ID_PAYPS_CONFIRM 4554 //缴费
+
+////////////////////////////医生问诊 page//////////////////////////////////////////////
+#define ID_DOCPAGE 5000
+#define ID_DOC_RETURN 5001
+#define ID_DOC_TEXTBOX_RESULT 5002
+#define ID_DOC_TEXTBOX_HANDLER 5003
+
+#define ID_DOC_QUERY_DRUG 5004
+#define ID_DOC_QUERY 5005
+
+#define ID_DOC_PSCHK 5400
+#define ID_DOC_PSLINK 5500
+
+#define ID_DOC_PREV 5550
+#define ID_DOC_NEXT 5551
+
+#define ID_DOC_DRUGCHK 5600
+#define ID_DOC_DRUGLINK 5650
+
 //#define ID_PAYPS_STOCK 4552 //查看库存
 //#define ID_PAYPS_SHIP 4553  //发货
-#define ID_PAYPS_CONFIRM 4554  //缴费
+#define ID_DOC_CONFIRM 5554 //缴费
 
 ///////////////未授权页面/////////////////////////////
-// #define ID_DENYPAGE 60000 
+// #define ID_DENYPAGE 60000
 
 #endif

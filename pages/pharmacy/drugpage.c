@@ -27,7 +27,7 @@ hbasewinAttr *CreateDrugpage(hbasewinAttr *parent, int winID, int userid)
 {
   hbasewinAttr *page = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, NULL);
   page->onPaint = OnPaint_Drugpage;
-  Createhyperlink(page, 20, 10, 65, 25, ID_POST_RETURN, "[首 页]");
+  // Createhyperlink(page, 20, 10, 65, 25, ID_POST_RETURN, "[首 页]");
   page->EventHandler = Eventhandler_drugpage;
 
   page->style = malloc(sizeof(WinStyle));
@@ -42,7 +42,7 @@ hbasewinAttr *CreateDrugpage(hbasewinAttr *parent, int winID, int userid)
   }
   else
   {
-   // strcpy(page->title, "药房取药");
+    // strcpy(page->title, "药房取药");
     //CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_DRUG_CONFIRM, "确认订单");
   }
 
@@ -119,9 +119,10 @@ void fillPrescription(hbasewinAttr *win, int page)
 
       if (lnk == NULL)
       { //创建lnk
-        lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, PAGE_W, 25, ID_DRUG_PSLINK + i, NULL);
+        lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, PAGE_W, 25, ID_DRUG_PSLINK + j, NULL);
         lnk->wintype = HYPERLINK_BK;
-        CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_DRUG_PSCHK + i, NULL);
+        CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_DRUG_PSCHK + j, NULL);
+        j++;
       }
 
       if (lnk->title)
@@ -141,8 +142,7 @@ void fillPrescription(hbasewinAttr *win, int page)
         lnk->data = p->id; //处方id
         //TRACE(("%s\n", lnk->title));
       }
-      j++;
-    }
+        }
 
   if (ps)
     list_destroy(ps);
@@ -242,9 +242,9 @@ void drawPostInfo(hbasewinAttr *win, int psid)
   printTextLineXY(win->x + 585, win->y + 32 + 335, "收货人:                发货人电话:", _h);
   printTextLineXY(win->x + 585, win->y + 64 + 335, "收货地址:", _h);
 
-   ps = fFindPrescription(PRESCRITIONFILE, psid);
-   if (ps)
-   {
+  ps = fFindPrescription(PRESCRITIONFILE, psid);
+  if (ps)
+  {
     po = fFindPostInfo(POSTFILE, ps->postid);
     if (po)
     {
@@ -260,8 +260,8 @@ void drawPostInfo(hbasewinAttr *win, int psid)
       printTextLineXY(win->x + 690, win->y + 64 + 334, info, _h);
       free(po);
     }
-     free(ps);
-   }
+    free(ps);
+  }
   freeFont(_h);
 }
 
@@ -444,7 +444,29 @@ void Eventhandler_drugpage(hbasewinAttr *win, int type, void *val)
         repaintChildren(win, NULL);
 
         drawPrescription(win->x, win->y);
-        drawPostInfo(win, pslink->data);         
+        drawPostInfo(win, pslink->data);
+      }
+    }
+    break;
+  case ID_DRUG_RETURN:
+    if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
+      _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+    if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+    { //鼠标按下
+      if (hitwin->onClick)
+        hitwin->onClick(hitwin, NULL);
+    }
+    else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+    { //鼠标释放
+      if (hitwin->onLeave)
+        hitwin->onLeave(hitwin, NULL);
+
+      //转跳homepage
+      if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+      {
+        _g->activePageID = ID_HOMEPAGE;
+        win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
       }
     }
     break;

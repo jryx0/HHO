@@ -19,6 +19,7 @@
 #include "postpage.h"
 #include "drugpage.h"
 #include "paydrug.h"
+#include "docpage.h"
 #include <memory.h>
 #include <string.h>
 
@@ -290,7 +291,22 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
     }
     break;
   case ID_PAYPSPAGE:
-    newpage = CreatePayDrugpage(desktop, ID_PAYPSPAGE, _g->userid);
+    if (_g->isLogin)
+    {
+      if (_g->usertype == PATIENT)
+        newpage = CreatePayDrugpage(desktop, ID_PAYPSPAGE, _g->userid);
+      else
+        newpage = CreateHomepage(desktop, ID_HOMEPAGE);
+    }
+    break;
+  case ID_DOCPAGE:
+    if (_g->isLogin)
+    {
+      if (_g->usertype == DOCTOR)
+        newpage = CreateDocPage(desktop, ID_DOCPAGE, _g->userid);
+      else
+        newpage = CreateHomepage(desktop, ID_HOMEPAGE);
+    }
     break;
   default:
     break;

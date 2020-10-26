@@ -21,7 +21,7 @@
 
 void createPostinfo(hbasewinAttr *parent, int userid)
 {
-  int i;
+  int i, j;
   list_node_t *node;
   postInfo *pi;
   int x, y;
@@ -37,7 +37,7 @@ void createPostinfo(hbasewinAttr *parent, int userid)
   x = 20;
   y = 110;
 
-  for (i = 0; i < postlist->len && i < 7; i++)
+  for (i = 0, j = 0; i < postlist->len && i < 7; i++)
   {
     node = list_at(postlist, i);
     if (node && node->val)
@@ -59,9 +59,10 @@ void createPostinfo(hbasewinAttr *parent, int userid)
       }
       else if (userid == pi->userid)
       {
-        lnk = Createhyperlink(parent, x, y + 30 * i, PAGE_W, 25, ID_POST_LINK + i, info);
+        lnk = Createhyperlink(parent, x, y + 30 * j, PAGE_W, 25, ID_POST_LINK + j, info);
         lnk->data = pi->postid;
         lnk->wintype = HYPERLINK_BK;
+        j++;
       }
       //btn = CreateButton(parent, x, y + 50 * i, 125, 45, ID_DEPT_LINK + i, dept->deptname);
       //btn->data = dept->id;
