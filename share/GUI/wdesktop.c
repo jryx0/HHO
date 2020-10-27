@@ -20,6 +20,7 @@
 #include "drugpage.h"
 #include "paydrug.h"
 #include "docpage.h"
+#include "finddoc.h"
 #include <memory.h>
 #include <string.h>
 
@@ -306,6 +307,12 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
         newpage = CreateDocPage(desktop, ID_DOCPAGE, _g->userid);
       else
         newpage = CreateHomepage(desktop, ID_HOMEPAGE);
+    }
+    break;
+  case ID_FINDDOCPAGE:
+    if (_g->isLogin)
+    {
+      newpage = CreateFindDocpage(desktop, ID_FINDDOCPAGE, _g->userid);
     }
     break;
   default:

@@ -146,27 +146,43 @@
 
 #define ID_PAYPS_CONFIRM 4554 //缴费
 
+////////////////////////////查询医生 page//////////////////////////////////////////////
+#define ID_FINDDOCPAGE 5000
+#define ID_FINDDOC_RETURN 5001
+
+#define ID_FINDDOC_DOC 5020
+#define ID_FINDDOC_DOCMAX 5040
+#define ID_FINDDOC_DOCLINK 5050
+#define ID_FINDDOC_DOCLINKMAX 5070
+
 ////////////////////////////医生问诊 page//////////////////////////////////////////////
-#define ID_DOCPAGE 5000
-#define ID_DOC_RETURN 5001
-#define ID_DOC_TEXTBOX_RESULT 5002
-#define ID_DOC_TEXTBOX_HANDLER 5003
+#define ID_DOCPAGE 5100
+#define ID_DOC_RETURN 5101
+#define ID_DOC_TEXTBOX_RESULT 5102
+#define ID_DOC_TEXTBOX_HANDLER 5103
 
-#define ID_DOC_QUERY_DRUG 5004
-#define ID_DOC_QUERY 5005
+#define ID_DOC_QUERY_DRUG 5104
+#define ID_DOC_QUERY 5105
 
-#define ID_DOC_PSCHK 5400
-#define ID_DOC_PSLINK 5500
+#define ID_DOC_PSCHK 5200
+#define ID_DOC_PSLINK 5200
 
-#define ID_DOC_PREV 5550
-#define ID_DOC_NEXT 5551
+// #define ID_DOC_PREV 5550
+// #define ID_DOC_NEXT5551
 
-#define ID_DOC_DRUGCHK 5600
-#define ID_DOC_DRUGLINK 5650
+#define ID_DOC_REGSCHK 5300  //挂号checkbox
+#define ID_DOC_REGSLINK 5350 //挂号link
 
-//#define ID_PAYPS_STOCK 4552 //查看库存
-//#define ID_PAYPS_SHIP 4553  //发货
-#define ID_DOC_CONFIRM 5554 //缴费
+#define ID_DOC_DRUGCHK 5400  //查询药品chekbox
+#define ID_DOC_DRUGLINK 5450 //查询药品link
+
+#define ID_DOC_PSDRUGCHK 5500  //处方药品chekbox
+#define ID_DOC_PSDRUGLINK 5550 //处方药品link
+
+#define ID_DOC_BTN_GEN 5701     //生成处方
+#define ID_DOC_BTN_CONFIRM 5702 //诊断完成
+#define ID_DOC_ADDDRUG 5703     //添加药品
+#define ID_DOC_DELDRUG 5704     //删除药品
 
 ///////////////未授权页面/////////////////////////////
 // #define ID_DENYPAGE 60000

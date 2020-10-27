@@ -99,6 +99,7 @@ typedef struct
   unsigned int prescriptionid;
   unsigned int drugItemid;
   unsigned int amount;
+  unsigned int count;
 } PrescriptionDrugItem;
 
 typedef struct

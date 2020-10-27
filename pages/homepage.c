@@ -112,6 +112,8 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
               _g->activePageID = ID_PAYPSPAGE; //处方缴费页面 只允许病人查看
             else if (hitwin->winID == ID_HOMEPAGE_DIAGNOSE)
               _g->activePageID = ID_DOCPAGE; //只允许医生查看
+            else if (hitwin->winID == ID_HOMEPAGE_REGS)
+              _g->activePageID = ID_FINDDOCPAGE;
 
             win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
           }
