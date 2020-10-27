@@ -17,12 +17,12 @@ hbasewinAttr *Createregisterpage(hbasewinAttr *parent, int winID)
   page->EventHandler = EventHandler_registerpage;
 
   Createhyperlink(page, 20, 10, 65, 25, ID_REGISTER_RETURN, "[首 页]");
-  CreateButton(page, 15, 55, 125, 45, ID_REGISTER_DEPT_MEDICINE, "内科");
-  CreateButton(page, 15, 105, 125, 45, ID_REGISTER_DEPT_SURGERY, "外科");
-  CreateButton(page, 15, 155, 125, 45, ID_REGISTER_DEPT_PAEDIATRICS, "儿科");
-  CreateButton(page, 15, 205, 125, 45, ID_REGISTER_DEPT_GYNAECOLOGY, "妇科");
-  CreateButton(page, 15, 255, 125, 45, ID_REGISTER_DEPT_ENT, "耳鼻喉科");
-  CreateButton(page, 15, 305, 125, 45, ID_REGISTER_DEPT_STOMATOLOGY, "口腔科");
+  CreateButton(page, 15, 70, 125, 45, ID_REGISTER_DEPT_MEDICINE, "内科");
+  CreateButton(page, 15, 120, 125, 45, ID_REGISTER_DEPT_SURGERY, "外科");
+  CreateButton(page, 15, 170, 125, 45, ID_REGISTER_DEPT_PAEDIATRICS, "儿科");
+  CreateButton(page, 15, 220, 125, 45, ID_REGISTER_DEPT_GYNAECOLOGY, "妇科");
+  CreateButton(page, 15, 270, 125, 45, ID_REGISTER_DEPT_ENT, "耳鼻喉科");
+  CreateButton(page, 15, 320, 125, 45, ID_REGISTER_DEPT_STOMATOLOGY, "口腔科");
 
   page->style = malloc(sizeof(WinStyle));
   getWinTheme((WinStyle *)page->style, 1);

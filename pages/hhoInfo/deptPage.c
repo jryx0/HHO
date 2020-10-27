@@ -49,7 +49,7 @@ hbasewinAttr *CreateDeptpage(hbasewinAttr *parent, int winID, char *title)
   WinStyle *style;
 
   Createhyperlink(page, 20, 10, 65, 25, ID_DEPT_RETURN, "[首 页]");
-  Createhyperlink(page, 170, PAGE_H - 50, 200, 25, ID_DEPT_DOCLINK, NULL);
+  Createhyperlink(page, 170, PAGE_H - 30, 200, 25, ID_DEPT_DOCLINK, NULL);
 
   ctrl = CreateLabel(page, 160, 35, PAGE_W - 220, PAGE_H - 50, ID_DEPT_TEXT, NULL);
   ctrl->wintype = LABEL_FILE_TXT; //设置label 从文件中读取文本,并显示
