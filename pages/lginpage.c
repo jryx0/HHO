@@ -47,10 +47,10 @@ void OnPaint_loginpage(hbasewinAttr *win, void *value)
 
   Putbmp565(x - 4, y + 30, DATAPATH "bmp\\login.565");
 
-  linex_styleEx(x + PAGE_W / 2 - 200 - 30, y + PAGE_H / 2 - 100, 450, 0x6BAF, 1, 1);
   rectangleEx(x + PAGE_W / 2 - 200 - 30 - 1, y + PAGE_H / 2 - 100 - 40 - 1, 451, 301, 0x6BAF, 1, 1);
   fillRegionEx(x + PAGE_W / 2 - 200 - 30, y + PAGE_H / 2 - 100 - 40, 450, 300, 0xFFFF);
-  fillRegionEx(x + PAGE_W / 2 - 200 - 30 + 1, y + PAGE_H / 2 - 100 - 40 + 1, 449, 39, style->bkcolor2);
+  fillRegionEx(x + PAGE_W / 2 - 200 - 30, y + PAGE_H / 2 - 100 - 40, 450, 40, style->bkcolor2);
+  linex_styleEx(x + PAGE_W / 2 - 200 - 30, y + PAGE_H / 2 - 100, 450, 0x6BAF, 1, 1);
 
   printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2 - 60, "ÓÃ»§Ãû£º", _h);
   printTextLineXY(x + PAGE_W / 2 - 200, y + PAGE_H / 2 + 10, "ÃÜ  Âë£º", _h);

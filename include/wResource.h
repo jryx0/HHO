@@ -131,12 +131,25 @@
 #define ID_DRUG_SHIP 3553  //发货
 #define ID_DRUG_PAY 3553  //缴费
 
-////////////////////////////registerpage//////////////////////////////////////////////
-#define ID_SIGNINPAGE 4000
-
-
 // #define ID_DRUG_ADDITEM 3552
 // #define ID_DRUG_DELITEM 3553
+
+////////////////////////////registerpage//////////////////////////////////////////////
+#define ID_SIGNINPAGE 4000
+#define ID_SIGNIN_NAME 4001
+#define ID_SIGNIN_SEX 4002
+#define ID_SIGNIN_MARRIAGESTATUS 4003
+#define ID_SIGNIN_IDNUMBER 4004
+#define ID_SIGNIN_BIRTH_YEAR 4005
+#define ID_SIGNIN_BIRTH_DAY 4006
+#define ID_SIGNIN_TELENUM 4007
+#define ID_SIGNIN_ADDRESS 4008
+#define ID_SIGNIN_ALLERGY 4009
+#define ID_SIGNIN_RETURN 4010
+#define ID_SIGNIN_USERNAME 4011
+#define ID_SIGNIN_PASSWORD1 4012
+#define ID_SIGNIN_PASSWORD2 4013
+#define ID_SIGNIN_SIGNIN 4014
 
 ///////////////未授权页面/////////////////////////////
 // #define ID_DENYPAGE 60000 
