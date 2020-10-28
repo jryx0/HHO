@@ -244,13 +244,30 @@ void DrawTextCursor(hbasewinAttr *textbox, unsigned int blink)
   }
 
   if (textbox->title)
-    liney_styleEx(ti->curx, ti->cury,
-                  ti->textStyle->fontsize + 2, color, 2, 1);
+    liney_styleEx(ti->curx, ti->cury + 2,
+                  ti->textStyle->fontsize - 2, color, 1, 1);
   // liney_styleEx(getAbsoluteX(textbox) + 10 + strlen(textbox->title) * 12, getAbsoluteY(textbox) + 6,
   //               23, color, 2, 1);
   else
-    liney_styleEx(getAbsoluteX(textbox) + 10, getAbsoluteY(textbox) + 6,
-                  ti->textStyle->fontsize + 2, color, 2, 1);
+    liney_styleEx(getAbsoluteX(textbox) + 10, getAbsoluteY(textbox) + 8,
+                  ti->textStyle->fontsize - 2, color, 1, 1);
+}
+
+int strrchr_l(const char *str, char ch, int len)
+{
+  int slen;
+  TESTNULL(str, -1);
+
+  slen = strlen(str);
+  if (len > slen)
+    len = slen;
+
+  while (--len > 0)
+  {
+    if (str[len] == ch)
+      return len;
+  }
+  return -1;
 }
 
 void OnKey_Textbox(hbasewinAttr *textbox, void *key)
@@ -333,12 +350,23 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     /* 上 */
     //if (ti->curTextindex - ti->maxCol >= 0)
     {
+      int n = strrchr_l(textbox->title, '\r', ti->curTextindex - 1);
       hfont *_font = getFont(ti->textStyle->fonttype, ti->textStyle->fontsize, DEFAULT_FONTCOLOR); // getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
-      ti->curTextindex = ti->curTextindex - ti->maxCol - 1;
-      if (ti->curTextindex <= 0)
-        ti->curTextindex = 0;
+      if (n != -1)
+      {
+        ti->curTextindex = n;
+      }
+      else
+      {
+        ti->curTextindex = ti->curTextindex - ti->maxCol - 1;
+      }
 
-      ch = textbox->title[ti->curTextindex];
+      if (ti->curTextindex <= 0)
+      {
+        ti->curTextindex = 0;
+      }
+
+      //ch = textbox->title[ti->curTextindex];
       // if(ti->curTextindex > 0)
       //   if(ch > 0xa0 && textbox->title[ti->curTextindex-1] <= 0xa0)
       // // if (ch > 0xa0)
@@ -353,6 +381,15 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     //  if (ti->curTextindex + ti->maxCol <= len)
     {
       hfont *_font = getFont(ti->textStyle->fonttype, ti->textStyle->fontsize, DEFAULT_FONTCOLOR); // getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
+      if (ti->curTextindex < strlen(textbox->title))
+      {//没有控制好,需要修改
+        char *ch = strchr(textbox->title + ti->curTextindex, '\r');
+        if (strchr(ch, '\r'))
+        {
+          ti->curTextindex = ch - textbox->title + 1;
+        }
+      }
+
       ti->curTextindex = ti->curTextindex + ti->maxCol - 1;
       if (ti->curTextindex >= len)
         ti->curTextindex = len - 1;

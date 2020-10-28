@@ -10,6 +10,7 @@
 #include "finddoc.h"
 #include "data.h"
 #include "list.h"
+#include <string.h>
 
 ///动态创建hyperlink
 ///响应动态创建hyperlink事件
@@ -53,10 +54,10 @@ void CreateDocInfoLabel(hbasewinAttr *win)
 
   for (i = 0, j = 0; i < 10; i++)
   {
-    label = CreateLabel(win, 90 + j * 160, 80 + k * 220 + 25, 150, 210, ID_FINDDOC_DOC + i, NULL);
+    label = CreateLabel(win, 90 + j * 160, 10 + k * 230 + 80, 150, 205, ID_FINDDOC_DOC + i, NULL);
     label->wintype = LABEL_FILE_TXT;
 
-    CreateButton(win, 90 + j * 160 + 50, 95 + k * 220 + 205, 50, 20, ID_FINDDOC_DOCLINK + i, NULL);
+    CreateButton(win, 90 + j * 160 + 50, 10 + k * 230 + 80 + 205, 50, 20, ID_FINDDOC_DOCLINK + i, NULL);
     if (++j % 5 == 0)
     {
       j = 0;
@@ -119,9 +120,9 @@ void fillDocInfo(hbasewinAttr *win)
       if (node && node->val)
       {
         docinfo = (DoctorInfo *)node->val;
-        if (docinfo->deptid == style->height)
-        { //create labe
-          ctrl = findWinByID(win, ID_FINDDOC_DOC + j);
+        if (docinfo->deptid == style->height) //style->height 保存科室id
+        {
+          ctrl = findWinByID(win, ID_FINDDOC_DOC + j); //lable
           if (ctrl->title)
           {
             free(ctrl->title);
@@ -131,7 +132,7 @@ void fillDocInfo(hbasewinAttr *win)
           sprintf(ctrl->title, "%sdatabase\\doctor\\%d.txt", DATAPATH, docinfo->id);
           ctrl->onPaint(ctrl, NULL);
 
-          ctrl = findWinByID(win, ID_FINDDOC_DOCLINK + j);
+          ctrl = findWinByID(win, ID_FINDDOC_DOCLINK + j); //button
           if (ctrl->title)
           {
             free(ctrl->title);
@@ -139,6 +140,7 @@ void fillDocInfo(hbasewinAttr *win)
           }
           ctrl->title = malloc(6);
           strcpy(ctrl->title, "挂号");
+          ctrl->data = docinfo->id;
           ctrl->onPaint(ctrl, NULL);
           j++;
         }
@@ -147,58 +149,6 @@ void fillDocInfo(hbasewinAttr *win)
     list_destroy(docInfolist);
   }
 }
-// void CreateDocInfo(hbasewinAttr *win, int deptid)
-// {
-//   int x, y, i;
-//   hbasewinAttr *label;
-//   list_t *docInfolist, *deptlist;
-//   DoctorInfo *docinfo;
-//   DeptInfo *deptinfo;
-//   list_node_t *node;
-
-//   TESTNULLVOID(win);
-
-//   if (deptid == 0)
-//     deptid = 901; //内科
-//   x = getAbsoluteX(win);
-//   y = getAbsoluteY(win);
-
-//   docInfolist = ReadDoctorInfo(DOCTORINFOFILE);
-//   if (docInfolist)
-//   {
-//     for (i = 0; i < docInfolist->len; i++)
-//     {
-//       node = list_at(docInfolist, i);
-//       if (node && node->val)
-//       {
-//         docinfo = (DoctorInfo *)node->val;
-//         if (docinfo->deptid == deptid)
-//         { //create labe
-//           label = CreateLabel(win, 125, 100, 150, 220, ID_FINDDOC_DOC + i, NULL);
-//           label->wintype = LABEL_FILE_TXT;
-//         }
-//       }
-//     }
-//     list_destroy(docInfolist);
-//   }
-
-//   rectangleEx(x + 125, y + 100, 150, 220, 0x0000, 1, 1);
-//   // Putbmp565(x + 125 + 15, y + 100, DATAPATH "database\\doctor\\d0.565");
-//   // rectangleEx(x + 125 + 230 + 10, y + 100, 133, 220, 0x0000, 1, 1);
-//   // Putbmp565(x + 125 + 230 + 25, y + 100, DATAPATH "database\\doctor\\d1.565");
-
-//   // rectangleEx(x + 125 + 230 * 2 + 20, y + 100, 230, 220, 0x0000, 1, 1);
-
-//   // rectangleEx(x + 125, y + 100 + 230, 230, 220, 0x0000, 1, 1);
-//   // rectangleEx(x + 125 + 230 + 10, y + 100 + 230, 230, 220, 0x0000, 1, 1);
-//   // rectangleEx(x + 125 + 230 * 2 + 20, y + 100 + 230, 230, 220, 0x0000, 1, 1);
-
-//   // rectangle(x + 125 * 2, y + 120, 250, 300, 0x0000, 1, 1);
-//   // rectangle(x + 125 * 3, y + 120, 250, 300, 0x0000, 1, 1);
-//   // rectangle(x + 125, y + 120 * 2, 250, 300, 0x0000, 1, 1);
-//   // rectangle(x + 125 * 2, y + 120 * 2, 250, 300, 0x0000, 1, 1);
-//   // rectangle(x + 125 * 3, y + 120 * 2, 250, 300, 0x0000, 1, 1);
-// }
 
 hbasewinAttr *CreateFindDocpage(hbasewinAttr *parent, int winID, int userid)
 {
@@ -286,7 +236,7 @@ void EventHandler_FindDoc(hbasewinAttr *win, int type, void *val)
       }
       break;
     default:
-      if (hitwin->winID >= ID_DEPT_LINK && hitwin->winID < ID_DEPT_LINK + 10)       //+ win->data)
+      if (hitwin->winID >= ID_DEPT_LINK && hitwin->winID < ID_DEPT_LINK + 10)       //点击科室
       {                                                                             //点击动态生成的button
         if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在link窗口部分显示标准鼠标
           _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
@@ -297,7 +247,7 @@ void EventHandler_FindDoc(hbasewinAttr *win, int type, void *val)
         }
         else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
         { //鼠标释放
-          hbasewinAttr *ctrl = findWinByID(win, ID_DEPT_TEXT);
+
           WinStyle *style;
           if (hitwin->onLeave)
             hitwin->onLeave(hitwin, NULL);
@@ -308,7 +258,38 @@ void EventHandler_FindDoc(hbasewinAttr *win, int type, void *val)
           fillDocInfo(win);
         }
       }
-      break;
+      else if (hitwin->winID >= ID_FINDDOC_DOCLINK && hitwin->winID < ID_FINDDOC_DOCLINK + 10)
+      {//转跳点击挂号页面
+        if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在link窗口部分显示标准鼠标
+          _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+        if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+        { //鼠标按下
+          if (hitwin->onClick)
+            hitwin->onClick(hitwin, NULL);
+        }
+        else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+        { //鼠标释放
+          // hbasewinAttr *ctrl = findWinByID(win, hitwin->winID);
+          if (hitwin->onLeave)
+            hitwin->onLeave(hitwin, NULL);
+
+          //TRACE(("%s(%d):deptid = %d\n", __FILE__, __LINE__, hitwin->data));
+          //转跳 挂号页面
+          if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+          {
+            _g->data = hitwin->data;
+            _g->activePageID = ID_REGISTERPAGE;
+            win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+          }
+        }
+        else if (hitwin->winID >= ID_FINDDOC_DOC && hitwin->winID < ID_FINDDOC_DOC + 10)
+        {                                                                              //医生信息label 控件
+          if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow) //在link窗口部分显示标准鼠标
+            _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow;
+        }
+
+        break;
+      }
     }
   }
 }

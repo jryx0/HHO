@@ -49,6 +49,21 @@ void Nonemallocfree(void *val)
 	free(val);
 }
 
+/**
+ * 对字符串中的字符进行替换
+ * 使用 #代替回车 或 回车替换#
+ **/
+void strrpl(char *str, char oldch, char newch)
+{
+	char *s = str;
+	while (*s)
+	{
+		if (*s == oldch)
+			*s = newch;
+		s++;
+	}
+}
+
 /***********数据模块************/
 //---------------User-----------------//
 /// <summary>
@@ -805,10 +820,10 @@ list_t *ReadRegistration(const char *filename)
 			//list->match = DoctorInfomatch;
 			list->free = Nonemallocfree;
 		}
-		sscanf(line, "%d\t%d\t%d\t%s\t%s\t%d\t%d",
+		sscanf(line, "%d\t%d\t%d\t%s\t%s\t%d\t%d\t%s",
 					 &Infotemp->id, &Infotemp->userid, &Infotemp->doctorid,
 					 Infotemp->dept, Infotemp->datetime, &Infotemp->serial,
-					 &Infotemp->status);
+					 &Infotemp->status, Infotemp->disease);
 		list_rpush(list, list_node_new(Infotemp));
 	}
 
@@ -827,15 +842,15 @@ void SaveRegistration(const char *filename, list_t *rlist)
 		TRACE(("unable to open %s\r\n", filename));
 		return;
 	}
-	fprintf(fp, "#挂号单号  患者id 医生id 科室 时间 流水号 状态\n");
+	fprintf(fp, "#挂号单号  患者id 医生id 科室 时间 流水号 状态(0未缴费 1已缴费 3已完成) 病情描述\n");
 	it = list_iterator_new(rlist, LIST_HEAD);
 	while ((node = list_iterator_next(it)))
 	{
 		Infotemp = (RegisterInfo *)node->val;
-		fprintf(fp, "%d\t%d\t%d\t%s\t%s\t%d\t%d",
+		fprintf(fp, "%d\t%d\t%d\t%s\t%s\t%d\t%d\t%s\n",
 						Infotemp->id, Infotemp->userid, Infotemp->doctorid,
 						Infotemp->dept, Infotemp->datetime, Infotemp->serial,
-						Infotemp->status);
+						Infotemp->status, Infotemp->disease);
 	}
 
 	list_iterator_destroy(it);

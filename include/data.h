@@ -110,9 +110,10 @@ typedef struct
   unsigned int doctorid; //医生唯一编码
   DoctorInfo *pdoctor;   //指向医生
   char dept[10];         //科室
-  char datetime[20];       //挂号单生成时间
+  char datetime[20];     //挂号单生成时间
   unsigned char serial;  //流水号
-  unsigned char status;   //挂号单状态,0未看病,1看病中,2已看完
+  unsigned char status;  //挂号单状态,0未看病,1看病中,2已看完
+  char disease[256];     //病情描述 127个汉字
 } RegisterInfo;
 
 typedef struct
@@ -185,7 +186,6 @@ list_t *ReadDeptInfo(const char *filename);
 void SaveDeptInfo(list_t *deptinfo, char *filename);
 DeptInfo *fFindDeptInfo(const char *filename, int id);
 
-
 /*通过科室唯一编码id找到科室信息deptinfo链表中对应的用户，并返回指向该信息的指针*/
 DeptInfo *FindDeptInfo(list_t *deptinfo, int id);
 DeptInfo *fFindDeptInfo(const char *filename, int id);
@@ -216,4 +216,6 @@ void SaveRegistration(const char *filename, list_t *rlist);
 DrugItem *fFindDrugItem(const char *filename, int drugid);
 list_t *ReadDrugItembyName(const char *filename, char *name);
 
+
+void strrpl(char *str, char oldch, char newch);
 #endif

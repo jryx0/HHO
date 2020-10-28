@@ -217,7 +217,7 @@ hbasewinAttr *CreateDesktop(void)
   Createhyperlink(desktop, 900, (HEADER_HEIGHT - 44) / 2 - 10, 100, 25, ID_MENU_LOGIN, "[µÇ  Â¼]");
   //´´½¨²Ëµ¥,ÇĞ»»Ò³Ãæ,ÁÙÊ±Ê¹ÓÃ
   CreateButton(desktop, 400, HEADER_HEIGHT - 44, 120, 44, ID_MENU_HOMEPAGE, "Ê×Ò³");
-  CreateButton(desktop, 520, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "²âÊÔÒ³");
+  CreateButton(desktop, 520, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "¹ÒºÅ");
   CreateButton(desktop, 670, HEADER_HEIGHT - 44, 150, 44, ID_MENU_DEPTPAGE, "¿ÆÊÒ¼ò½é");
   CreateButton(desktop, 900, HEADER_HEIGHT - 44, 120, 44, ID_MENU_EXIT, "ÍË³ö");
 
@@ -251,8 +251,10 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
     break;
 
   case ID_TESTPAGE:
-    newpage = CreateTestPage(desktop, ID_TESTPAGE, "²âÊÔÒ³Ãæ-½¨ÉèÖĞ.....");
+    //newpage = CreateTestPage(desktop, ID_TESTPAGE, "²âÊÔÒ³Ãæ-½¨ÉèÖĞ.....");
+    newpage = Createregisterpage(desktop, ID_REGISTERPAGE, _g->userid);
     break;
+
   case ID_LOGINPAGE:
     newpage = Createloginpage(desktop, ID_LOGINPAGE);
     break;
@@ -267,7 +269,7 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
     newpage = CreateDeptpage(desktop, ID_DEPTPAGE, "¿ÆÊÒ¼ò½é");
     break;
   case ID_REGISTERPAGE:
-    newpage = Createregisterpage(desktop, ID_REGISTERPAGE);
+    newpage = Createregisterpage(desktop, ID_REGISTERPAGE, _g->userid);
     break;
   case ID_POSTPAGE:
     if (_g->isLogin)
@@ -309,11 +311,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
         newpage = CreateHomepage(desktop, ID_HOMEPAGE);
     }
     break;
+
   case ID_FINDDOCPAGE:
-    if (_g->isLogin)
-    {
-      newpage = CreateFindDocpage(desktop, ID_FINDDOCPAGE, _g->userid);
-    }
+    newpage = CreateFindDocpage(desktop, ID_FINDDOCPAGE, _g->userid);
     break;
   default:
     break;

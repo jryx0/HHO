@@ -92,16 +92,19 @@
 #define ID_LOGIN_KEY 1005
 
 ////////////////////////////registerpage//////////////////////////////////////////////
-#define ID_REGISTERPAGE 2000
-#define ID_REGISTER_RETURN 2001
-#define ID_REGISTER_DEPT_MEDICINE 2002      //内科
-#define ID_REGISTER_DEPT_SURGERY 2003       //外科
-#define ID_REGISTER_DEPT_PAEDIATRICS 2004   //儿科
-#define ID_REGISTER_DEPT_GYNAECOLOGY 2005   //妇科
-#define ID_REGISTER_DEPT_OPHTHALMOLOGY 2006 //眼科
-#define ID_REGISTER_DEPT_ENT 2007           //耳鼻喉科
-#define ID_REGISTER_DEPT_STOMATOLOGY 2008   //口腔科
-#define ID_REGISTER_DEPT_DERMATOLOGY 2009   //皮肤科
+#define ID_REGISTERPAGE 2000     //挂号页面
+#define ID_REGISTER_RETURN 2001  //首页
+#define ID_REGISTER_DISEASE 2002 //病情描述
+#define ID_REGISTER_OK 2003 //确认挂号
+
+// #define ID_REGISTER_DEPT_MEDICINE 2002      //内科
+// #define ID_REGISTER_DEPT_SURGERY 2003       //外科
+// #define ID_REGISTER_DEPT_PAEDIATRICS 2004   //儿科
+// #define ID_REGISTER_DEPT_GYNAECOLOGY 2005   //妇科
+// #define ID_REGISTER_DEPT_OPHTHALMOLOGY 2006 //眼科
+// #define ID_REGISTER_DEPT_ENT 2007           //耳鼻喉科
+// #define ID_REGISTER_DEPT_STOMATOLOGY 2008   //口腔科
+// #define ID_REGISTER_DEPT_DERMATOLOGY 2009   //皮肤科
 
 ////////////////////////////物流 page//////////////////////////////////////////////
 #define ID_POSTPAGE 2500
