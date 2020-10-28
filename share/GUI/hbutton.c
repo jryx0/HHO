@@ -50,6 +50,9 @@ void OnPaint_button(hbasewinAttr *btn, void *value)
   TESTNULLVOID(btn);
   TESTNULLVOID(btn->style);
 
+  if(btn ->title == NULL)
+    return;
+
   btnStyle = (WinStyle *)btn->style;
   y = getAbsoluteY(btn);
   x = getAbsoluteX(btn);

@@ -69,10 +69,26 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #define DATAPATH "C:\\HHO\\data\\"
 #endif
 
+//用户信息存储文件
 #define USERINFOFILE DATAPATH "database\\userinfo.txt"
-#define DOCTORINFOFILE DATAPATH "database\\doctorinfo.txt"
-#define PATIENTINFOFILE DATAPATH "database\\patientinfo.txt"
+//医生信息存储文件
+#define DOCTORINFOFILE DATAPATH "database\\docinfo.txt"
+//患者信息存储文件
+#define PATIENTINFOFILE DATAPATH "database\\painfo.txt"
+//科室信息存储文件
 #define DEPTINFOFILE DATAPATH "database\\deptinfo.txt"
+
+//运单信息存储文件
+#define POSTFILE DATAPATH "database\\logistic\\postinfo.txt"
+
+//处方信息存储文件
+#define PRESCRITIONFILE DATAPATH "database\\ps\\psinfo.txt"
+
+//挂号存储文件
+#define REGISTRATIONFILE DATAPATH "database\\regs\\regs.txt"
+
+//药品文件
+#define DRUGFILE DATAPATH "database\\drug\\druglist.txt"
 
 //pinyin files
 #define FILE_PYINDEX DATAPATH "pinyin\\index.txt"
@@ -135,5 +151,5 @@ union REGS
 
 #endif //_REG_DEFS
 #endif
- 
+
 #endif

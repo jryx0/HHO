@@ -105,7 +105,19 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
           {
             _g->activePageID = ID_LOGINPAGE;
             if (hitwin->winID == ID_HOMEPAGE_LOGISTICS)
+<<<<<<< HEAD
               _g->activePageID = ID_POSTPAGE; //物流页面
+=======
+              _g->activePageID = ID_POSTPAGE; //物流页面 只允许 物流和病人查看
+            else if (hitwin->winID == ID_HOMEPAGE_DRUG)
+              _g->activePageID = ID_DRUGPAGE; //药房页面 只允许 病人和药房查看
+            else if (hitwin->winID == ID_HOMEPAGE_CHARGE2)
+              _g->activePageID = ID_PAYPSPAGE; //处方缴费页面 只允许病人查看
+            else if (hitwin->winID == ID_HOMEPAGE_DIAGNOSE)
+              _g->activePageID = ID_DOCPAGE; //只允许医生查看
+            else if (hitwin->winID == ID_HOMEPAGE_REGS)
+              _g->activePageID = ID_FINDDOCPAGE;
+>>>>>>> 4413994f726079b97aca823f50f46a3390ed5d61
 
             win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
           }

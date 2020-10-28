@@ -61,7 +61,7 @@ void OnPaint_Label_File(hbasewinAttr *label, void *value)
   hregion _region;
   WinStyle *style;
   FILE *fpFile;
-
+  
   TESTNULLVOID(label);
   TESTNULLVOID(label->title)
   TESTNULLVOID(label->style);
@@ -79,6 +79,7 @@ void OnPaint_Label_File(hbasewinAttr *label, void *value)
 
   fillRegion(_region.left_top.x, _region.left_top.y, _region.right_bottom.x, _region.right_bottom.y, 0xFFFF);
 
+  
   fpFile = fopen(label->title, "r");
   if (fpFile)
     printTextFileV6(&_region, fpFile, fpfont);

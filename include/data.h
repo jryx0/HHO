@@ -91,6 +91,7 @@ typedef struct
   char dept[12];  //科室
   char status[8]; //处方状态
   long amount;    //金额
+  int postid;
 } Prescription;
 
 typedef struct
@@ -98,6 +99,10 @@ typedef struct
   unsigned int prescriptionid;
   unsigned int drugItemid;
   unsigned int amount;
+<<<<<<< HEAD
+=======
+  unsigned int count;
+>>>>>>> 4413994f726079b97aca823f50f46a3390ed5d61
 } PrescriptionDrugItem;
 
 typedef struct
@@ -107,9 +112,10 @@ typedef struct
   PatientInfo *puser;    //指向用户
   unsigned int doctorid; //医生唯一编码
   DoctorInfo *pdoctor;   //指向医生
-  time_t datetime;       //挂号单生成时间
+  char dept[10];         //科室
+  char datetime[20];       //挂号单生成时间
   unsigned char serial;  //流水号
-  char state;            //挂号单状态,0未看病,1看病中,2已看完
+  unsigned char status;   //挂号单状态,0未看病,1看病中,2已看完
 } RegisterInfo;
 
 typedef struct
@@ -176,11 +182,15 @@ list_t *ReadPatientInfo(const char *filename);
 void SavePatientInfo(list_t *patientinfo, char *filename);
 /*通过病人唯一编码id找到病人信息patientinfo链表中对应的用户，并返回指向该信息的指针*/
 PatientInfo *FindPatientInfo(list_t *patientinfo, int id);
+PatientInfo *fFindPatientInfo(const char *filename, int id);
 
 /*从filename代表的文件中读出科室信息并将信息以链表形式存入内存，返回表头*/
 list_t *ReadDeptInfo(const char *filename);
 /*将deptinfo链表中存储的科室信息写入filename代表的文件中*/
 void SaveDeptInfo(list_t *deptinfo, char *filename);
+DeptInfo *fFindDeptInfo(const char *filename, int id);
+
+
 /*通过科室唯一编码id找到科室信息deptinfo链表中对应的用户，并返回指向该信息的指针*/
 DeptInfo *FindDeptInfo(list_t *deptinfo, int id);
 DeptInfo *fFindDeptInfo(const char *filename, int id);
@@ -191,15 +201,24 @@ list_t *ReadDoctorInfo(const char *filename);
 void SaveDoctorInfo(list_t *doctorinfo, char *filename);
 /*通过医生唯一编码id找到医生信息doctorinfo链表中对应的用户，并返回指向该信息的指针*/
 DoctorInfo *FindDoctorInfo(list_t *doctorinfo, int id);
+DoctorInfo *fFindDoctorInfo(const char *filename, int docid);
 
 /*获取物流信息*/
 list_t *ReadPostInfo(const char *filename);
 postInfo *fFindPostInfo(const char *filename, int postid);
+void SavePostInfo(const char *filename, list_t *polist);
 
 /*获取处方信息*/
 list_t *ReadPrescription(const char *filename);
+Prescription *FindPrescription(list_t *ps, int id);
+Prescription *fFindPrescription(const char *filename, int psid);
+void SavePrescription(const char *filename, list_t *pslist);
 
+/*挂号*/
+list_t *ReadRegistration(const char *filename);
+void SaveRegistration(const char *filename, list_t *rlist);
 /*查找药品*/
 DrugItem *fFindDrugItem(const char *filename, int drugid);
+list_t *ReadDrugItembyName(const char *filename, char *name);
 
 #endif

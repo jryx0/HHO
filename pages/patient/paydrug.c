@@ -9,7 +9,7 @@
 #include "htextbox.h"
 #include "hbutton.h"
 #include "data.h"
-#include "drugpage.h"
+#include "paydrug.h"
 #include "hchkbox.h"
 
 #include <string.h>
@@ -23,41 +23,35 @@
 #define COL7 (COL6 + 100)
 #define COL8 (COL7 + 120)
 
-hbasewinAttr *CreateDrugpage(hbasewinAttr *parent, int winID, int userid)
+hbasewinAttr *CreatePayDrugpage(hbasewinAttr *parent, int winID, int userid)
 {
   hbasewinAttr *page = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, NULL);
-  page->onPaint = OnPaint_Drugpage;
-  // Createhyperlink(page, 20, 10, 65, 25, ID_POST_RETURN, "[首 页]");
-  page->EventHandler = Eventhandler_drugpage;
+  page->onPaint = OnPaint_PayDrugpage;
+  // Createhyperlink(page, 20, 10, 65, 25, ID_PAYPS_RETURN, "[首 页]");
+  page->EventHandler = Eventhandler_paydrugpage;
 
   page->style = malloc(sizeof(WinStyle));
   getWinTheme((WinStyle *)page->style, 1);
 
   page->title = malloc(10);
-  if (userid == -1)
+  if (userid != -1)
   {
-    strcpy(page->title, "药房发药");
-    CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_DRUG_STOCK, "查看仓库");
-    CreateButton(page, page->x + 825, page->y + 365, 100, 32, ID_DRUG_SHIP, "生成发货单");
-  }
-  else
-  {
-    // strcpy(page->title, "药房取药");
-    //CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_DRUG_CONFIRM, "确认订单");
+    strcpy(page->title, "取药缴费");
+    CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_PAYPS_CONFIRM, "确认缴费");
   }
 
-  Createhyperlink(page, 20, 10, 65, 25, ID_DRUG_RETURN, "[首 页]");
+  Createhyperlink(page, 20, 10, 65, 25, ID_PAYPS_RETURN, "[首 页]");
   ((WinStyle *)page->style)->type = userid; //保存id区分
 
-  Createhyperlink(page, page->x + 860, page->y + 175, 55, 25, ID_DRUG_PREV, "上一页");
-  Createhyperlink(page, page->x + 925, page->y + 175, 55, 25, ID_DRUG_NEXT, "下一页");
+  Createhyperlink(page, page->x + 860, page->y + 175, 55, 25, ID_PAYPS_PREV, "上一页");
+  Createhyperlink(page, page->x + 925, page->y + 175, 55, 25, ID_PAYPS_NEXT, "下一页");
 
   return page;
 }
 
 //绘制处方
 //onpaint中调用,画处方显示的外观
-void drawPrescription(int x, int y)
+void drawPrescription_pay(int x, int y)
 {
   rectangleEx(x, y + 65, PAGE_W, PAGE_H / 2 - 50, 0x6BAF, 1, 1);
 
@@ -78,7 +72,7 @@ void drawPrescription(int x, int y)
 //在drawPrescription前调用
 //根据用户类型不同,显示不同的处方 style->type
 //page 页号从0开始
-void fillPrescription(hbasewinAttr *win, int page)
+void fillPrescription_pay(hbasewinAttr *win, int page)
 {
   hbasewinAttr *lnk;
   list_t *ps, *patient, *doc;
@@ -107,22 +101,21 @@ void fillPrescription(hbasewinAttr *win, int page)
   if (patient && doc)
     for (i = 0, j = 0; i < ps->len && i < 8; i++)
     { //一次最多8行, page控制显示那个8个
-      hbasewinAttr *lnk = findWinByID(win, ID_DRUG_PSLINK + j);
+      hbasewinAttr *lnk = findWinByID(win, ID_PAYPS_PSLINK + j);
       node = list_at(ps, i);
       p = (Prescription *)node->val;
 
       if (style->type != -1)
-      {
+      { //只显示本人单据
         if (p->userid != style->type)
           continue;
       }
 
       if (lnk == NULL)
       { //创建lnk
-        lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, PAGE_W, 25, ID_DRUG_PSLINK + j, NULL);
+        lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, PAGE_W, 25, ID_PAYPS_PSLINK + i, NULL);
         lnk->wintype = HYPERLINK_BK;
-        CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_DRUG_PSCHK + j, NULL);
-        j++;
+        CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_PAYPS_PSCHK + i, NULL);
       }
 
       if (lnk->title)
@@ -142,7 +135,8 @@ void fillPrescription(hbasewinAttr *win, int page)
         lnk->data = p->id; //处方id
         //TRACE(("%s\n", lnk->title));
       }
-        }
+      j++;
+    }
 
   if (ps)
     list_destroy(ps);
@@ -155,7 +149,7 @@ void fillPrescription(hbasewinAttr *win, int page)
 }
 
 //绘制药品清单
-void drawDruglist(int x, int y)
+void drawDruglist_pay(int x, int y)
 {
   fillRegionEx(x + 1, y + 360, 540, 205, 0xFFFF);
   rectangleEx(x, y + 325, 540, 205, 0x6BAF, 1, 1);
@@ -170,7 +164,7 @@ void drawDruglist(int x, int y)
 
 //填充药品
 //默认不会超出
-void fillDruglist(hbasewinAttr *win, int psid)
+void fillDruglist_pay(hbasewinAttr *win, int psid)
 {
   FILE *fp;
   char info[256];
@@ -222,7 +216,7 @@ void fillDruglist(hbasewinAttr *win, int psid)
  * 
  * @param psid 处方id
  */
-void drawPostInfo(hbasewinAttr *win, int psid)
+void drawPostInfo_pay(hbasewinAttr *win, int psid)
 {
   int x, y;
   //WinStyle *style;
@@ -264,12 +258,8 @@ void drawPostInfo(hbasewinAttr *win, int psid)
   }
   freeFont(_h);
 }
-
-void fillPostInfo(hbasewinAttr *win)
-{
-}
-
-void generatePostInfo(hbasewinAttr *win, int psid)
+/*
+void generatePostInfo_pay(hbasewinAttr *win, int psid)
 {
   hbasewinAttr *lnk;
   Prescription *ps;
@@ -342,29 +332,29 @@ void generatePostInfo(hbasewinAttr *win, int psid)
   free(patient);
   TRACE(("%s(%d): save2\n", __FILE__, __LINE__));
 }
-
+*/
 //返回checkbox选择的hyperlink
-hbasewinAttr *getcheckedlink(hbasewinAttr *win)
+hbasewinAttr *getcheckedlink_pay(hbasewinAttr *win)
 {
   hbasewinAttr *lnk = NULL, *chk = NULL;
   int i;
   TESTNULL(win, NULL);
 
-  for (i = 0; i < ID_DRUG_PSCHK + 8; i++)
+  for (i = 0; i < ID_PAYPS_PSCHK + 8; i++)
   {
-    chk = findWinByID(win, ID_DRUG_PSCHK + i);
+    chk = findWinByID(win, ID_PAYPS_PSCHK + i);
 
     if (chk && chk->data == 1)
     { //第一个 checbox 选择
       //根据i找到相应的link
-      lnk = findWinByID(win, ID_DRUG_PSLINK + i);
+      lnk = findWinByID(win, ID_PAYPS_PSLINK + i);
       return lnk;
     }
   }
   return NULL;
 }
 
-void OnPaint_Drugpage(hbasewinAttr *win, void *val)
+void OnPaint_PayDrugpage(hbasewinAttr *win, void *val)
 {
   int x, y;
   WinStyle *style;
@@ -374,7 +364,7 @@ void OnPaint_Drugpage(hbasewinAttr *win, void *val)
   TESTNULLVOID(win->style);
 
   //填充处方数据
-  fillPrescription(win, 0);
+  fillPrescription_pay(win, 0);
   //绘制
   repaintChildren(win, val);
 
@@ -391,17 +381,17 @@ void OnPaint_Drugpage(hbasewinAttr *win, void *val)
   //处方头
   printTextLineXY(x + 10, y + 70, " 处方单号         日  期         患  者    性别   年龄      医生      科室          金额      状态", _h);
   //画处方线框
-  drawPrescription(x, y);
+  drawPrescription_pay(x, y);
 
   //药品头
   printTextLineXY(x + 10, y + 330, "    药品名称       单位   规格       数量    单价     小计", _h);
   //画药品清单框
-  drawDruglist(x, y);
+  drawDruglist_pay(x, y);
 
   freeFont(_h);
 }
 
-void Eventhandler_drugpage(hbasewinAttr *win, int type, void *val)
+void Eventhandler_paydrugpage(hbasewinAttr *win, int type, void *val)
 {
   globaldef *_g;
   hbasewinAttr *hitwin;
@@ -418,37 +408,7 @@ void Eventhandler_drugpage(hbasewinAttr *win, int type, void *val)
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow;
     }
     break;
-  case ID_DRUG_SHIP:
-    if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
-      _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
-
-    if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
-    { //鼠标按下
-      if (hitwin->onClick)
-        hitwin->onClick(hitwin, NULL);
-    }
-    else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-    { //鼠标释放,生成运单号
-
-      hbasewinAttr *pslink;
-      if (hitwin->onLeave)
-        hitwin->onLeave(hitwin, NULL);
-
-      //查询checkbox已选的link
-      pslink = getcheckedlink(win);
-      //生成运单信息,并显示
-      if (pslink)
-      {
-        generatePostInfo(win, pslink->data);
-        fillPrescription(win, 0);
-        repaintChildren(win, NULL);
-
-        drawPrescription(win->x, win->y);
-        drawPostInfo(win, pslink->data);
-      }
-    }
-    break;
-  case ID_DRUG_RETURN:
+  case ID_PAYPS_RETURN:
     if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
       _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
 
@@ -470,7 +430,7 @@ void Eventhandler_drugpage(hbasewinAttr *win, int type, void *val)
       }
     }
     break;
-  case ID_DRUG_CONFIRM:
+  case ID_PAYPS_CONFIRM:
     if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
       _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
 
@@ -480,17 +440,44 @@ void Eventhandler_drugpage(hbasewinAttr *win, int type, void *val)
         hitwin->onClick(hitwin, NULL);
     }
     else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-    { //鼠标释放,生成运单号
+    { //鼠标释放,修改处方状态
 
       hbasewinAttr *pslink;
+      list_t *tmplist;
+      Prescription *ps;
       if (hitwin->onLeave)
         hitwin->onLeave(hitwin, NULL);
+
+      //获取处方
+      //查询checkbox已选的link
+      pslink = getcheckedlink_pay(win);
+      if (pslink)
+      {
+        tmplist = ReadPrescription(PRESCRITIONFILE);
+        if (tmplist)
+        { //找到
+          ps = FindPrescription(tmplist, pslink->data);
+          if (ps)
+          {
+            if (strcmp(ps->status, "未缴费") == 0)
+            {
+              strcpy(ps->status, "已缴费");
+              SavePrescription(PRESCRITIONFILE, tmplist);
+
+              fillPrescription_pay(win, 0);
+              repaintChildren(win, NULL);
+              drawPrescription_pay(win->x, win->y);
+            }
+          }
+          list_destroy(tmplist);
+        }
+      }
 
       //已缴费->已确认
     }
     break;
   default:
-    if (hitwin->winID >= ID_DRUG_PSLINK && hitwin->winID < ID_DRUG_PSLINK + 8)
+    if (hitwin->winID >= ID_PAYPS_PSLINK && hitwin->winID < ID_PAYPS_PSLINK + 8)
     {
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
@@ -508,18 +495,18 @@ void Eventhandler_drugpage(hbasewinAttr *win, int type, void *val)
           hitwin->onLeave(hitwin, NULL);
 
         //处方划线
-        drawPrescription(getAbsoluteX(win), getAbsoluteY(win));
+        drawPrescription_pay(getAbsoluteX(win), getAbsoluteY(win));
 
         //填充药品 hitwin->data  处方单号
-        drawDruglist(win->x, win->y);
-        fillDruglist(win, hitwin->data);
+        drawDruglist_pay(win->x, win->y);
+        fillDruglist_pay(win, hitwin->data);
 
         //运单信息
-        drawPostInfo(win, hitwin->data);
+        drawPostInfo_pay(win, hitwin->data);
         //fillPostInfo(win, hitwin->data);
       }
     }
-    else if (hitwin->winID >= ID_DRUG_PSCHK && hitwin->winID < ID_DRUG_PSCHK + 8)
+    else if (hitwin->winID >= ID_PAYPS_PSCHK && hitwin->winID < ID_PAYPS_PSCHK + 8)
     {                                                                             //checkbox
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;

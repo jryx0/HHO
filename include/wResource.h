@@ -111,10 +111,9 @@
 #define ID_POST_UPDATESTATUS 2506
 
 #define ID_POST_QUERY_BILLNUM 2510
-#define ID_POST_QUERY_SHIPPER 2511 
+#define ID_POST_QUERY_SHIPPER 2511
 #define ID_POST_QUERY_SHIPPERTEL 2512
 #define ID_POST_QUERY_RECEIVER 2513
- 
 
 #define ID_POST_LINK 2550
 
@@ -122,36 +121,87 @@
 #define ID_DRUGPAGE 3000 //取药-发药页面
 #define ID_DRUG_RETURN 3001
 
-#define ID_DRUG_PSCHK  3400
+#define ID_DRUG_PSCHK 3400
 #define ID_DRUG_PSLINK 3500
 #define ID_DRUG_PREV 3550
 #define ID_DRUG_NEXT 3551
 
-#define ID_DRUG_STOCK 3552 //查看库存
-#define ID_DRUG_SHIP 3553  //发货
-#define ID_DRUG_PAY 3553  //缴费
+#define ID_DRUG_STOCK 3552   //查看库存
+#define ID_DRUG_SHIP 3553    //发货
+#define ID_DRUG_CONFIRM 3554 //缴费
 
 // #define ID_DRUG_ADDITEM 3552
 // #define ID_DRUG_DELITEM 3553
 
+<<<<<<< HEAD
 ////////////////////////////registerpage//////////////////////////////////////////////
-#define ID_SIGNINPAGE 4000
-#define ID_SIGNIN_NAME 4001
-#define ID_SIGNIN_SEX 4002
-#define ID_SIGNIN_MARRIAGESTATUS 4003
-#define ID_SIGNIN_IDNUMBER 4004
-#define ID_SIGNIN_BIRTH_YEAR 4005
-#define ID_SIGNIN_BIRTH_MONTH 4006
-#define ID_SIGNIN_TELENUM 4007
-#define ID_SIGNIN_ADDRESS 4008
-#define ID_SIGNIN_ALLERGY 4009
-#define ID_SIGNIN_RETURN 4010
-#define ID_SIGNIN_USERNAME 4011
-#define ID_SIGNIN_PASSWORD1 4012
-#define ID_SIGNIN_PASSWORD2 4013
-#define ID_SIGNIN_SIGNIN 4014
+#define ID_SIGNINPAGE 6000
+#define ID_SIGNIN_NAME 6001
+#define ID_SIGNIN_SEX 6002
+#define ID_SIGNIN_MARRIAGESTATUS 6003
+#define ID_SIGNIN_IDNUMBER 6004
+#define ID_SIGNIN_BIRTH_YEAR 6005
+#define ID_SIGNIN_BIRTH_MONTH 6006
+#define ID_SIGNIN_TELENUM 6007
+#define ID_SIGNIN_ADDRESS 6008
+#define ID_SIGNIN_ALLERGY 6009
+#define ID_SIGNIN_RETURN 6010
+#define ID_SIGNIN_USERNAME 6011
+#define ID_SIGNIN_PASSWORD1 6012
+#define ID_SIGNIN_PASSWORD2 6013
+#define ID_SIGNIN_SIGNIN 6014
+=======
+////////////////////////////处方缴费 page//////////////////////////////////////////////
+#define ID_PAYPSPAGE 4000 //取药-发药页面
+#define ID_PAYPS_RETURN 4001
+
+#define ID_PAYPS_PSCHK 4400
+#define ID_PAYPS_PSLINK 4500
+#define ID_PAYPS_PREV 4550
+#define ID_PAYPS_NEXT 4551
+
+#define ID_PAYPS_CONFIRM 4554 //缴费
+
+////////////////////////////查询医生 page//////////////////////////////////////////////
+#define ID_FINDDOCPAGE 5000
+#define ID_FINDDOC_RETURN 5001
+
+#define ID_FINDDOC_DOC 5020
+#define ID_FINDDOC_DOCMAX 5040
+#define ID_FINDDOC_DOCLINK 5050
+#define ID_FINDDOC_DOCLINKMAX 5070
+
+////////////////////////////医生问诊 page//////////////////////////////////////////////
+#define ID_DOCPAGE 5100
+#define ID_DOC_RETURN 5101
+#define ID_DOC_TEXTBOX_RESULT 5102
+#define ID_DOC_TEXTBOX_HANDLER 5103
+
+#define ID_DOC_QUERY_DRUG 5104
+#define ID_DOC_QUERY 5105
+
+#define ID_DOC_PSCHK 5200
+#define ID_DOC_PSLINK 5200
+
+// #define ID_DOC_PREV 5550
+// #define ID_DOC_NEXT5551
+
+#define ID_DOC_REGSCHK 5300  //挂号checkbox
+#define ID_DOC_REGSLINK 5350 //挂号link
+
+#define ID_DOC_DRUGCHK 5400  //查询药品chekbox
+#define ID_DOC_DRUGLINK 5450 //查询药品link
+
+#define ID_DOC_PSDRUGCHK 5500  //处方药品chekbox
+#define ID_DOC_PSDRUGLINK 5550 //处方药品link
+
+#define ID_DOC_BTN_GEN 5701     //生成处方
+#define ID_DOC_BTN_CONFIRM 5702 //诊断完成
+#define ID_DOC_ADDDRUG 5703     //添加药品
+#define ID_DOC_DELDRUG 5704     //删除药品
+>>>>>>> 4413994f726079b97aca823f50f46a3390ed5d61
 
 ///////////////未授权页面/////////////////////////////
-// #define ID_DENYPAGE 60000 
+// #define ID_DENYPAGE 60000
 
 #endif
