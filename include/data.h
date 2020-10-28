@@ -93,13 +93,12 @@ typedef struct
   long amount;    //金额
 } Prescription;
 
-typedef struct 
+typedef struct
 {
   unsigned int prescriptionid;
   unsigned int drugItemid;
   unsigned int amount;
-}PrescriptionDrugItem;
-
+} PrescriptionDrugItem;
 
 typedef struct
 {
@@ -168,6 +167,8 @@ void SaveUserInfo(list_t *userinfo, char *filename);
 userInfo *FindUserInfo(list_t *userinfo, int id);
 
 userInfo *fFindUserInfo(const char *filename, char *username, char *password);
+
+int fFindUsername(const char *filename, char *username);
 
 /*从filename代表的文件中读出病人信息并将信息以链表形式存入内存，返回表头*/
 list_t *ReadPatientInfo(const char *filename);

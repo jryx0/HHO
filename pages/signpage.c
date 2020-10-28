@@ -153,8 +153,9 @@ void EventHandler_signpage(hbasewinAttr *win, int type, void *value)
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标释放
         hfont *_h = getFont(SIMSUN, 16, 0xF801);
-        list_t *palist = ReadUserInfo(PATIENTINFOFILE);
-        hbasewinAttr *temp;
+        list_t *palist = ReadPatientInfo(PATIENTINFOFILE);
+        list_t *userlist = ReadUserInfo(USERINFOFILE);
+        hbasewinAttr *temp, *pwd;
         userInfo *user;
         PatientInfo *patient;
         if (hitwin->onLeave)
@@ -368,11 +369,71 @@ void EventHandler_signpage(hbasewinAttr *win, int type, void *value)
           break;
         }
         strcpy(patient->allergy, temp->title);
-        
-        list_rpush(palist,list_node_new(patient));
-        SavePatientInfo(palist,PATIENTINFOFILE);
+
+        user = (userInfo *)malloc(sizeof(userInfo));
+        memset(user, 0, sizeof(userInfo));
+        user->userID = patient->id;
+        user->userType = PATIENT;
+
+        //输入用户名
+        temp = findWinByID(win, ID_SIGNIN_USERNAME);
+        if (temp->title == NULL || strlen(temp->title) == 0)
+        {
+          printTextLineXY(PAGE_W / 2 - 48, win->y + 460, "请输入用户名", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(user);
+          free(patient);
+          break;
+        }
+        else if (fFindUsername(USERINFOFILE, temp->title))
+        {
+          temp->title = "";
+          printTextLineXY(PAGE_W / 2 - 48, win->y + 460, "用户名已存在", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(user);
+          free(patient);
+          break;
+        }
+        else if (strlen(temp->title) > 9)
+        {
+          temp->title = "";
+          printTextLineXY(PAGE_W / 2 - 40, win->y + 460, "用户名过长", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(user);
+          free(patient);
+          break;
+        }
+        strcpy(user->username, temp->title);
+
+        temp = findWinByID(win, ID_SIGNIN_PASSWORD1);
+        pwd = findWinByID(win, ID_SIGNIN_PASSWORD2);
+        if (strcmp(temp->title, pwd->title) == 0)
+          strcpy(user->password, temp->title);
+        else
+        {
+          temp->title = "";
+          pwd->title = "";
+          printTextLineXY(PAGE_W / 2 - 96, win->y + 460, "两次密码不同，请重新输入", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(user);
+          free(patient);
+          break;
+        }
+
+        //存储新建病人信息
+        list_rpush(palist, list_node_new(patient));
+        SavePatientInfo(palist, PATIENTINFOFILE);
         free(patient);
         list_destroy(palist);
+
+        list_rpush(userlist, list_node_new(user));
+        SaveUserInfo(userlist, USERINFOFILE);
+        free(user);
+        list_destroy(userlist);
 
         printTextLineXY(PAGE_W / 2 - 32, win->y + 460, "注册成功！", _h);
         freeFont(_h);
