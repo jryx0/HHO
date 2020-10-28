@@ -7,7 +7,9 @@
 #include "htextbox.h"
 #include "hyperlnk.h"
 #include "hbutton.h"
+#include "data.h"
 #include <time.h>
+#include <string.h>
 
 hbasewinAttr *Createsignpage(hbasewinAttr *parent, int winID)
 {
@@ -24,7 +26,7 @@ hbasewinAttr *Createsignpage(hbasewinAttr *parent, int winID)
   CreateTextBox(page, 240, 166, 80, 26, ID_SIGNIN_MARRIAGESTATUS, "", 1);
   CreateTextBox(page, 610, 166, 230, 26, ID_SIGNIN_IDNUMBER, "", 1);
   CreateTextBox(page, 240, 237, 80, 26, ID_SIGNIN_BIRTH_YEAR, "", 1);
-  CreateTextBox(page, 360, 237, 50, 26, ID_SIGNIN_BIRTH_DAY, "", 1);
+  CreateTextBox(page, 360, 237, 50, 26, ID_SIGNIN_BIRTH_MONTH, "", 1);
   CreateTextBox(page, 610, 237, 200, 26, ID_SIGNIN_TELENUM, "", 1);
   CreateTextBox(page, 240, 297, 250, 26, ID_SIGNIN_ADDRESS, "", 1);
   CreateTextBox(page, 610, 297, 150, 26, ID_SIGNIN_ALLERGY, "", 1);
@@ -63,7 +65,7 @@ void OnPaint_signpage(hbasewinAttr *win, void *value)
   printTextLineXY(x + 160, y + 245, "出生年月：", _h1);
   printTextLineXY(x + 332, y + 245, "年", _h1);
   printTextLineXY(x + 422, y + 245, "月", _h1);
-  printTextLineXY(x + 530, y + 245, "电话号码：", _h1);
+  printTextLineXY(x + 530, y + 245, "联系电话：", _h1);
   printTextLineXY(x + 192, y + 307, "住址：", _h1);
   printTextLineXY(x + 546, y + 307, "过敏史：", _h1);
   printTextLineXY(x + 176, y + 364, "用户名：", _h1);
@@ -128,7 +130,7 @@ void EventHandler_signpage(hbasewinAttr *win, int type, void *value)
     case ID_SIGNIN_MARRIAGESTATUS:
     case ID_SIGNIN_IDNUMBER:
     case ID_SIGNIN_BIRTH_YEAR:
-    case ID_SIGNIN_BIRTH_DAY:
+    case ID_SIGNIN_BIRTH_MONTH:
     case ID_SIGNIN_TELENUM:
     case ID_SIGNIN_ADDRESS:
     case ID_SIGNIN_ALLERGY:
@@ -150,12 +152,229 @@ void EventHandler_signpage(hbasewinAttr *win, int type, void *value)
       }
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       { //鼠标释放
-        hfont *_h = getFont(SIMSUN, 16, 0);
+        hfont *_h = getFont(SIMSUN, 16, 0xF801);
+        list_t *palist = ReadUserInfo(PATIENTINFOFILE);
+        hbasewinAttr *temp;
+        userInfo *user;
+        PatientInfo *patient;
         if (hitwin->onLeave)
           hitwin->onLeave(hitwin, NULL);
 
         fillRegionEx(win->x + 125, win->y + 445, 760, 38, 0xFFFF);
-        printTextLineXY(PAGE_W / 2 - 32, win->y + 455, "注册成功！", _h);
+        patient = (PatientInfo *)malloc(sizeof(PatientInfo));
+        memset(patient, 0, sizeof(PatientInfo));
+
+        if (palist->len == 0)
+          patient->id = 1001;
+        else
+        {
+          patient = (PatientInfo *)palist->tail->val;
+          patient->id++;
+        }
+
+        //输入名字
+        temp = findWinByID(win, ID_SIGNIN_NAME);
+        if (temp->title && strlen(temp->title) > 0 && strlen(temp->title) < 9)
+          strcpy(patient->name, temp->title);
+        else if (strlen(temp->title) > 8) //to do:判断汉字
+        {
+          printTextLineXY(PAGE_W / 2 - 80, win->y + 460, "请输入四字以内的姓名", _h);
+          freeFont(_h);
+          temp->title = "";
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        else
+        {
+          printTextLineXY(PAGE_W / 2 - 40, win->y + 460, "请输入姓名", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+
+        //输入性别
+        temp = findWinByID(win, ID_SIGNIN_SEX);
+        if (temp->title == NULL || strlen(temp->title) == 0)
+        {
+          printTextLineXY(PAGE_W / 2 - 40, win->y + 460, "请输入性别", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        else if (0 == strcmp(temp->title, "男"))
+          patient->sex = 1;
+        else if (0 == strcmp(temp->title, "女"))
+          patient->sex = 0;
+        else
+        {
+          printTextLineXY(PAGE_W / 2 - 56, win->y + 460, "请正确输入性别", _h);
+          freeFont(_h);
+          temp->title = "";
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+
+        //输入婚姻史
+        temp = findWinByID(win, ID_SIGNIN_MARRIAGESTATUS);
+        if (temp->title == NULL || strlen(temp->title) == 0)
+        {
+          printTextLineXY(PAGE_W / 2 - 48, win->y + 460, "请输入婚姻史", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        else if (0 == strcmp(temp->title, "未婚"))
+          patient->marriagestatus = 0;
+        else if (0 == strcmp(temp->title, "已婚"))
+          patient->marriagestatus = 1;
+        else if (0 == strcmp(temp->title, "离异"))
+          patient->marriagestatus = 2;
+        else
+        {
+          printTextLineXY(PAGE_W / 2 - 64, win->y + 460, "请正确输入婚姻史", _h);
+          freeFont(_h);
+          temp->title = "";
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+
+        //输入身份证号
+        temp = findWinByID(win, ID_SIGNIN_IDNUMBER);
+        if (temp->title == NULL || strlen(temp->title) == 0)
+        {
+          printTextLineXY(PAGE_W / 2 - 56, win->y + 460, "请输入身份证号", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        else if (id_num_judge(temp->title) == 1)
+          strcpy(patient->id_number, temp->title);
+        else
+        {
+          printTextLineXY(PAGE_W / 2 - 72, win->y + 460, "请正确输入身份证号", _h);
+          freeFont(_h);
+          temp->title = "";
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+
+        //输入出生年份
+        temp = findWinByID(win, ID_SIGNIN_BIRTH_YEAR);
+        if (temp->title == NULL || strlen(temp->title) == 0)
+        {
+          printTextLineXY(PAGE_W / 2 - 56, win->y + 460, "请输入出生年份", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        else if (patient->year = atoi(temp->title) == 0 || patient->year < 1900 || patient->year > 2020)
+        {
+          printTextLineXY(PAGE_W / 2 - 72, win->y + 460, "请正确输入出生年份", _h);
+          freeFont(_h);
+          temp->title = "";
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+
+        //输入出生月份
+        temp = findWinByID(win, ID_SIGNIN_BIRTH_MONTH);
+        if (temp->title == NULL || strlen(temp->title) == 0)
+        {
+          printTextLineXY(PAGE_W / 2 - 56, win->y + 460, "请输入出生月份", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        else if (patient->month = atoi(temp->title) == 0 || patient->month < 0 || patient->month > 12)
+        {
+          printTextLineXY(PAGE_W / 2 - 72, win->y + 460, "请正确输入出生月份", _h);
+          freeFont(_h);
+          temp->title = "";
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+
+        //输入电话号码
+        temp = findWinByID(win, ID_SIGNIN_TELENUM);
+        if (temp->title == NULL || strlen(temp->title) == 0)
+        {
+          printTextLineXY(PAGE_W / 2 - 56, win->y + 460, "请输入联系电话", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        else if (telenum_judge(temp->title))
+        {
+          printTextLineXY(PAGE_W / 2 - 72, win->y + 460, "请正确输入联系电话", _h);
+          freeFont(_h);
+          temp->title = "";
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        strcpy(patient->telenum, temp->title);
+
+        //输入住址
+        temp = findWinByID(win, ID_SIGNIN_ADDRESS);
+        if (temp->title == NULL || strlen(temp->title) == 0)
+        {
+          printTextLineXY(PAGE_W / 2 - 40, win->y + 460, "请输入住址", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        else if (strlen(temp->title) > 31)
+        {
+          printTextLineXY(PAGE_W / 2 - 48, win->y + 460, "输入住址过长", _h);
+          freeFont(_h);
+          temp->title = "";
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        strcpy(patient->addr, temp->title);
+
+        //输入过敏史
+        temp = findWinByID(win, ID_SIGNIN_ADDRESS);
+        if (temp->title == NULL || strlen(temp->title) == 0)
+        {
+          printTextLineXY(PAGE_W / 2 - 48, win->y + 460, "请输入过敏史", _h);
+          freeFont(_h);
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        else if (strlen(temp->title) > 15)
+        {
+          printTextLineXY(PAGE_W / 2 - 56, win->y + 460, "输入过敏史过长", _h);
+          freeFont(_h);
+          temp->title = "";
+          temp->onActivate(temp, _g);
+          free(patient);
+          break;
+        }
+        strcpy(patient->allergy, temp->title);
+        
+        list_rpush(palist,list_node_new(patient));
+        SavePatientInfo(palist,PATIENTINFOFILE);
+        free(patient);
+        list_destroy(palist);
+
+        printTextLineXY(PAGE_W / 2 - 32, win->y + 460, "注册成功！", _h);
         freeFont(_h);
         delay(1200);
         //转跳homepage
@@ -175,4 +394,27 @@ void EventHandler_signpage(hbasewinAttr *win, int type, void *value)
     break;
   }
   (void)type;
+}
+
+int id_num_judge(char *id_num)
+{
+  int i, len = strlen(id_num);
+  if (len != 18)
+    return 0;
+  for (i = 0; i < len - 1; i++)
+    if (id_num[i] < '0' || id_num[i] > '9')
+      return 0;
+  if ((id_num[i] < '0' || id_num[i] > '9') && id_num[i] != 'X' && id_num[i] != 'x')
+    return 0;
+  return 1;
+}
+int telenum_judge(char *telenum)
+{
+  int i, len = strlen(telenum);
+  if (len != 11 && len != 8)
+    return 0;
+  for (i = 0; i < len; i++)
+    if (telenum[i] < '0' || telenum[i] > '9')
+      return 0;
+  return 1;
 }
