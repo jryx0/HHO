@@ -54,10 +54,10 @@ void CreateDocInfoLabel(hbasewinAttr *win)
 
   for (i = 0, j = 0; i < 10; i++)
   {
-    label = CreateLabel(win, 90 + j * 160, 10 + k * 230 + 80, 150, 205, ID_FINDDOC_DOC + i, NULL);
+    label = CreateLabel(win, 90 + j * 160, 10 + k * 240 + 80, 150, 220, ID_FINDDOC_DOC + i, NULL);
     label->wintype = LABEL_FILE_TXT;
 
-    CreateButton(win, 90 + j * 160 + 50, 10 + k * 230 + 80 + 205, 50, 20, ID_FINDDOC_DOCLINK + i, NULL);
+    CreateButton(win, 90 + j * 160 + 50, 10 + k * 240 + 80 + 220, 50, 20, ID_FINDDOC_DOCLINK + i, NULL);
     if (++j % 5 == 0)
     {
       j = 0;
