@@ -1,0 +1,3 @@
+#i c:\hho\data\database\doctor\d1.565
+吴同
+消化系统疾病的诊治
