@@ -382,7 +382,7 @@ void OnKey_Textbox(hbasewinAttr *textbox, void *key)
     {
       hfont *_font = getFont(ti->textStyle->fonttype, ti->textStyle->fontsize, DEFAULT_FONTCOLOR); // getFont(DEFAULT_FONTNAME, DEFAULT_FONTSIZE, DEFAULT_FONTCOLOR);
       if (ti->curTextindex < strlen(textbox->title))
-      {//没有控制好,需要修改
+      { //没有控制好,需要修改
         char *ch = strchr(textbox->title + ti->curTextindex, '\r');
         if (strchr(ch, '\r'))
         {
@@ -458,9 +458,17 @@ void OnKeyPress_Textbox(hbasewinAttr *textbox, void *str)
   if (ti->active == INACTIVE)
     return;
 
-  titlelen = strlen(textbox->title);
   len = strlen(str);
+  if (str == NULL || len == 0)
+  {
+    memset(textbox->title, 0, len);
+    return;
+  }
+
+  titlelen = strlen(textbox->title);
+
   //newLen = strlen(textbox->title) + len + 1;
+
   newLen = titlelen + len;
   if (newLen + 32 > 1024) //最大允许值1024个字符
   {

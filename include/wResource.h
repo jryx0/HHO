@@ -189,13 +189,17 @@
 #define ID_DOC_DRUGCHK 5400  //查询药品chekbox
 #define ID_DOC_DRUGLINK 5450 //查询药品link
 
-#define ID_DOC_PSDRUGCHK 5500  //处方药品chekbox
-#define ID_DOC_PSDRUGLINK 5550 //处方药品link
+#define ID_DOC_PSDRUGCHK 5500      //处方药品chekbox
+#define ID_DOC_PSDRUGLINK 5550     //处方药品link
+#define ID_DOC_PSDRUGTEXTBOX 5580  //处方药数量
+#define ID_DOC_PSDRUGTEXTBOX2 5590 //处方药用法
 
 #define ID_DOC_BTN_GEN 5701     //生成处方
 #define ID_DOC_BTN_CONFIRM 5702 //诊断完成
 #define ID_DOC_ADDDRUG 5703     //添加药品
 #define ID_DOC_DELDRUG 5704     //删除药品
+#define ID_DOC_BTN_CAL 5705     //计算金额
+#define ID_DOC_AMOUNT 5706      //总金额
 
 ///////////////未授权页面/////////////////////////////
 // #define ID_DENYPAGE 60000
