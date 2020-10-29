@@ -956,6 +956,7 @@ RegisterInfo *fFindRegisterInfo(const char *filename, int rgsid)
 					 &Infotemp->status, Infotemp->disease);
 		if (Infotemp->id == rgsid)
 		{
+			strrpl(Infotemp->disease, '#', '\r');
 			fclose(fp);
 			return Infotemp;
 		}

@@ -214,7 +214,7 @@ void fillPayRegisterInfo(hbasewinAttr *win, int regsid)
       _r.right_bottom.y = _r.left_top.y + 160 - 10;
       rectangleEx(x + 388, y + 275, 349, 160, 0x6BAF, 1, 1);
       //恢复回车
-      strrpl(rgs->disease, '#', '\r');
+      //strrpl(rgs->disease, '#', '\r');
       printTextEx(&_r, rgs->disease, _h, 0);
     }
 
@@ -372,7 +372,7 @@ void EventHandler_payregspage(hbasewinAttr *win, int type, void *value)
         if (hitwin->onLeave)
           hitwin->onLeave(hitwin, NULL);
 
-        TRACE(("挂号单缴费\n"));
+        //TRACE(("挂号单缴费\n"));
         UpdateRegiserBill(win);
 
         //更新挂号清单信息
