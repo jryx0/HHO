@@ -265,10 +265,6 @@ void drawPostInfo(hbasewinAttr *win, int psid)
   freeFont(_h);
 }
 
-void fillPostInfo(hbasewinAttr *win)
-{
-}
-
 void generatePostInfo(hbasewinAttr *win, int psid)
 {
   hbasewinAttr *lnk;

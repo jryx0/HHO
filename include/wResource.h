@@ -95,8 +95,18 @@
 #define ID_REGISTERPAGE 2000     //挂号页面
 #define ID_REGISTER_RETURN 2001  //首页
 #define ID_REGISTER_DISEASE 2002 //病情描述
-#define ID_REGISTER_OK 2003 //确认挂号
+#define ID_REGISTER_OK 2003      //确认挂号
 
+//挂号支付
+
+#define ID_PAYREGSPAGE 2200
+#define ID_PAYREGS_OK 2201
+#define ID_PAYREGS_RETURN 2202 //首页
+#define ID_PAYREGS_DISEASE 2203
+#define ID_ID_PAYREGS_ALLCHK 2204
+
+#define ID_PAYREGS_LINK 2250
+#define ID_PAYREGS_CHK 2270
 // #define ID_REGISTER_DEPT_MEDICINE 2002      //内科
 // #define ID_REGISTER_DEPT_SURGERY 2003       //外科
 // #define ID_REGISTER_DEPT_PAEDIATRICS 2004   //儿科

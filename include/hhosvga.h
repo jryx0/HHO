@@ -277,9 +277,10 @@ void printTextLineXY(int x, int y, char *text, hfont *_font);
  * @param region  要显示的区域
  * @param text 字符串
  * @param _font 字体设置
- *  @return 无
+ * @param firstline 设置第一行是否空两格
+ * @return 无
  */
-void printTextEx(hregion *region, char *text, hfont *_font);
+void printTextEx(hregion *region, char *text, hfont *_font, int firstline);
 
 /**
  * @version v3 输出文本函数版本3

@@ -109,7 +109,7 @@ void OnPaint_hyperlink_Line(hbasewinAttr *link, void *val)
       rectangleEx(x, y, link->nWidth, link->nHeight, 0xFFFF, 1, 2);
     }
 
-    printTextEx(&region, link->title, _font);
+    printTextEx(&region, link->title, _font, 1);
     freeFont(_font);
   }
   (void)val;
@@ -142,7 +142,7 @@ void OnPaint_hyperlink_BK(hbasewinAttr *link, void *val)
       link->nHeight = lnkStyle->fontsize + 6;
 
     region.left_top.x = x;
-    region.left_top.y = y + (link->nHeight - lnkStyle->fontsize) / 2;    
+    region.left_top.y = y + (link->nHeight - lnkStyle->fontsize) / 2;
 
     region.right_bottom.x = x + link->nWidth;
     region.right_bottom.y = y + link->nHeight;
@@ -163,7 +163,7 @@ void OnPaint_hyperlink_BK(hbasewinAttr *link, void *val)
       rectangleEx(x, y, link->nWidth, link->nHeight, 0xFFFF, 1, 2);
     }
 
-    printTextEx(&region, link->title, _font);
+    printTextEx(&region, link->title, _font, 1);
     freeFont(_font);
   }
   (void)val;

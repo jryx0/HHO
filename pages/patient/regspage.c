@@ -158,13 +158,13 @@ void SaveRegiserBill(hbasewinAttr *win, char *disease)
   doc = fFindDoctorInfo(DOCTORINFOFILE, docid);
   if (doc)
   {
-	 dept = fFindDeptInfo(DEPTINFOFILE, doc->deptid);
+    dept = fFindDeptInfo(DEPTINFOFILE, doc->deptid);
     if (dept)
     {
       char datebuf[9], timebuf[9];
       rgsi = malloc(sizeof(RegisterInfo));
       rgsi->id = maxid + 1;
-	  rgsi->userid = userid;
+      rgsi->userid = userid;
       rgsi->doctorid = docid;
       strcpy(rgsi->dept, dept->deptname);
       _strdate(datebuf);
@@ -173,7 +173,7 @@ void SaveRegiserBill(hbasewinAttr *win, char *disease)
       rgsi->serial = 0;
       rgsi->status = 0;
 
-      strrpl(disease, '\r', '#');
+      //strrpl(disease, '\r', '#');
       strcpy(rgsi->disease, disease);
 
       list_rpush(rgslist, list_node_new(rgsi));
@@ -250,7 +250,7 @@ void EventHandler_registerpage(hbasewinAttr *win, int type, void *value)
         if (hitwin->onLeave)
           hitwin->onLeave(hitwin, NULL);
         disease = findWinByID(win, ID_REGISTER_DISEASE);
-        if (disease && disease->title && strlen(disease->title) > 10)
+        if (disease && disease->title && strlen(disease->title) > 10 && strlen(disease->title) < 255)
         { //保存挂号单
           TRACE(("保存挂号单\n"));
           SaveRegiserBill(win, disease->title);
@@ -265,7 +265,8 @@ void EventHandler_registerpage(hbasewinAttr *win, int type, void *value)
         else
         { //提示输入病情描述
           hfont *_h = getFont(SIMSUN, 16, 0xF801);
-          printTextLineXY(390, 650, "请输入病情描述,大于10个字符", _h);
+          printTextLineXY(390, 650, "请输入病情描述。", _h);
+          printTextLineXY(390, 675, "(大于10个字符小于255个字符)", _h);
           freeFont(_h);
         }
       }

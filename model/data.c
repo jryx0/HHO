@@ -101,6 +101,7 @@ list_t *ReadUserInfo(const char *filename)
 		list_rpush(list, list_node_new(Infotemp));
 	}
 
+	fflush(fp);
 	fclose(fp);
 	return list;
 }
@@ -109,7 +110,7 @@ list_t *ReadUserInfo(const char *filename)
 /// </summary>
 /// <param name="userinfo">用户信息链表</param>
 /// <param name="filename">文件名</param>
-void SaveUserInfo(list_t *userinfo, char *filename)
+void SaveUserInfo(char *filename, list_t *userinfo)
 {
 	FILE *fp;
 	userInfo *Infotemp;
@@ -131,6 +132,7 @@ void SaveUserInfo(list_t *userinfo, char *filename)
 	}
 
 	list_iterator_destroy(it);
+	fflush(fp);
 	fclose(fp);
 }
 /// <summary>
@@ -225,7 +227,7 @@ list_t *ReadPatientInfo(const char *filename)
 	return list;
 }
 
-void SavePatientInfo(list_t *patientinfo, char *filename)
+void SavePatientInfo(char *filename, list_t *patientinfo)
 {
 	FILE *fp;
 	PatientInfo *Infotemp;
@@ -249,6 +251,8 @@ void SavePatientInfo(list_t *patientinfo, char *filename)
 	}
 
 	list_iterator_destroy(it);
+	fflush(fp);
+	fclose(fp);
 }
 
 PatientInfo *FindPatientInfo(list_t *patientinfo, int id)
@@ -444,7 +448,7 @@ list_t *ReadDoctorInfo(const char *filename)
 	return list;
 }
 
-void SaveDoctorInfo(list_t *doctorinfo, char *filename)
+void SaveDoctorInfo(char *filename, list_t *doctorinfo)
 {
 	FILE *fp;
 	DoctorInfo *Infotemp;
@@ -720,6 +724,7 @@ Prescription *FindPrescription(list_t *ps, int id)
 		Infotemp = (Prescription *)node->val;
 		if (Infotemp->id == id)
 		{
+			list_iterator_destroy(it);
 			return Infotemp;
 		}
 		Infotemp = NULL;
@@ -824,6 +829,8 @@ list_t *ReadRegistration(const char *filename)
 					 &Infotemp->id, &Infotemp->userid, &Infotemp->doctorid,
 					 Infotemp->dept, Infotemp->datetime, &Infotemp->serial,
 					 &Infotemp->status, Infotemp->disease);
+		//恢复回车
+		strrpl(Infotemp->disease, '#', '\r');
 		list_rpush(list, list_node_new(Infotemp));
 	}
 
@@ -847,6 +854,8 @@ void SaveRegistration(const char *filename, list_t *rlist)
 	while ((node = list_iterator_next(it)))
 	{
 		Infotemp = (RegisterInfo *)node->val;
+		//转换回车为#
+		strrpl(Infotemp->disease, '\r', '#');
 		fprintf(fp, "%d\t%d\t%d\t%s\t%s\t%d\t%d\t%s\n",
 						Infotemp->id, Infotemp->userid, Infotemp->doctorid,
 						Infotemp->dept, Infotemp->datetime, Infotemp->serial,
@@ -856,6 +865,105 @@ void SaveRegistration(const char *filename, list_t *rlist)
 	list_iterator_destroy(it);
 	fflush(fp);
 	fclose(fp);
+}
+list_t *ReadRegistrationbyUser(const char *filename, int userid)
+{
+	FILE *fp;
+	list_t *list = NULL;
+	char line[256];
+	RegisterInfo *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		Infotemp = malloc(sizeof(RegisterInfo));
+		if (NULL == list)
+		{
+			list = list_new();
+			//list->match = DoctorInfomatch;
+			list->free = Nonemallocfree;
+		}
+		sscanf(line, "%d\t%d\t%d\t%s\t%s\t%d\t%d\t%s",
+					 &Infotemp->id, &Infotemp->userid, &Infotemp->doctorid,
+					 Infotemp->dept, Infotemp->datetime, &Infotemp->serial,
+					 &Infotemp->status, Infotemp->disease);
+		if (Infotemp->userid == userid)
+		{
+			list_rpush(list, list_node_new(Infotemp));
+		}
+		else
+		{
+			free(Infotemp);
+			Infotemp = NULL;
+		}
+	}
+
+	fclose(fp);
+	return list;
+}
+RegisterInfo *FindRegisterInfo(list_t *self, int rgsid)
+{
+	list_iterator_t *it = list_iterator_new(self, LIST_HEAD);
+	list_node_t *node;
+	RegisterInfo *Infotemp = NULL;
+	while ((node = list_iterator_next(it)))
+	{
+		if (node && node->val)
+		{
+			Infotemp = (RegisterInfo *)node->val;
+			if (Infotemp->id == rgsid)
+			{
+				list_iterator_destroy(it);
+				return Infotemp;
+			}
+			Infotemp = NULL;
+		}
+	}
+
+	list_iterator_destroy(it);
+	return NULL;
+}
+
+RegisterInfo *fFindRegisterInfo(const char *filename, int rgsid)
+{
+	FILE *fp;
+	char line[256];
+	RegisterInfo *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	Infotemp = malloc(sizeof(RegisterInfo));
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		sscanf(line, "%d\t%d\t%d\t%s\t%s\t%d\t%d\t%s",
+					 &Infotemp->id, &Infotemp->userid, &Infotemp->doctorid,
+					 Infotemp->dept, Infotemp->datetime, &Infotemp->serial,
+					 &Infotemp->status, Infotemp->disease);
+		if (Infotemp->id == rgsid)
+		{
+			fclose(fp);
+			return Infotemp;
+		}
+	}
+
+	fclose(fp);
+	free(Infotemp);
+	return NULL;
 }
 
 ////////////////////////药品///////////////////////////

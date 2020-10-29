@@ -768,7 +768,7 @@ void printTextLineXY(int x, int y, char *text, hfont *_font)
  * @param _font 字体设置
  *  @return 无
  */
-void printTextEx(hregion *region, char *text, hfont *_font)
+void printTextEx(hregion *region, char *text, hfont *_font, int firstline)
 {
   int x0, y0;                //每个汉字起始点
   unsigned char quma, weima; //定义汉字的区码和位码
@@ -795,7 +795,7 @@ void printTextEx(hregion *region, char *text, hfont *_font)
   x0 = region->left_top.x;
   while (*text)
   {
-    if (isFirstLine)
+    if (isFirstLine && firstline)
     { //段落首行空两个字。
       x0 += _font->currentFontSize * 2;
       isFirstLine = FALSE;

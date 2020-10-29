@@ -112,7 +112,7 @@ typedef struct
   char dept[10];         //科室
   char datetime[20];     //挂号单生成时间
   unsigned char serial;  //流水号
-  unsigned char status;  //挂号单状态,0未看病,1看病中,2已看完
+  unsigned char status;  //挂号单状态,0未缴费 1已缴费 3已完成
   char disease[256];     //病情描述 127个汉字
 } RegisterInfo;
 
@@ -166,7 +166,7 @@ typedef struct postitem
 /*从filename代表的文件中读出用户信息并将信息以链表形式存入内存，返回表头*/
 list_t *ReadUserInfo(const char *filename);
 /*将userinfo链表中存储的用户信息写入filename代表的文件中*/
-void SaveUserInfo(list_t *userinfo, char *filename);
+void SaveUserInfo(char *filename, list_t *userinfo);
 /*通过用户唯一编码id找到用户信息userinfo链表中对应的用户，并返回指向该信息的指针*/
 userInfo *FindUserInfo(list_t *userinfo, int id);
 
@@ -175,7 +175,7 @@ userInfo *fFindUserInfo(const char *filename, char *username, char *password);
 /*从filename代表的文件中读出病人信息并将信息以链表形式存入内存，返回表头*/
 list_t *ReadPatientInfo(const char *filename);
 /*将patientinfo链表中存储的病人信息写入filename代表的文件中*/
-void SavePatientInfo(list_t *patientinfo, char *filename);
+void SavePatientInfo( char *filename,list_t *patientinfo);
 /*通过病人唯一编码id找到病人信息patientinfo链表中对应的用户，并返回指向该信息的指针*/
 PatientInfo *FindPatientInfo(list_t *patientinfo, int id);
 PatientInfo *fFindPatientInfo(const char *filename, int id);
@@ -193,7 +193,7 @@ DeptInfo *fFindDeptInfo(const char *filename, int id);
 /*从filename代表的文件中读出医生信息并将信息以链表形式存入内存，返回表头*/
 list_t *ReadDoctorInfo(const char *filename);
 /*将doctorinfo链表中存储的医生信息写入filename代表的文件中*/
-void SaveDoctorInfo(list_t *doctorinfo, char *filename);
+void SaveDoctorInfo(char *filename, list_t *doctorinfo);
 /*通过医生唯一编码id找到医生信息doctorinfo链表中对应的用户，并返回指向该信息的指针*/
 DoctorInfo *FindDoctorInfo(list_t *doctorinfo, int id);
 DoctorInfo *fFindDoctorInfo(const char *filename, int docid);
@@ -212,10 +212,11 @@ void SavePrescription(const char *filename, list_t *pslist);
 /*挂号*/
 list_t *ReadRegistration(const char *filename);
 void SaveRegistration(const char *filename, list_t *rlist);
+RegisterInfo *fFindRegisterInfo(const char *filename, int rgsid);
+RegisterInfo *FindRegisterInfo(list_t *self, int rgsid);
 /*查找药品*/
 DrugItem *fFindDrugItem(const char *filename, int drugid);
 list_t *ReadDrugItembyName(const char *filename, char *name);
-
 
 void strrpl(char *str, char oldch, char newch);
 #endif

@@ -114,6 +114,8 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
               _g->activePageID = ID_DOCPAGE; //只允许医生查看
             else if (hitwin->winID == ID_HOMEPAGE_REGS)
               _g->activePageID = ID_FINDDOCPAGE;
+            else if (hitwin->winID == ID_HOMEPAGE_CHARGE1) //挂号支付
+              _g->activePageID = ID_PAYREGSPAGE;
 
             win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
           }

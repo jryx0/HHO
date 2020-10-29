@@ -15,12 +15,14 @@
 #include "lginpage.h"
 #include "hnews.h"
 #include "regspage.h"
+#include "payregs.h"
 #include "hdept.h"
 #include "postpage.h"
 #include "drugpage.h"
 #include "paydrug.h"
 #include "docpage.h"
 #include "finddoc.h"
+#include "payregs.h"
 #include <memory.h>
 #include <string.h>
 
@@ -310,6 +312,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
       else
         newpage = CreateHomepage(desktop, ID_HOMEPAGE);
     }
+    break;
+  case ID_PAYREGSPAGE:
+    newpage = CreatePayRegspage(desktop, ID_PAYREGSPAGE, _g->userid);
     break;
 
   case ID_FINDDOCPAGE:

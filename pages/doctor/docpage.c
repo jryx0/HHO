@@ -49,7 +49,6 @@ hbasewinAttr *CreateDocPage(hbasewinAttr *parent, int winID, int userid)
         free(dp);
       }
     }
-
     free(doc);
   }
 
@@ -71,12 +70,13 @@ hbasewinAttr *CreateDocPage(hbasewinAttr *parent, int winID, int userid)
 //绘制挂号信息
 void drawRegistration(int x, int y)
 {
-  rectangleEx(x, y + 65, 200, 200, 0x6BAF, 1, 1);
+  rectangleEx(x, y + 65, 240, 200, 0x6BAF, 1, 1);
   //fillRegionEx(x + 2, y + 320, 320, 200, 0x0000);
 
-  lineyEx(x + 90, y + 65, 200, 0x6BAF);
-  lineyEx(x + 150, y + 65, 200, 0x6BAF);
-  linex_styleEx(x, y + 90, 200, 0x6BAF, 1, 1);
+  lineyEx(x + 80, y + 65, 200, 0x6BAF);
+  lineyEx(x + 140, y + 65, 200, 0x6BAF);
+  lineyEx(x + 180, y + 65, 200, 0x6BAF);
+  linex_styleEx(x, y + 90, 240, 0x6BAF, 1, 1);
 }
 
 //填充挂号单信息
@@ -109,13 +109,13 @@ void fillRegistration(hbasewinAttr *win)
       node = list_at(rgslist, i);
       rgs = (RegisterInfo *)node->val;
 
-      //只显示医生本人单据
-      if (rgs->doctorid != style->type)
+      //只显示医生本人单据和已缴费单据
+      if (rgs->doctorid != style->type && rgs->status == 1)
         continue;
 
       if (lnk == NULL)
       { //创建lnk
-        lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, 200, 25, ID_DOC_PSLINK + j, NULL);
+        lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, 240, 25, ID_DOC_PSLINK + j, NULL);
         lnk->wintype = HYPERLINK_BK;
         CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_DOC_PSCHK + j, NULL);
         j++;
@@ -130,7 +130,7 @@ void fillRegistration(hbasewinAttr *win)
       d = FindDoctorInfo(doclist, rgs->doctorid); //医生
       if (rgs && pi && d)
       {
-        sprintf(lnk->title, "%-8d%-8s%-5d", rgs->id, pi->name, 2020 - pi->year);
+        sprintf(lnk->title, "%-8d%-6s%-4d已缴费", rgs->id, pi->name, 2020 - pi->year);
         lnk->data = rgs->id; //挂号id
         //TRACE(("%s\n", lnk->title));
       }
@@ -158,17 +158,16 @@ void drawPatientInfo(hbasewinAttr *win, int rgsid)
   style = win->style;
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
-  fillRegionEx(x + 220, y + 65, 350, 200, 0xFFFF);
+  fillRegionEx(x + 260, y + 65, 310, 200, 0xFFFF);
 
   _h = getFont(style->fonttype, style->fontsize, 0x0000);
-  printTextLineXY(x + 220, y + 65, "姓名:", _h);
-  printTextLineXY(x + 330, y + 65, "性别:", _h);
-  printTextLineXY(x + 400, y + 65, "年龄:", _h);
-  printTextLineXY(x + 470, y + 65, "过敏史:", _h);
-  printTextLineXY(x + 220, y + 90, "住址:", _h);
-  printTextLineXY(x + 220, y + 115, "患者主诉:", _h);
-
-  rectangleEx(x + 220, y + 135, 350, 130, 0x0000, 1, 1);
+  printTextLineXY(x + 260, y + 65, "姓名:", _h);
+  printTextLineXY(x + 370, y + 65, "性别:", _h);
+  printTextLineXY(x + 440, y + 65, "年龄:", _h);
+  printTextLineXY(x + 260, y + 90, "住址:", _h);
+  printTextLineXY(x + 260, y + 115, "患者主诉:", _h);
+  printTextLineXY(x + 480, y + 115, "过敏史:", _h);
+  rectangleEx(x + 260, y + 135, 310, 130, 0x6BAF, 1, 1);
   freeFont(_h);
 }
 
@@ -573,7 +572,7 @@ void OnPaint_Docpage(hbasewinAttr *win, void *val)
   printTextLineXY(x + 600, y + 125, "治疗/处置:", _h);
 
   //绘制挂号窗口头
-  printTextLineXY(x + 2, y + 68, "   单号    姓名   年龄", _h);
+  printTextLineXY(x + 2, y + 68, "   单号   姓名  年龄  状态", _h);
   //绘制挂号窗口
   drawRegistration(x, y);
 
@@ -672,9 +671,8 @@ void Eventhandler_docpage(hbasewinAttr *win, int type, void *val)
       {
         //查询druglist 中选择的药品,
         hbasewinAttr *chk = getcheckedlink_doc(win);
-        if(chk)
-        {//保存药品清单到文件
-          
+        if (chk)
+        { //保存药品清单到文件
         }
         TRACE(("%s(%d): 查询药品=%s\n", __FILE__, __LINE__, tb->title));
       }

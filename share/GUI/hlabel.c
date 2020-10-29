@@ -49,7 +49,7 @@ void OnPaint_Label_Title(hbasewinAttr *label, void *value)
   _region.right_bottom.x = _region.left_top.x + label->nWidth;
   _region.right_bottom.y = _region.left_top.y + label->nHeight;
   fillRegion(_region.left_top.x, _region.left_top.y, _region.right_bottom.x, _region.right_bottom.y, 0xFFFF);
-  printTextEx(&_region, label->title, fpfont);
+  printTextEx(&_region, label->title, fpfont, 1);
 
   freeFont(fpfont);
   (void)value;
