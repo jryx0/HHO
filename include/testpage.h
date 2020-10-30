@@ -1,7 +1,7 @@
 #ifndef __TESTPAGE_H__
 #define __TESTPAGE_H__
 #include "macrodef.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "hhosvga.h"
 #include "HBaseWin.h"
 

@@ -206,7 +206,8 @@
 #define ID_RESULT_RETURN 6001 //返回首页
 #define ID_RESULT_OK 6002
 
-#define ID_RESULT_LINK 6100
+#define ID_RESULT_REGSLINK 6100
+#define ID_RESULT_PSDRUGLINK 6200
 ///////////////未授权页面/////////////////////////////
 // #define ID_DENYPAGE 60000
 

@@ -4,7 +4,7 @@
 #include "hlabel.h"
 #include "hglobal.h"
 #include "homepage.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "hyperlnk.h"
 #include "htextbox.h"
 #include "hbutton.h"

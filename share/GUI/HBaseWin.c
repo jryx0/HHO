@@ -2,7 +2,7 @@
 //#include "macrodef.h"
 #include "mouse.h"
 #include "hhosvga.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "HBaseWin.h"
 #include "list.h"
 #include "hglobal.h"

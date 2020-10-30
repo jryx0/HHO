@@ -1,6 +1,6 @@
 
 #include "macrodef.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "hhosvga.h"
 #include "HBaseWin.h"
 #include "hyperlnk.h"

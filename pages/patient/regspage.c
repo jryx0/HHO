@@ -2,7 +2,7 @@
 #include "HBaseWin.h"
 #include "hlabel.h"
 #include "hbutton.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "macrodef.h"
 #include "hglobal.h"
 #include "hyperlnk.h"

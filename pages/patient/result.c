@@ -3,7 +3,7 @@
 #include "hhosvga.h"
 #include "HBaseWin.h"
 #include "hbutton.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "macrodef.h"
 #include "hglobal.h"
 #include "hyperlnk.h"
@@ -27,7 +27,7 @@ hbasewinAttr *CreateResultPage(hbasewinAttr *parent, int winID, int userid)
   style->type = userid;
 
   Createhyperlink(page, 20, 10, 65, 25, ID_RESULT_RETURN, "[首 页]");
-  CreateButton(page, 638, 510, 100, 32, ID_RESULT_OK, "确   认");
+  //CreateButton(page, 638, 510, 100, 32, ID_RESULT_OK, "确   认");
 
   return page;
 }
@@ -138,7 +138,7 @@ void fillResultRegisterList(hbasewinAttr *win, int userid)
   doclist = ReadDoctorInfo(DOCTORINFOFILE);
 
   //清空link数据
-  for (i = ID_PAYREGS_LINK; i < ID_PAYREGS_LINK + 8; i++)
+  for (i = ID_RESULT_REGSLINK; i < ID_RESULT_REGSLINK + 8; i++)
   {
     lnk = findWinByID(win, i);
     if (lnk && lnk->title)
@@ -150,7 +150,7 @@ void fillResultRegisterList(hbasewinAttr *win, int userid)
 
   for (i = 0, j = 0; i < rgslist->len && i < 8; i++)
   { //一次最多8行, page控制显示那个8个
-    hbasewinAttr *lnk = findWinByID(win, ID_PAYREGS_LINK + j);
+    hbasewinAttr *lnk = findWinByID(win, ID_RESULT_REGSLINK + j);
     node = list_at(rgslist, i);
     regs = (RegisterInfo *)node->val;
 
@@ -158,13 +158,13 @@ void fillResultRegisterList(hbasewinAttr *win, int userid)
     if (regs->userid != userid)
       continue;
 
-    //控制显示全部或未缴费单据
-    if (style->height == 0 && regs->status != 0)
+    //只显示已完成单据
+    if (regs->status != 2)
       continue;
 
     if (lnk == NULL)
     { //创建lnk
-      lnk = Createhyperlink(win, 15, 75 + 25 * j, 340, 25, ID_PAYREGS_LINK + j, NULL);
+      lnk = Createhyperlink(win, 15, 75 + 25 * j, 340, 25, ID_RESULT_REGSLINK + j, NULL);
       lnk->wintype = HYPERLINK_BK;
       //CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_PAYREGS_CHK + j, NULL);
     }
@@ -201,14 +201,60 @@ void drawPrescriptionInfo_Re(hbasewinAttr *win)
   y = getAbsoluteY(win);
 
   // fillRegionEx(x + 3, y + 346, 360, 200, 0xFFFF);
-  rectangleEx(x + 380, y + 300, 480, 200, 0x6BAF, 1, 1);
-  lineyEx(x + 550, y + 300, 200, 0x6BAF);
-  lineyEx(x + 600, y + 300, 200, 0x6BAF);
-  lineyEx(x + 660, y + 300, 200, 0x6BAF);
-  lineyEx(x + 810, y + 300, 200, 0x6BAF);
-  lineyEx(x + 870, y + 300, 200, 0x6BAF);
-  linex_styleEx(x + 380, y + 335, 480, 0x6BAF, 1, 1);
+  rectangleEx(x + 380, y + 270, 560, 200, 0x6BAF, 1, 1);
+  lineyEx(x + 580, y + 270, 200, 0x6BAF);
+  lineyEx(x + 640, y + 270, 200, 0x6BAF);
+  lineyEx(x + 710, y + 270, 200, 0x6BAF);
+  lineyEx(x + 780, y + 270, 200, 0x6BAF);
+  lineyEx(x + 870, y + 270, 200, 0x6BAF);
+  linex_styleEx(x + 380, y + 300, 560, 0x6BAF, 1, 1);
 }
+void fillPrescriptionInfo_Re(hbasewinAttr *win)
+{
+  int i, x, y;
+  list_t *psDruglist;
+  DrugItem *drug;
+  MedicalRecord *mr;
+  char info[128];
+  list_node_t *node;
+  PrescriptionDrugItem *psItem;
+  hfont *_hfont;
+
+  TESTNULLVOID(win);
+  x = getAbsoluteX(win);
+  y = getAbsoluteY(win);
+
+  //清空数据
+  mr = fFindMedicalRecordbyregId(MEDICALRECORDFILE, win->data);
+  if (!mr)
+    return;
+  sprintf(info, "%sdatabase\\ps\\%d.txt", DATAPATH, mr->prescriptionid);
+  free(mr);
+
+  psDruglist = ReadPSDrug(info);
+  if (!psDruglist)
+    return;
+  _hfont = getFont(SIMYOU, 16, 0x0000);
+  for (i = 0; i < psDruglist->len; i++)
+  {
+    node = list_at(psDruglist, i);
+    if (node && node->val)
+    {
+      psItem = (PrescriptionDrugItem *)node->val;
+      drug = fFindDrugItem(DRUGFILE, psItem->drugItemid);
+
+      sprintf(info, "%-25s%-5s%-6.2f %4d     %6.2f  %3d次/天", drug->name, drug->unit, drug->price / 100.00,
+              psItem->amount, drug->price * psItem->amount / 100.00, psItem->count);
+
+      printTextLineXY(x + 385, y + 310 + i * 30, info, _hfont);
+      TRACE(("ps drug:%s\n", info));
+      free(drug);
+    }
+  }
+
+  freeFont(_hfont);
+}
+
 void OnPaint_ResultPage(hbasewinAttr *win, void *val)
 {
   int x, y;
@@ -234,10 +280,13 @@ void OnPaint_ResultPage(hbasewinAttr *win, void *val)
   //绘制挂号窗口头
   printTextLineXY(x + 20, y + 45, "  单号   姓名    科室    医生   状态", _h);
   drawResultRegister(x, y);
-  freeFont(_h);
+
+  printTextLineXY(x + 720, y + 250, "总金额:", _h);
+  printTextLineXY(x + 380, y + 275, "        药品名称        单位    单价    数量    价格     用法", _h);
 
   drawResultRegisterInfo(win);
   drawPrescriptionInfo_Re(win);
+  freeFont(_h);
 }
 void EventHandler_resultpage(hbasewinAttr *win, int type, void *val)
 {
@@ -286,7 +335,7 @@ void EventHandler_resultpage(hbasewinAttr *win, int type, void *val)
       }
       break;
     default:
-      if (hitwin->winID >= ID_PAYREGS_LINK && hitwin->winID < ID_PAYREGS_LINK + 8)
+      if (hitwin->winID >= ID_RESULT_REGSLINK && hitwin->winID < ID_RESULT_REGSLINK + 8)
       {
         if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
           _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
@@ -305,14 +354,22 @@ void EventHandler_resultpage(hbasewinAttr *win, int type, void *val)
 
           //填充信息
           fillRegionEx(x + 370, y + 40, 620, 200, 0xFFFF);
+
+          //时间
+          fillRegionEx(x + 100, y + 250, 200, 20, 0xFFFF);
           // fillPayRegisterInfo(win, hitwin->data);
           // drawPayRegisterInfo(win);
-          drawResultRegisterInfo(win);
+          fillRegionEx(x + 20 + 1, y + 300 + 1, 330 - 2, 150 - 2, 0xFFFF);
           fillResultRegisterInfo(win, hitwin->data);
+          drawResultRegisterInfo(win);
           //设置当前挂号单,用于更新挂号单状态
           drawResultRegister(x, y);
-
           win->data = hitwin->data;
+
+          fillRegionEx(x + 380 + 1, y + 300 + 2, 560 - 2, 200 - 3, 0xFFFF);
+          fillPrescriptionInfo_Re(win);
+          drawPrescriptionInfo_Re(win);
+          TRACE(("%d\n", hitwin->data));
         }
       }
       break;

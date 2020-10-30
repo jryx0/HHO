@@ -1,7 +1,7 @@
 #include "macrodef.h"
 #include "HBaseWin.h"
 #include "hyperlnk.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "hhosvga.h"
 #include "list.h"
 #include "hglobal.h"

@@ -114,7 +114,7 @@ typedef struct
   char dept[10];         //科室
   char datetime[20];     //挂号单生成时间
   unsigned char serial;  //流水号
-  unsigned char status;  //挂号单状态,0未缴费 1已缴费 3已完成
+  unsigned char status;  //挂号单状态,0未缴费 1已缴费 2已完成
   char disease[256];     //病情描述 127个汉字
 } RegisterInfo;
 

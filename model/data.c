@@ -783,7 +783,7 @@ void SavePrescription(const char *filename, list_t *pslist)
 		TRACE(("unable to open %s\r\n", filename));
 		return;
 	}
-	fprintf(fp, "#处方id  日期 患者id 医生id 科室   金额  状态 \n");
+	fprintf(fp, "#处方id  日期 患者id 医生id 科室   金额  状态 挂号id\n");
 	it = list_iterator_new(pslist, LIST_HEAD);
 	while ((node = list_iterator_next(it)))
 	{

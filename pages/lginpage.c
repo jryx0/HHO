@@ -1,7 +1,7 @@
 #include "lginpage.h"
 #include "hhosvga.h"
 #include "HBaseWin.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "htextbox.h"
 #include "hbutton.h"
 #include "hyperlnk.h"

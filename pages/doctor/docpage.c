@@ -1,7 +1,7 @@
 #include "macrodef.h"
 #include "HBaseWin.h"
 #include "hyperlnk.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "hhosvga.h"
 #include "list.h"
 #include "hglobal.h"
@@ -860,7 +860,7 @@ void Eventhandler_docpage(hbasewinAttr *win, int type, void *val)
         addDrugtoPSwin(win, druglink);
         drawPrescriptionInfo(win);
       }
-      TRACE(("%s(%d): 查询药品=%s\n", __FILE__, __LINE__, druglink->title));
+      //TRACE(("%s(%d): 查询药品=%s\n", __FILE__, __LINE__, druglink->title));
     }
     break;
   case ID_DOC_BTN_CONFIRM:

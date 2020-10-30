@@ -4,7 +4,7 @@
 #include "hhosvga.h"
 #include "wdesktop.h"
 #include "HBaseWin.h"
-#include "wResource.h"
+#include "Resource.h"
 #include "hlabel.h"
 #include "hyperlnk.h"
 #include "hbutton.h"

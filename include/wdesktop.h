@@ -1,7 +1,7 @@
 #ifndef __WDESKTOP_H__
 #define __WDESKTOP_H__
 
-#include "wResource.h"
+#include "Resource.h"
 #include "HBaseWin.h"
 #include "mouse.h"
 
