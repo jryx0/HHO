@@ -1,3 +1,3 @@
 #i c:\hho\data\database\doctor\d0.565
-洪远
+#+洪远
 擅长神经内镜新技术的神经外科手术
