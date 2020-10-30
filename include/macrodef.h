@@ -87,6 +87,9 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 //挂号存储文件
 #define REGISTRATIONFILE DATAPATH "database\\regs\\regs.txt"
 
+//病例存储文件
+#define MEDICALRECORDFILE DATAPATH "database\\record\\record.txt"
+
 //药品文件
 #define DRUGFILE DATAPATH "database\\drug\\druglist.txt"
 

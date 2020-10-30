@@ -92,12 +92,14 @@ typedef struct
   char status[8]; //处方状态
   long amount;    //金额
   int postid;
+  int registerid;
 } Prescription;
 
 typedef struct
 {
   unsigned int prescriptionid;
   unsigned int drugItemid;
+  long price;
   unsigned int amount;
   unsigned int count;
 } PrescriptionDrugItem;
@@ -120,13 +122,12 @@ typedef struct
 {
   unsigned int id;             //病历唯一编码
   unsigned int regid;          //挂号单唯一编码
-  RegisterInfo *bookinfo;      //挂号单
-  time_t recordtime;           //病历生成时间
-  char illness[50];            //主诉
-  char diagnosis[50];          //病情诊断
-  char advice;                 //处置建议
+  RegisterInfo *regiinfo;      //挂号单
+  char record_date[20];        //病历生成时间
+  char diagnosis[20];          //病情诊断
+  char handler[256];           //处置
   unsigned int prescriptionid; //处方唯一编码
-  Prescription *pprescription; //指向处方
+  Prescription *prescription;  //指向处方
 } MedicalRecord;
 
 typedef struct
@@ -175,7 +176,7 @@ userInfo *fFindUserInfo(const char *filename, char *username, char *password);
 /*从filename代表的文件中读出病人信息并将信息以链表形式存入内存，返回表头*/
 list_t *ReadPatientInfo(const char *filename);
 /*将patientinfo链表中存储的病人信息写入filename代表的文件中*/
-void SavePatientInfo( char *filename,list_t *patientinfo);
+void SavePatientInfo(char *filename, list_t *patientinfo);
 /*通过病人唯一编码id找到病人信息patientinfo链表中对应的用户，并返回指向该信息的指针*/
 PatientInfo *FindPatientInfo(list_t *patientinfo, int id);
 PatientInfo *fFindPatientInfo(const char *filename, int id);
@@ -208,6 +209,8 @@ list_t *ReadPrescription(const char *filename);
 Prescription *FindPrescription(list_t *ps, int id);
 Prescription *fFindPrescription(const char *filename, int psid);
 void SavePrescription(const char *filename, list_t *pslist);
+list_t *ReadPSDrug(const char *filename);
+void SavePSDrug(const char *filename, list_t *psdruglist);
 
 /*挂号*/
 list_t *ReadRegistration(const char *filename);
@@ -217,6 +220,13 @@ RegisterInfo *FindRegisterInfo(list_t *self, int rgsid);
 /*查找药品*/
 DrugItem *fFindDrugItem(const char *filename, int drugid);
 list_t *ReadDrugItembyName(const char *filename, char *name);
+
+/*病例*/
+list_t *ReadMedicalRecord(const char *filename);
+void SaveMedicalRecord(const char *filename, list_t *mrlist);
+MedicalRecord *fFindMedicalRecordbyId(const char *filename, int mrid);
+list_t *ReadMedicalRecordbyUserId(const char *filename, int userid);
+list_t *ReadMedicalRecordbyDocId(const char *filename, int docid);
 
 void strrpl(char *str, char oldch, char newch);
 #endif

@@ -702,11 +702,11 @@ list_t *ReadPrescription(const char *filename)
 			//list->match = DoctorInfomatch;
 			list->free = Nonemallocfree;
 		}
-		sscanf(line, "%d\t%s\t%d\t%d\t%s\t%ld\t%s\t%d",
+		sscanf(line, "%d\t%s\t%d\t%d\t%s\t%ld\t%s\t%d\t%d",
 					 &Infotemp->id, Infotemp->date,
 					 &Infotemp->userid, &Infotemp->doctorid,
 					 Infotemp->dept, &Infotemp->amount,
-					 Infotemp->status, &Infotemp->postid);
+					 Infotemp->status, &Infotemp->postid, &Infotemp->registerid);
 		list_rpush(list, list_node_new(Infotemp));
 	}
 
@@ -751,11 +751,11 @@ Prescription *fFindPrescription(const char *filename, int psid)
 		if (line[0] == '#')
 			continue;
 
-		sscanf(line, "%d\t%s\t%d\t%d\t%s\t%ld\t%s\t%d",
+		sscanf(line, "%d\t%s\t%d\t%d\t%s\t%ld\t%s\t%d\t%d",
 					 &Infotemp->id, Infotemp->date,
 					 &Infotemp->userid, &Infotemp->doctorid,
 					 Infotemp->dept, &Infotemp->amount,
-					 Infotemp->status, &Infotemp->postid);
+					 Infotemp->status, &Infotemp->postid, &Infotemp->registerid);
 		// sscanf(line, "%d",
 		// 			 &Infotemp->id);
 
@@ -788,11 +788,70 @@ void SavePrescription(const char *filename, list_t *pslist)
 	while ((node = list_iterator_next(it)))
 	{
 		Infotemp = (Prescription *)node->val;
-		fprintf(fp, "%d\t%s\t%d\t%d\t%s\t%ld\t%s\t%d\n",
+		fprintf(fp, "%d\t%s\t%d\t%d\t%s\t%ld\t%s\t%d\t%d\n",
 						Infotemp->id, Infotemp->date,
 						Infotemp->userid, Infotemp->doctorid,
 						Infotemp->dept, Infotemp->amount,
-						Infotemp->status, Infotemp->postid);
+						Infotemp->status, Infotemp->postid, Infotemp->registerid);
+	}
+	list_iterator_destroy(it);
+	fflush(fp);
+	fclose(fp);
+}
+
+list_t *ReadPSDrug(const char *filename)
+{
+	FILE *fp;
+	list_t *list = NULL;
+	char line[256];
+	PrescriptionDrugItem *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		Infotemp = malloc(sizeof(PrescriptionDrugItem));
+		if (NULL == list)
+		{
+			list = list_new();
+			//list->match = DoctorInfomatch;
+			list->free = Nonemallocfree;
+		}
+		sscanf(line, "%d\t%d\t%d\t%ld",
+					 &Infotemp->drugItemid, &Infotemp->amount, &Infotemp->count, &Infotemp->price);
+		list_rpush(list, list_node_new(Infotemp));
+	}
+
+	fclose(fp);
+	return list;
+}
+
+void SavePSDrug(const char *filename, list_t *psdruglist)
+{
+	FILE *fp;
+	list_node_t *node;
+	PrescriptionDrugItem *Infotemp;
+	list_iterator_t *it;
+
+	if ((fp = fopen(filename, "wt")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return;
+	}
+	fprintf(fp, "#药品id  数量  用法 单价\n");
+	it = list_iterator_new(psdruglist, LIST_HEAD);
+	while ((node = list_iterator_next(it)))
+	{
+		Infotemp = (PrescriptionDrugItem *)node->val;
+		fprintf(fp, "%d\t%d\t%d\t%ld",
+						Infotemp->drugItemid, Infotemp->amount, Infotemp->count, Infotemp->price);
 	}
 	list_iterator_destroy(it);
 	fflush(fp);
@@ -804,7 +863,7 @@ list_t *ReadRegistration(const char *filename)
 {
 	FILE *fp;
 	list_t *list = NULL;
-	char line[256];
+	char line[512];
 	RegisterInfo *Infotemp;
 
 	if ((fp = fopen(filename, "r")) == NULL)
@@ -813,7 +872,7 @@ list_t *ReadRegistration(const char *filename)
 		return NULL;
 	}
 
-	while (fgets(line, 256, fp))
+	while (fgets(line, 512, fp))
 	{
 		if (line[0] == '#')
 			continue;
@@ -849,7 +908,7 @@ void SaveRegistration(const char *filename, list_t *rlist)
 		TRACE(("unable to open %s\r\n", filename));
 		return;
 	}
-	fprintf(fp, "#挂号单号  患者id 医生id 科室 时间 流水号 状态(0未缴费 1已缴费 3已完成) 病情描述\n");
+	fprintf(fp, "#挂号单号  患者id 医生id 科室 时间 流水号 状态(0未缴费 1已缴费 2已完成) 病情描述\n");
 	it = list_iterator_new(rlist, LIST_HEAD);
 	while ((node = list_iterator_next(it)))
 	{
@@ -870,7 +929,7 @@ list_t *ReadRegistrationbyUser(const char *filename, int userid)
 {
 	FILE *fp;
 	list_t *list = NULL;
-	char line[256];
+	char line[512];
 	RegisterInfo *Infotemp;
 
 	if ((fp = fopen(filename, "r")) == NULL)
@@ -879,7 +938,7 @@ list_t *ReadRegistrationbyUser(const char *filename, int userid)
 		return NULL;
 	}
 
-	while (fgets(line, 256, fp))
+	while (fgets(line, 512, fp))
 	{
 		if (line[0] == '#')
 			continue;
@@ -965,6 +1024,216 @@ RegisterInfo *fFindRegisterInfo(const char *filename, int rgsid)
 	fclose(fp);
 	free(Infotemp);
 	return NULL;
+}
+////////////////////病例////////////////////////////
+list_t *ReadMedicalRecord(const char *filename)
+{
+	FILE *fp;
+	list_t *list = NULL;
+	char line[256];
+	MedicalRecord *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		Infotemp = malloc(sizeof(MedicalRecord));
+		if (NULL == list)
+		{
+			list = list_new();
+			//list->match = DoctorInfomatch;
+			list->free = Nonemallocfree;
+		}
+
+		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%d",
+					 &Infotemp->id, &Infotemp->regid, Infotemp->record_date,
+					 Infotemp->diagnosis, Infotemp->handler, &Infotemp->prescriptionid);
+		strrpl(Infotemp->handler, '#', '\r');
+		list_rpush(list, list_node_new(Infotemp));
+	}
+
+	fclose(fp);
+	return list;
+}
+
+void SaveMedicalRecord(const char *filename, list_t *mrlist)
+{
+	FILE *fp;
+	list_node_t *node;
+	MedicalRecord *Infotemp;
+	list_iterator_t *it;
+
+	if ((fp = fopen(filename, "wt")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return;
+	}
+	fprintf(fp, "#病例编号 挂号单 诊断结论 处置方法  处方id\n");
+	it = list_iterator_new(mrlist, LIST_HEAD);
+	while ((node = list_iterator_next(it)))
+	{
+		Infotemp = (MedicalRecord *)node->val;
+		//转换回车为#
+		strrpl(Infotemp->handler, '\r', '#');
+		fprintf(fp, "%d\t%d\t%s\t%s\t%s\t%d\n",
+						Infotemp->id, Infotemp->regid, Infotemp->record_date,
+						Infotemp->diagnosis, Infotemp->handler, Infotemp->prescriptionid);
+	}
+
+	list_iterator_destroy(it);
+	fflush(fp);
+	fclose(fp);
+}
+
+MedicalRecord *fFindMedicalRecordbyId(const char *filename, int mrid)
+{
+	FILE *fp;
+	char line[512];
+	MedicalRecord *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+	Infotemp = malloc(sizeof(MedicalRecord));
+	while (fgets(line, 512, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%d",
+					 &Infotemp->id, &Infotemp->regid, Infotemp->record_date,
+					 Infotemp->diagnosis, Infotemp->handler, &Infotemp->prescriptionid);
+		strrpl(Infotemp->handler, '#', '\r');
+
+		if (Infotemp->id == mrid)
+		{
+			fclose(fp);
+			return Infotemp;
+		}
+	}
+
+	fclose(fp);
+	if (Infotemp)
+		free(Infotemp);
+	return NULL;
+}
+
+list_t *ReadMedicalRecordbyUserId(const char *filename, int userid)
+{
+	FILE *fp;
+	list_t *list = NULL;
+	char line[256];
+	MedicalRecord *Infotemp;
+	RegisterInfo *regi;
+	list_t *regslist = ReadRegistration(REGISTRATIONFILE);
+
+	if (regslist == NULL)
+		return NULL;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		Infotemp = malloc(sizeof(MedicalRecord));
+		if (NULL == list)
+		{
+			list = list_new();
+			//list->match = DoctorInfomatch;
+			list->free = Nonemallocfree;
+		}
+
+		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%d",
+					 &Infotemp->id, &Infotemp->regid, Infotemp->record_date,
+					 Infotemp->diagnosis, Infotemp->handler, &Infotemp->prescriptionid);
+
+		regi = FindRegisterInfo(regslist, Infotemp->regid);
+		if (regi && regi->userid == userid)
+		{
+			Infotemp->regiinfo = malloc(sizeof(RegisterInfo));
+			memcpy(Infotemp->regiinfo, regi, sizeof(RegisterInfo));
+			strrpl(Infotemp->handler, '#', '\r');
+			list_rpush(list, list_node_new(Infotemp));
+		}
+		else
+		{
+			free(Infotemp);
+			Infotemp = NULL;
+		}
+	}
+
+	list_destroy(regslist);
+	fclose(fp);
+	return list;
+}
+
+list_t *ReadMedicalRecordbyDocId(const char *filename, int docid)
+{
+	FILE *fp;
+	list_t *list = NULL;
+	char line[256];
+	MedicalRecord *Infotemp;
+	RegisterInfo *regi;
+	list_t *regslist = ReadRegistration(REGISTRATIONFILE);
+	if (regslist == NULL)
+		return NULL;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+
+	while (fgets(line, 256, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		Infotemp = malloc(sizeof(MedicalRecord));
+		if (NULL == list)
+		{
+			list = list_new();
+			//list->match = DoctorInfomatch;
+			list->free = Nonemallocfree;
+		}
+
+		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%d",
+					 &Infotemp->id, &Infotemp->regid, Infotemp->record_date,
+					 Infotemp->diagnosis, Infotemp->handler, &Infotemp->prescriptionid);
+
+		regi = FindRegisterInfo(regslist, Infotemp->regid);
+		if (regi && regi->doctorid == docid)
+		{
+			Infotemp->regiinfo = malloc(sizeof(RegisterInfo));
+			memcpy(Infotemp->regiinfo, regi, sizeof(RegisterInfo));
+			strrpl(Infotemp->handler, '#', '\r');
+			list_rpush(list, list_node_new(Infotemp));
+		}
+		else
+		{
+			free(Infotemp);
+			Infotemp = NULL;
+		}
+	}
+
+	list_destroy(regslist);
+	fclose(fp);
+	return list;
 }
 
 ////////////////////////药品///////////////////////////

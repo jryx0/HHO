@@ -14,6 +14,7 @@
 #include "hlabel.h"
 
 #include <string.h>
+#include <ctype.h>
 
 #define COL1 120
 #define COL2 (COL1 + 150)
@@ -24,6 +25,8 @@
 #define COL7 (COL6 + 100)
 #define COL8 (COL7 + 120)
 
+//win->data 选择的挂号单
+//style->type 医生
 hbasewinAttr *CreateDocPage(hbasewinAttr *parent, int winID, int userid)
 {
   hbasewinAttr *ctrl;
@@ -47,7 +50,7 @@ hbasewinAttr *CreateDocPage(hbasewinAttr *parent, int winID, int userid)
       {
         sprintf(page->title, "医生诊断(%s)", dp->deptname);
         CreateButton(page, page->x + 660, page->y + 390, 100, 32, ID_DOC_BTN_CONFIRM, "诊断完成");
-        CreateButton(page, page->x + 780, page->y + 390, 100, 32, ID_DOC_BTN_GEN, "生成处方");
+        // CreateButton(page, page->x + 780, page->y + 390, 100, 32, ID_DOC_BTN_GEN, "生成处方");
         CreateButton(page, page->x + 540, page->y + 390, 100, 32, ID_DOC_BTN_CAL, "计算金额");
         free(dp);
       }
@@ -56,12 +59,12 @@ hbasewinAttr *CreateDocPage(hbasewinAttr *parent, int winID, int userid)
   }
 
   Createhyperlink(page, 20, 10, 65, 25, ID_DOC_RETURN, "[首 页]");
-  ((WinStyle *)page->style)->type = userid; //保存id区分
+  ((WinStyle *)page->style)->type = userid; //保存医生
 
-  CreateTextBox(page, 600, 85, 400, 32, ID_DOC_TEXTBOX_RESULT, NULL, 1);
-  CreateTextBox(page, 600, 145, 400, 120, ID_DOC_TEXTBOX_HANDLER, NULL, 0);
+  CreateTextBox(page, 600, 85, 400, 32, ID_DOC_TEXTBOX_RESULT, "", 1);
+  CreateTextBox(page, 600, 145, 400, 120, ID_DOC_TEXTBOX_HANDLER, "", 0);
 
-  CreateTextBox(page, 80, 275, 150, 32, ID_DOC_QUERY_DRUG, NULL, 1);
+  CreateTextBox(page, 80, 275, 150, 32, ID_DOC_QUERY_DRUG, "", 1);
   CreateButton(page, 250, 275, 80, 32, ID_DOC_QUERY, "查询");
 
   CreateButton(page, 470, 380, 40, 30, ID_DOC_ADDDRUG, "-->");
@@ -127,7 +130,7 @@ void fillRegistration(hbasewinAttr *win)
       rgs = (RegisterInfo *)node->val;
 
       //只显示医生本人单据和已缴费单据
-      if (rgs->doctorid != style->type && rgs->status == 1)
+      if (!(rgs->status == 1 && rgs->doctorid == style->type))
         continue;
 
       if (lnk == NULL)
@@ -147,7 +150,8 @@ void fillRegistration(hbasewinAttr *win)
       d = FindDoctorInfo(doclist, rgs->doctorid); //医生
       if (rgs && pi && d)
       {
-        sprintf(lnk->title, "%-9d%-7s%-4d已缴费", rgs->id, pi->name, 2020 - pi->year);
+
+        sprintf(lnk->title, "%-9d%-7s%-4d%d", rgs->id, pi->name, 2020 - pi->year, rgs->status);
         lnk->data = rgs->id; //挂号id
         //TRACE(("%s\n", lnk->title));
       }
@@ -330,216 +334,6 @@ void drawPrescriptionInfo(hbasewinAttr *win)
   linex_styleEx(x + 520, y + 345, 480, 0x6BAF, 1, 1);
 }
 
-//绘制处方
-//onpaint中调用,画处方显示的外观
-void drawPrescription_doc(int x, int y)
-{
-  rectangleEx(x, y + 65, PAGE_W, PAGE_H / 2 - 50, 0x6BAF, 1, 1);
-
-  //printTextLineXY(x + 10, y + 70, " 处方单号         日  期         患  者    性别   年龄      医生      科室          金额      状态", _h);
-
-  lineyEx(x + COL1, y + 65, PAGE_H / 2 - 50, 0x6BAF);
-  lineyEx(x + COL2, y + 65, PAGE_H / 2 - 50, 0x6BAF);
-  lineyEx(x + COL3, y + 65, PAGE_H / 2 - 50, 0x6BAF);
-  lineyEx(x + COL4, y + 65, PAGE_H / 2 - 50, 0x6BAF);
-  lineyEx(x + COL5, y + 65, PAGE_H / 2 - 50, 0x6BAF);
-  lineyEx(x + COL6, y + 65, PAGE_H / 2 - 50, 0x6BAF);
-  lineyEx(x + COL7, y + 65, PAGE_H / 2 - 50, 0x6BAF);
-  lineyEx(x + COL8, y + 65, PAGE_H / 2 - 50, 0x6BAF);
-  linex_styleEx(x, y + 90, PAGE_W, 0x6BAF, 1, 1);
-}
-
-//填充处方数据
-//在drawPrescription前调用
-//根据用户类型不同,显示不同的处方 style->type
-//page 页号从0开始
-void fillPrescription_doc(hbasewinAttr *win, int page)
-{
-  hbasewinAttr *lnk;
-  list_t *ps, *patient, *doc;
-  PatientInfo *pi;
-  Prescription *p;
-  DoctorInfo *d;
-  WinStyle *style;
-  //char infostr[256];
-
-  list_node_t *node;
-  int i, j = 0;
-
-  TESTNULLVOID(win);
-  TESTNULLVOID(win->style);
-  style = win->style;
-
-  //ps = ReadPrescription(DATAPATH "database\\ps\\psinfo.txt");
-  ps = ReadPrescription(PRESCRITIONFILE);
-  TESTNULLVOID(ps);
-
-  // patient = ReadPatientInfo(DATAPATH "database\\painfo.txt");
-  // doc = ReadDoctorInfo(DATAPATH "database\\docinfo.txt");
-  patient = ReadPatientInfo(PATIENTINFOFILE);
-  doc = ReadDoctorInfo(DOCTORINFOFILE);
-
-  if (patient && doc)
-    for (i = 0, j = 0; i < ps->len && i < 8; i++)
-    { //一次最多8行, page控制显示那个8个
-      hbasewinAttr *lnk = findWinByID(win, ID_DOC_PSLINK + j);
-      node = list_at(ps, i);
-      p = (Prescription *)node->val;
-
-      if (style->type != -1)
-      { //只显示本人单据
-        if (p->userid != style->type)
-          continue;
-      }
-
-      if (lnk == NULL)
-      { //创建lnk
-        lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, PAGE_W, 25, ID_DOC_PSLINK + i, NULL);
-        lnk->wintype = HYPERLINK_BK;
-        CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_DOC_PSCHK + i, NULL);
-      }
-
-      if (lnk->title)
-        free(lnk->title);
-      lnk->title = malloc(256);
-      memset(lnk->title, 0, 256);
-
-      // node = list_at(ps, i);
-
-      // p = (Prescription *)node->val;            //处方
-      pi = FindPatientInfo(patient, p->userid); //患者
-      d = FindDoctorInfo(doc, p->doctorid);     //医生
-      if (p && pi && d)
-      {
-        sprintf(lnk->title, "%-12d%-20s%-5s%8s%7d%8s%12s%15.2f%12s", p->id, p->date, pi->name,
-                pi->sex ? "男" : "女", 2020 - pi->year, d->name, p->dept, (float)(p->amount / 100), p->status);
-        lnk->data = p->id; //挂号id
-        //TRACE(("%s\n", lnk->title));
-      }
-      j++;
-    }
-
-  if (ps)
-    list_destroy(ps);
-  if (patient)
-    list_destroy(patient);
-  if (doc)
-    list_destroy(doc);
-
-  (void)page;
-}
-
-//绘制药品清单
-void drawDruglist_doc(int x, int y)
-{
-  fillRegionEx(x + 1, y + 360, 540, 205, 0xFFFF);
-  rectangleEx(x, y + 325, 540, 205, 0x6BAF, 1, 1);
-
-  lineyEx(x + 170, y + 325, 205, 0x6BAF);
-  lineyEx(x + 220, y + 325, 205, 0x6BAF);
-  lineyEx(x + 330, y + 325, 205, 0x6BAF);
-  lineyEx(x + 370, y + 325, 205, 0x6BAF);
-  lineyEx(x + 470, y + 325, 205, 0x6BAF);
-  linex_styleEx(x, y + 350, 540, 0x6BAF, 1, 1);
-}
-
-//填充药品
-//默认不会超出
-void fillDruglist_doc(hbasewinAttr *win, int psid)
-{
-  FILE *fp;
-  char info[256];
-  PrescriptionDrugItem *pdi;
-  DrugItem *di;
-  hfont *_h;
-  int i = 0;
-  TESTNULLVOID(win);
-  //TRACE(("linkdata:%d\n",link->data));
-
-  //处方药品清单文件名
-  sprintf(info, "%sdatabase\\ps\\%d.txt", DATAPATH, psid);
-  fp = fopen(info, "r");
-  if (fp == NULL)
-  {
-    TRACE(("%s(%d):无法打开文件%s\n", __FILE__, __LINE__, info));
-    return;
-  }
-  //查找药品
-  pdi = malloc(sizeof(PrescriptionDrugItem));
-  _h = getFont(SIMHEI, 16, 0x0000);
-  while (fgets(info, 256, fp))
-  {
-    if (info[0] == '#')
-      continue;
-    sscanf(info, "%d\t%d", &pdi->drugItemid, &pdi->amount);
-    di = fFindDrugItem(DATAPATH "database\\drug\\druglist.txt", pdi->drugItemid);
-
-    if (di)
-    {
-      sprintf(info, "%-20s%-5s%-14s%-4d%7.2f%8.2f", di->name, di->unit, di->kind, pdi->amount,
-              di->price / 100.0, (float)(pdi->amount * di->price) / 100.00);
-      printTextLineXY(win->x + 10, win->y + 360 + i * 20, info, _h);
-      i++;
-      //TRACE(("%s\n", info));
-      free(di);
-    }
-  }
-
-  free(pdi);
-
-  fclose(fp);
-  freeFont(_h);
-  return;
-}
-
-//绘制运单提示信息
-/**
- * 
- * @param psid 处方id
- */
-void drawPostInfo_doc(hbasewinAttr *win, int psid)
-{
-  int x, y;
-  //WinStyle *style;
-  hfont *_h;
-  Prescription *ps;
-  postInfo *po;
-  char info[64];
-
-  TESTNULLVOID(win);
-  //TESTNULLVOID(win->style);
-  //style = win->style;
-  _h = getFont(SIMSUN, 16, 0x0000);
-
-  fillRegionEx(win->x + 580, win->y + 325, 420, 160, 0xFFFF);
-
-  printTextLineXY(win->x + 585, win->y + 335, "运单号:                发货人:", _h);
-  printTextLineXY(win->x + 585, win->y + 32 + 335, "收货人:                发货人电话:", _h);
-  printTextLineXY(win->x + 585, win->y + 64 + 335, "收货地址:", _h);
-
-  ps = fFindPrescription(PRESCRITIONFILE, psid);
-  if (ps)
-  {
-    po = fFindPostInfo(POSTFILE, ps->postid);
-    if (po)
-    {
-      sprintf(info, "%d", po->postid);
-      printTextLineXY(win->x + 650, win->y + 334, info, _h);
-      sprintf(info, "%s", po->shipper);
-      printTextLineXY(win->x + 850, win->y + 334, info, _h);
-      sprintf(info, "%s", po->receiver);
-      printTextLineXY(win->x + 650, win->y + 32 + 334, info, _h);
-      sprintf(info, "%s", po->tel);
-      printTextLineXY(win->x + 890, win->y + 32 + 334, info, _h);
-      sprintf(info, "%s", po->receiveraddr);
-      printTextLineXY(win->x + 690, win->y + 64 + 334, info, _h);
-      free(po);
-    }
-    free(ps);
-  }
-  freeFont(_h);
-}
-
 void delDrugfromPSwin(hbasewinAttr *win, hbasewinAttr *druglink)
 {
   int i, j = 0, k;
@@ -559,6 +353,10 @@ void delDrugfromPSwin(hbasewinAttr *win, hbasewinAttr *druglink)
   if (tb)
     tb->onDestroy(tb, NULL);
 
+  tb2 = findWinByID(win, ID_DOC_PSDRUGTEXTBOX2 + k);
+  if (tb2)
+    tb2->onDestroy(tb2, NULL);
+
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
 
@@ -568,6 +366,7 @@ void delDrugfromPSwin(hbasewinAttr *win, hbasewinAttr *druglink)
     lnk = findWinByID(win, ID_DOC_PSDRUGLINK + i);
     tb = findWinByID(win, ID_DOC_PSDRUGTEXTBOX + i);
     chk = findWinByID(win, ID_DOC_PSDRUGCHK + i);
+    tb2 = findWinByID(win, ID_DOC_PSDRUGTEXTBOX2 + i);
     if (lnk)
     {
       textInfo *ti;
@@ -584,6 +383,14 @@ void delDrugfromPSwin(hbasewinAttr *win, hbasewinAttr *druglink)
       // tb->nWidth = 20;
       // tb->nHeight = 16 * 5 / 3;
 
+      tb2->x = x + 930;
+      tb2->y = 350 + 30 * i;
+      ti = (textInfo *)tb2->style;
+      ti->r.left_top.x = getAbsoluteX(tb2) + 6;
+      ti->r.left_top.y = getAbsoluteY(tb2) + 7;
+      ti->r.right_bottom.x = ti->r.left_top.x + tb->nWidth - 6 - 2;
+      ti->r.right_bottom.y = ti->r.left_top.y + tb->nHeight - 6 - 2;
+
       chk->x = x + 520;
       chk->y = 360 + 30 * j;
 
@@ -591,8 +398,38 @@ void delDrugfromPSwin(hbasewinAttr *win, hbasewinAttr *druglink)
       lnk->onPaint(lnk, NULL);
       chk->onPaint(chk, NULL);
       tb->onPaint(tb, NULL);
+      tb2->onPaint(tb2, NULL);
     }
   }
+}
+
+void delallPSDrug(hbasewinAttr *win)
+{
+  int i;
+  int x, y;
+  hbasewinAttr *ctrl;
+  for (i = 0; i < 8; i++)
+  {
+    ctrl = findWinByID(win, ID_DOC_PSDRUGCHK + i);
+    if (ctrl)
+    {
+      ctrl->onDestroy(ctrl, NULL);
+
+      ctrl = findWinByID(win, ID_DOC_PSDRUGLINK + i);
+      if (ctrl)
+        ctrl->onDestroy(ctrl, NULL);
+
+      ctrl = findWinByID(win, ID_DOC_PSDRUGTEXTBOX + i);
+      if (ctrl)
+        ctrl->onDestroy(ctrl, NULL);
+
+      ctrl = findWinByID(win, ID_DOC_PSDRUGTEXTBOX2 + i);
+      if (ctrl)
+        ctrl->onDestroy(ctrl, NULL);
+    }
+  }
+  x = getAbsoluteX(win);
+  y = getAbsoluteY(win);
 }
 
 void addDrugtoPSwin(hbasewinAttr *win, hbasewinAttr *druglink)
@@ -613,7 +450,6 @@ void addDrugtoPSwin(hbasewinAttr *win, hbasewinAttr *druglink)
   for (i = 0; i < 5; i++)
   {
     pslink = findWinByID(win, ID_DOC_PSDRUGLINK + i);
-
     if (pslink && pslink->title != NULL)
       continue;
 
@@ -658,81 +494,6 @@ void addDrugtoPSwin(hbasewinAttr *win, hbasewinAttr *druglink)
   }
 }
 
-/*
-void generatePostInfo_pay(hbasewinAttr *win, int psid)
-{
-  hbasewinAttr *lnk;
-  Prescription *ps;
-  list_t *polist, *pslist;
-  postInfo *po, *newpo;
-  PatientInfo *patient;
-  list_node_t *node;
-  char datebuf[9];
-  char timebuf[9];
-  int i, maxPostid = 0;
-
-  TESTNULLVOID(win);
-
-  //查询处方文件,查询处方是否是已缴费
-  pslist = ReadPrescription(PRESCRITIONFILE);
-  TESTNULLVOID(pslist);
-
-  ps = FindPrescription(pslist, psid);
-
-  //fFind 需要释放 Find不要释放
-  patient = fFindPatientInfo(PATIENTINFOFILE, ps->userid);
-  TESTNULLVOID(patient);
-  TESTNULLVOID(ps);
-
-  if (patient && ps && strcmp(ps->status, "已缴费") == 0)
-  {
-    polist = ReadPostInfo(POSTFILE);
-    for (i = 0; i < polist->len; i++)
-    {
-      node = list_at(polist, i);
-      if (node && node->val)
-      {
-        po = (postInfo *)node->val;
-        if (maxPostid <= po->postid)
-          maxPostid = po->postid;
-      }
-    }
-
-    newpo = malloc(sizeof(postInfo));
-    if (newpo == NULL)
-    {
-      TRACE(("%s(%d):ursrid = %d\n", __FILE__, __LINE__, ps->userid));
-    }
-    else
-    {
-      newpo->postid = maxPostid + 1;
-      newpo->userid = ps->userid;
-      strcpy(newpo->shipper, "药房");
-      strcpy(newpo->shipperaddr, "华中科技大学校医院");
-      strcpy(newpo->receiver, patient->name);
-      strcpy(newpo->receiveraddr, patient->addr);
-      strcpy(newpo->tel, patient->telenum);
-      strcpy(newpo->status, "待收货");
-      _strdate(datebuf);
-      _strtime(timebuf);
-      sprintf(newpo->shiptime, "%sT%s", datebuf, timebuf);
-
-      strcpy(ps->status, "待收货");
-      ps->postid = maxPostid + 1;
-      SavePrescription(PRESCRITIONFILE, pslist);
-
-      list_lpush(polist, list_node_new(newpo));
-      SavePostInfo(POSTFILE, polist);
-    }
-    list_destroy(polist);
-  }
-
-  list_destroy(pslist);
-
-  free(patient);
-  TRACE(("%s(%d): save2\n", __FILE__, __LINE__));
-}
-*/
 //返回checkbox选择的hyperlink
 hbasewinAttr *getcheckedlink_doc(hbasewinAttr *win, int linkid, int chkid)
 {
@@ -805,7 +566,7 @@ void OnPaint_Docpage(hbasewinAttr *win, void *val)
   drawPatientInfo(win, 0);
 }
 
-void calDrugAmount(hbasewinAttr *win)
+long calDrugAmount(hbasewinAttr *win)
 {
   hbasewinAttr *q;
   hbasewinAttr *lnk;
@@ -816,7 +577,7 @@ void calDrugAmount(hbasewinAttr *win)
   hfont *_h;
   int x, y;
 
-  TESTNULLVOID(win);
+  TESTNULL(win, 0);
   x = getAbsoluteY(win);
   y = getAbsoluteY(win);
 
@@ -854,6 +615,162 @@ void calDrugAmount(hbasewinAttr *win)
   //printTextLineXY(x + 720, x + 286, info, _h);
 
   freeFont(_h);
+  return sum;
+}
+
+int SavePS(hbasewinAttr *win)
+{
+  list_t *pslist;
+  list_node_t *node;
+  Prescription *ps;
+  RegisterInfo *regi;
+  int i, maxid = 2000;
+  char datebuf[9], timebuf[9];
+  TESTNULL(win, -1);
+
+  pslist = ReadPrescription(PRESCRITIONFILE);
+  if (pslist == NULL)
+    pslist = list_new();
+
+  for (i = 0; i < pslist->len; i++)
+  { //获取最大id
+    node = list_at(pslist, i);
+    if (node && node->val)
+    {
+      ps = (Prescription *)node->val;
+      if (maxid < ps->id)
+        maxid = ps->id;
+    }
+  }
+  regi = fFindRegisterInfo(REGISTRATIONFILE, win->data);
+  if (regi)
+  {
+    ps = malloc(sizeof(Prescription));
+    memset(ps, 0, sizeof(Prescription));
+    ps->id = maxid + 1;
+    ps->userid = regi->userid;
+    ps->doctorid = regi->doctorid;
+    strcpy(ps->dept, regi->dept);
+    _strtime(timebuf);
+    _strdate(datebuf);
+    sprintf(ps->date, "%sT%s", datebuf, timebuf);
+    ps->amount = calDrugAmount(win);
+    strcpy(ps->status, "未缴费");
+    ps->postid = 0;
+    ps->registerid = regi->id;
+
+    list_lpush(pslist, list_node_new(ps));
+    SavePrescription(PRESCRITIONFILE, pslist);
+
+    free(regi);
+  }
+
+  list_destroy(pslist);
+  return ps->id;
+}
+void saveDruglist(hbasewinAttr *win, int psid)
+{
+  hbasewinAttr *druglink = NULL, *drugamounttb = NULL, *drugcounttb = NULL;
+  DrugItem *drugitem;
+
+  char buf[64];
+  int i;
+  FILE *fp;
+
+  TESTNULLVOID(win);
+  sprintf(buf, "%sdatabase\\ps\\%d.txt", DATAPATH, psid);
+  if ((fp = fopen(buf, "wt")) == NULL)
+  {
+    TRACE(("unable to open %s\r\n", buf));
+    return;
+  }
+  fprintf(fp, "#药品id  数量  用法 单价\n");
+  for (i = 0; i < 8; i++)
+  {
+    druglink = findWinByID(win, ID_DOC_PSDRUGLINK + i);
+    drugamounttb = findWinByID(win, ID_DOC_PSDRUGTEXTBOX + i);
+    drugcounttb = findWinByID(win, ID_DOC_PSDRUGTEXTBOX2 + i);
+
+    if (druglink && drugamounttb && drugcounttb)
+    {
+      drugitem = fFindDrugItem(DRUGFILE, druglink->data);
+      if (drugitem)
+      {
+        // psdrug = malloc(sizeof(PrescriptionDrugItem));
+        // psdrug->drugItemid = drugitem->id;
+        // psdrug->amount = atio(drugamounttb->title);
+        // psdrug->count = atio(drugcounttb->title);
+        // psdrug->price = drugitem->price;
+        fprintf(fp, "%d\t%d\t%d\t%ld\n",
+                drugitem->id, atoi(drugamounttb->title), atoi(drugcounttb->title), drugitem->price);
+        // free(drugitem);
+      }
+    }
+  }
+  fflush(fp);
+  fclose(fp);
+}
+void SaveDiagnose(hbasewinAttr *win)
+{
+  hbasewinAttr *ctrl;
+  list_t *recordlist, *regslist;
+  list_node_t *node;
+  RegisterInfo *regs;
+  MedicalRecord *mrecord, *mtemp;
+  char datebuf[9], timebuf[9];
+
+  int i;
+  Prescription *ps;
+
+  regslist = ReadRegistration(REGISTRATIONFILE);
+  if (regslist)
+  { //更新挂号单
+    regs = FindRegisterInfo(regslist, win->data);
+    regs->status = 2; //已完成
+    //更新挂号状态
+    SaveRegistration(REGISTRATIONFILE, regslist);
+    list_destroy(regslist);
+  }
+
+  mrecord = malloc(sizeof(MedicalRecord));
+  memset(mrecord, 0, sizeof(MedicalRecord));
+  mrecord->id = 8000;
+
+  recordlist = ReadMedicalRecord(MEDICALRECORDFILE);
+  if (recordlist == NULL)
+    recordlist = list_new();
+
+  for (i = 0; i < recordlist->len; i++)
+  { //获取病例最大id
+    node = list_at(recordlist, i);
+    if (node && node->val)
+    {
+      mtemp = (MedicalRecord *)node->val;
+      if (mrecord->id < mtemp->id)
+        mrecord->id = mtemp->id;
+    }
+  }
+  mrecord->id++;
+  mrecord->regid = win->data;
+  _strdate(datebuf);
+  _strtime(timebuf);
+  sprintf(mrecord->record_date, "%sT%s", datebuf, timebuf);
+
+  ctrl = findWinByID(win, ID_DOC_TEXTBOX_RESULT);
+  if (ctrl)
+    strcpy(mrecord->diagnosis, ctrl->title);
+  ctrl = findWinByID(win, ID_DOC_TEXTBOX_HANDLER);
+  if (ctrl)
+    strcpy(mrecord->handler, ctrl->title);
+  mrecord->prescriptionid = SavePS(win);
+
+  //保存药品清单
+  saveDruglist(win, mrecord->prescriptionid);
+
+  //保存病例
+  list_lpush(recordlist, list_node_new(mrecord));
+  SaveMedicalRecord(MEDICALRECORDFILE, recordlist);
+  list_destroy(recordlist);
 }
 
 void Eventhandler_docpage(hbasewinAttr *win, int type, void *val)
@@ -947,7 +864,7 @@ void Eventhandler_docpage(hbasewinAttr *win, int type, void *val)
     }
     break;
   case ID_DOC_BTN_CONFIRM:
-    //????
+    //诊断完成
     if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在homepage窗口部分显示标准鼠标
       _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
 
@@ -957,40 +874,90 @@ void Eventhandler_docpage(hbasewinAttr *win, int type, void *val)
         hitwin->onClick(hitwin, NULL);
     }
     else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-    { //鼠标释放,修改处方状态
-
-      hbasewinAttr *pslink;
-      list_t *tmplist;
-      Prescription *ps;
+    { //鼠标释放,修改挂号状态
+      hbasewinAttr *ctrl;
+      int x = getAbsoluteX(win);
+      int y = getAbsoluteY(win);
       if (hitwin->onLeave)
         hitwin->onLeave(hitwin, NULL);
 
-      //获取处方
-      //查询checkbox已选的link
-      // pslink = getcheckedlink_doc(win);
-      // if (pslink)
-      // {
-      //   tmplist = ReadPrescription(PRESCRITIONFILE);
-      //   if (tmplist)
-      //   { //找到
-      //     ps = FindPrescription(tmplist, pslink->data);
-      //     if (ps)
-      //     {
-      //       if (strcmp(ps->status, "未缴费") == 0)
-      //       {
-      //         strcpy(ps->status, "已缴费");
-      //         SavePrescription(PRESCRITIONFILE, tmplist);
+      if (win->data < 1)
+      {
+        hfont *_h;
+        _h = getFont(SIMSUN, 16, 0xF801);
+        printTextLineXY(x + 20, y + 45, "请选择患者", _h);
+        break;
+      }
+      else
+      {
+        fillRegionEx(x + 20, y + 45, 200, 16, 0xFFFF);
+      }
 
-      //         fillPrescription_doc(win, 0);
-      //         repaintChildren(win, NULL);
-      //         drawPrescription_doc(win->x, win->y);
-      //       }
-      //     }
-      //     list_destroy(tmplist);
-      //   }
-      // }
+      ctrl = findWinByID(win, ID_DOC_TEXTBOX_RESULT);
 
-      //已缴费->已确认
+      if (ctrl == NULL || strlen(ctrl->title) < 1)
+      {
+        hfont *_h;
+        _h = getFont(SIMSUN, 16, 0xF801);
+        printTextLineXY(x + 710, y + 65, "请输入诊断结果", _h);
+        break;
+      }
+      else
+      {
+        fillRegionEx(x + 710, y + 65, 200, 16, 0xFFFF);
+      }
+
+      ctrl = findWinByID(win, ID_DOC_TEXTBOX_HANDLER);
+      if (ctrl == NULL || strlen(ctrl->title) < 1)
+      {
+        hfont *_h;
+        _h = getFont(SIMSUN, 16, 0xF801);
+        printTextLineXY(x + 710, y + 125, "请输入处置措施", _h);
+        break;
+      }
+      else
+      {
+        fillRegionEx(x + 710, y + 125, 200, 16, 0xFFFF);
+      }
+
+      SaveDiagnose(win);
+      //挂号信息
+      fillRegionEx(x + 1, y + 93, 240 - 1, 200 - 5, 0xFFFF);
+      fillRegistration(win);
+      //删除所有药品
+      delallPSDrug(win);
+      repaintChildren(win, NULL);
+
+      //绘制处方窗口
+      drawRegistration(x, y);
+      //绘制患者信息
+      drawPatientInfo(win, 0);
+      //绘制药品查询窗口
+      drawDrugQuery(win);
+      //绘制处方药品查询窗口
+      fillRegionEx(x + 520, y + 315 + 30, 480, 170, 0xFFFF);
+      //fillRegionEx(x + 519, y + 335, 480 - 2, 180, 0x0000);
+      drawPrescriptionInfo(win);
+      //填充总金额
+      fillRegionEx(x + 790, y + 282, 150, 20, 0xFFFF);
+
+      ctrl = findWinByID(win, ID_DOC_TEXTBOX_RESULT);
+      if (ctrl)
+      {
+        if (strlen(ctrl->title) >= 1)
+          ctrl->title[0] = 0;
+        ctrl->onPaint(ctrl, NULL);
+      }
+      ctrl = findWinByID(win, ID_DOC_TEXTBOX_HANDLER);
+      if (ctrl)
+      {
+        if (strlen(ctrl->title) >= 1)
+          ctrl->title[0] = 0;
+        ctrl->onPaint(ctrl, NULL);
+      }
+      // ctrl = findWinByID(win, ID_DOC_QUERY_DRUG);
+      // if (ctrl)
+      //   ctrl->onPaint(ctrl, NULL);
     }
     break;
   case ID_DOC_QUERY:
@@ -1070,6 +1037,12 @@ void Eventhandler_docpage(hbasewinAttr *win, int type, void *val)
         drawRegistration(x, y);
         //填充患者信息
         drawPatientInfo(win, hitwin->data);
+
+        fillRegionEx(x + 20, y + 45, 200, 16, 0xFFFF);
+        fillRegionEx(x + 710, y + 125, 200, 16, 0xFFFF);
+        fillRegionEx(x + 710, y + 65, 200, 16, 0xFFFF);
+
+        win->data = hitwin->data;
       }
     }
     else if (hitwin->winID >= ID_DOC_DRUGLINK && hitwin->winID < ID_DOC_DRUGLINK + 6)

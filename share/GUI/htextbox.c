@@ -71,6 +71,8 @@ void OnDestory_TextBox(hbasewinAttr *tb, void *value)
 
   OnLeave_TextBox(tb, NULL);
   // TRACE(("TEXTBOX destory2\n"));
+
+  OnDestory(tb, NULL);
   (void)value;
 }
 
