@@ -1127,6 +1127,42 @@ MedicalRecord *fFindMedicalRecordbyId(const char *filename, int mrid)
 	return NULL;
 }
 
+
+MedicalRecord *fFindMedicalRecordbyregId(const char *filename, int regid)
+{
+	FILE *fp;
+	char line[512];
+	MedicalRecord *Infotemp;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+	Infotemp = malloc(sizeof(MedicalRecord));
+	while (fgets(line, 512, fp))
+	{
+		if (line[0] == '#')
+			continue;
+
+		sscanf(line, "%d\t%d\t%s\t%s\t%s\t%d",
+					 &Infotemp->id, &Infotemp->regid, Infotemp->record_date,
+					 Infotemp->diagnosis, Infotemp->handler, &Infotemp->prescriptionid);
+		strrpl(Infotemp->handler, '#', '\r');
+
+		if (Infotemp->regid == regid)
+		{
+			fclose(fp);
+			return Infotemp;
+		}
+	}
+
+	fclose(fp);
+	if (Infotemp)
+		free(Infotemp);
+	return NULL;
+}
+
 list_t *ReadMedicalRecordbyUserId(const char *filename, int userid)
 {
 	FILE *fp;

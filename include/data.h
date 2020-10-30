@@ -225,6 +225,7 @@ list_t *ReadDrugItembyName(const char *filename, char *name);
 list_t *ReadMedicalRecord(const char *filename);
 void SaveMedicalRecord(const char *filename, list_t *mrlist);
 MedicalRecord *fFindMedicalRecordbyId(const char *filename, int mrid);
+MedicalRecord *fFindMedicalRecordbyregId(const char *filename, int regid);
 list_t *ReadMedicalRecordbyUserId(const char *filename, int userid);
 list_t *ReadMedicalRecordbyDocId(const char *filename, int docid);
 

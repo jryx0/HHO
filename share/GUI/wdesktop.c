@@ -23,6 +23,7 @@
 #include "docpage.h"
 #include "finddoc.h"
 #include "payregs.h"
+#include "result.h"
 #include <memory.h>
 #include <string.h>
 
@@ -315,6 +316,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
     break;
   case ID_PAYREGSPAGE:
     newpage = CreatePayRegspage(desktop, ID_PAYREGSPAGE, _g->userid);
+    break;
+  case ID_RESULTPAGE:
+    newpage = CreateResultPage(desktop, ID_RESULTPAGE, _g->userid);
     break;
 
   case ID_FINDDOCPAGE:
