@@ -170,15 +170,15 @@ hbasewinAttr *CreatePostpage(hbasewinAttr *parent, int winID, int userid)
   Createhyperlink(page, page->x, page->y + 190, 55, 25, ID_POST_PREV, "上一页");
   Createhyperlink(page, page->x + 65, page->y + 190, 55, 25, ID_POST_NEXT, "下一页");
 
-  CreateTextBox(page, 72, 43, 120, 18, ID_POST_QUERY_BILLNUM, NULL, 1);
-  CreateTextBox(page, 280, 43, 100, 20, ID_POST_QUERY_SHIPPER, NULL, 1);
-  CreateTextBox(page, 500, 43, 150, 20, ID_POST_QUERY_SHIPPERTEL, NULL, 1);
-  CreateTextBox(page, 730, 43, 150, 20, ID_POST_QUERY_RECEIVER, NULL, 1);
+  CreateTextBox(page, 72, 43, 120, 18, ID_POST_QUERY_BILLNUM, "", 1);
+  CreateTextBox(page, 280, 43, 100, 20, ID_POST_QUERY_SHIPPER, "", 1);
+  CreateTextBox(page, 500, 43, 150, 20, ID_POST_QUERY_SHIPPERTEL, "", 1);
+  CreateTextBox(page, 730, 43, 150, 20, ID_POST_QUERY_RECEIVER, "", 1);
 
   CreateButton(page, 890, 43, 120, 30, ID_POST_QUERY_RECEIVER, "查  询");
   CreateButton(page, 790, 510, 150, 40, ID_POST_UPDATEINFO, "更新物流信息");
-  CreateTextBox(page, 580, 465, 150, 20, ID_POST_UPDATEADDR, NULL, 1);
-  CreateTextBox(page, 805, 465, 150, 20, ID_POST_UPDATESTATUS, NULL, 1);
+  CreateTextBox(page, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
+  CreateTextBox(page, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "", 1);
 
   createPostinfo(page, userid);
 
