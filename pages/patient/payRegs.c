@@ -85,7 +85,7 @@ void fillPayRegisterList(hbasewinAttr *win, int userid)
     }
   }
 
-  for (i = 0, j = 0; i < rgslist->len && i < 8; i++)
+  for (i = 0, j = 0; i < rgslist->len && j < 8; i++)
   { //一次最多8行, page控制显示那个8个
     hbasewinAttr *lnk = findWinByID(win, ID_PAYREGS_LINK + j);
     node = list_at(rgslist, i);
@@ -96,8 +96,10 @@ void fillPayRegisterList(hbasewinAttr *win, int userid)
       continue;
 
     //控制显示全部或未缴费单据
-    if (style->height == 0 && regs->status != 0)
-      continue;
+    //style->height = 1显示全部
+    if (style->height == 0)
+      if ((regs->status != 0))
+        continue;
 
     if (lnk == NULL)
     { //创建lnk
@@ -118,8 +120,8 @@ void fillPayRegisterList(hbasewinAttr *win, int userid)
     {
       sprintf(lnk->title, " %-10d%-8s%-7s%-6s%s", regs->id, pa->name, regs->dept, doc->name, status[regs->status]);
       lnk->data = regs->id; //挂号id
-      j++;
     }
+    j++;
   }
 
   if (rgslist)

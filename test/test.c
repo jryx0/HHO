@@ -8,6 +8,7 @@
 #include <conio.h>
 #include <string.h>
 #include <memory.h>
+#include <stdio.h>
 
 void test_userinfo_save()
 {
@@ -47,8 +48,6 @@ void test_userinfo_read()
   list_node_t *node;
   UserInfo *ui;
 
-
-
   userinfolist = list_new();
 
   userinfolist = ReadFileToList(USERINFOFILE, userinfolist, sizeof(UserInfo));
@@ -59,14 +58,35 @@ void test_userinfo_read()
     list_remove(userinfolist, ptest);
 
     it = list_iterator_new(userinfolist, 0);
-    while(node = list_iterator_next(it))
+    while (node = list_iterator_next(it))
     {
-      ui = (UserInfo *)node ->val;
+      ui = (UserInfo *)node->val;
       printf("id = %d, pw = %s, type =%c, name=%s\n", ui->id, ui->password, ui->type, ui->username);
     }
   }
   else
     ASSERT_EQUALS(1, 0);
+}
+
+void test_file()
+{
+  char line[512];
+  FILE *fp;
+  FILE *fp2;
+
+  if ((fp = fopen(TARGET, "r") == 0))
+  {
+    return;
+  }
+  if ((fp2 = fopen(SOURCE, "r")) == NULL)
+  {
+    return NULL;
+  }
+
+  while (fgets(line, 512, fp))
+  {
+    //??; ????
+  }
 }
 
 // void test_pinyin()
@@ -99,9 +119,7 @@ void test_userinfo_read()
 
 void test_list()
 {
-  
 }
-
 
 // test in console both in vscode and borlandc
 void console_test()
@@ -113,8 +131,7 @@ void console_test()
 
   RUN(test_userinfo_save);
   RUN(test_userinfo_read);
- // RUN(test_pinyin);
-
+  // RUN(test_pinyin);
 
   TEST_REPORT();
 }

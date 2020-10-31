@@ -97,6 +97,8 @@ void db_printloc(const char *file, int line, const char *fmt, ...);
 #define FILE_PYINDEX DATAPATH "pinyin\\index.txt"
 #define FILE_HANZI DATAPATH "pinyin\\hanzi.txt"
 
+#define SOURCE DATAPATH "bmp\\"
+
 //字体文件
 #define FONTPATH DATAPATH "font\\"
 #define SIMSUN 0 //宋体
