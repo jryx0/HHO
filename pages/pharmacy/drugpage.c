@@ -14,8 +14,8 @@
 
 #include <string.h>
 
-#define COL1 120
-#define COL2 (COL1 + 150)
+#define COL1 100
+#define COL2 (COL1 + 170)
 #define COL3 (COL2 + 100)
 #define COL4 (COL3 + 65)
 #define COL5 (COL4 + 65)
@@ -136,7 +136,7 @@ void fillPrescription(hbasewinAttr *win, int page)
       d = FindDoctorInfo(doc, p->doctorid);     //医生
       if (p && pi && d)
       {
-        sprintf(lnk->title, "%-12d%-20s%-5s%8s%7d%8s%12s%15.2f%12s", p->id, p->date, pi->name,
+        sprintf(lnk->title, "%-9d%-20s%-5s%8s%7d%8s%12s%15.2f%12s", p->id, p->date, pi->name,
                 pi->sex ? "男" : "女", 2020 - pi->year, d->name, p->dept, (float)(p->amount / 100), p->status);
         lnk->data = p->id; //处方id
         //TRACE(("%s\n", lnk->title));
@@ -481,6 +481,7 @@ void Eventhandler_drugpage(hbasewinAttr *win, int type, void *val)
       hbasewinAttr *pslink;
       if (hitwin->onLeave)
         hitwin->onLeave(hitwin, NULL);
+      
 
       //已缴费->已确认
     }

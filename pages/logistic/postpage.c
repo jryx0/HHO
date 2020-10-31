@@ -56,6 +56,9 @@ void createPostinfo(hbasewinAttr *parent, int userid)
         lnk = Createhyperlink(parent, x, y + 30 * i, PAGE_W, 25, ID_POST_LINK + i, info);
         lnk->data = pi->postid;
         lnk->wintype = HYPERLINK_BK;
+        CreateButton(parent, 790, 510, 150, 40, ID_POST_UPDATEINFO, "更新物流信息");
+        CreateTextBox(parent, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
+        CreateTextBox(parent, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "", 1);
       }
       else if (userid == pi->userid)
       {
@@ -63,6 +66,9 @@ void createPostinfo(hbasewinAttr *parent, int userid)
         lnk->data = pi->postid;
         lnk->wintype = HYPERLINK_BK;
         j++;
+        CreateButton(parent, 790, 510, 150, 40, ID_POST_UPDATEINFO, "签收");
+        CreateTextBox(parent, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
+        CreateTextBox(parent, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "已签收", 1);
       }
       //btn = CreateButton(parent, x, y + 50 * i, 125, 45, ID_DEPT_LINK + i, dept->deptname);
       //btn->data = dept->id;
@@ -176,9 +182,6 @@ hbasewinAttr *CreatePostpage(hbasewinAttr *parent, int winID, int userid)
   CreateTextBox(page, 730, 43, 150, 20, ID_POST_QUERY_RECEIVER, "", 1);
 
   CreateButton(page, 890, 43, 120, 30, ID_POST_QUERY_RECEIVER, "查  询");
-  CreateButton(page, 790, 510, 150, 40, ID_POST_UPDATEINFO, "更新物流信息");
-  CreateTextBox(page, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
-  CreateTextBox(page, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "", 1);
 
   createPostinfo(page, userid);
 
