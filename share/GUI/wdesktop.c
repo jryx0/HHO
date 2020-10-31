@@ -24,6 +24,7 @@
 #include "finddoc.h"
 #include "payregs.h"
 #include "result.h"
+#include "signpage.h"
 #include <memory.h>
 #include <string.h>
 
@@ -323,6 +324,9 @@ hbasewinAttr *pageFactory(hbasewinAttr *desktop, int winID, globaldef *_g)
 
   case ID_FINDDOCPAGE:
     newpage = CreateFindDocpage(desktop, ID_FINDDOCPAGE, _g->userid);
+    break;
+  case ID_SIGNINPAGE:
+    newpage = Createsignpage(desktop, ID_SIGNINPAGE);
     break;
   default:
     break;

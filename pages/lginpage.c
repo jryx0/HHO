@@ -108,12 +108,13 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
       }
       else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
       {
-         if (hitwin->onLeave)
+        if (hitwin->onLeave)
           hitwin->onLeave(hitwin, NULL);
+
+        _g->activePageID = ID_SIGNINPAGE;
+        win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
       }
-
       break;
-
     case ID_LOGIN_RETURN:
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
