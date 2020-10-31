@@ -14,8 +14,8 @@
 
 #include <string.h>
 
-#define COL1 120
-#define COL2 (COL1 + 150)
+#define COL1 110
+#define COL2 (COL1 + 160)
 #define COL3 (COL2 + 100)
 #define COL4 (COL3 + 65)
 #define COL5 (COL4 + 65)
@@ -89,7 +89,6 @@ void fillPrescription_pay(hbasewinAttr *win, int page)
   TESTNULLVOID(win->style);
   style = win->style;
 
-  //ps = ReadPrescription(DATAPATH "database\\ps\\psinfo.txt");
   ps = ReadPrescription(PRESCRITIONFILE);
   TESTNULLVOID(ps);
 
@@ -130,10 +129,13 @@ void fillPrescription_pay(hbasewinAttr *win, int page)
       d = FindDoctorInfo(doc, p->doctorid);     //医生
       if (p && pi && d)
       {
+        // sprintf(lnk->title, "%-10d%-20s%-5s%8s%7d%8s%12s%15.2f%12s", p->id, p->date, pi->name,
+        //         pi->sex ? "男" : "女", 2020 - pi->year, d->name, p->dept, (float)(p->amount / 100), p->status);
+        // lnk->data = p->id; //处方id
+        // //TRACE(("%s\n", lnk->title));
         sprintf(lnk->title, "%-12d%-20s%-5s%8s%7d%8s%12s%15.2f%12s", p->id, p->date, pi->name,
                 pi->sex ? "男" : "女", 2020 - pi->year, d->name, p->dept, (float)(p->amount / 100), p->status);
         lnk->data = p->id; //处方id
-        //TRACE(("%s\n", lnk->title));
       }
       j++;
     }
@@ -151,15 +153,16 @@ void fillPrescription_pay(hbasewinAttr *win, int page)
 //绘制药品清单
 void drawDruglist_pay(int x, int y)
 {
-  fillRegionEx(x + 1, y + 360, 540, 205, 0xFFFF);
-  rectangleEx(x, y + 325, 540, 205, 0x6BAF, 1, 1);
+  fillRegionEx(x + 1, y + 360, 610, 205, 0xFFFF);
+  rectangleEx(x, y + 325, 610, 205, 0x6BAF, 1, 1);
 
-  lineyEx(x + 170, y + 325, 205, 0x6BAF);
-  lineyEx(x + 220, y + 325, 205, 0x6BAF);
+  lineyEx(x + 190, y + 325, 205, 0x6BAF);
+  lineyEx(x + 240, y + 325, 205, 0x6BAF);
   lineyEx(x + 330, y + 325, 205, 0x6BAF);
-  lineyEx(x + 370, y + 325, 205, 0x6BAF);
-  lineyEx(x + 470, y + 325, 205, 0x6BAF);
-  linex_styleEx(x, y + 350, 540, 0x6BAF, 1, 1);
+  lineyEx(x + 380, y + 325, 205, 0x6BAF);
+  lineyEx(x + 450, y + 325, 205, 0x6BAF);
+  lineyEx(x + 530, y + 325, 205, 0x6BAF);
+  linex_styleEx(x, y + 350, 610, 0x6BAF, 1, 1);
 }
 
 //填充药品
@@ -190,12 +193,13 @@ void fillDruglist_pay(hbasewinAttr *win, int psid)
   {
     if (info[0] == '#')
       continue;
-    sscanf(info, "%d\t%d", &pdi->drugItemid, &pdi->amount);
+    sscanf(info, "%d\t%d\t%d", &pdi->drugItemid, &pdi->amount, &pdi->count);
     di = fFindDrugItem(DATAPATH "database\\drug\\druglist.txt", pdi->drugItemid);
 
     if (di)
     {
-      sprintf(info, "%-20s%-5s%-14s%-4d%7.2f%8.2f", di->name, di->unit, di->kind, pdi->amount,
+      sprintf(info, "%-22s%-6s%-11s%-4d%d次/天 %7.2f%8.2f", di->name, di->unit, di->kind,
+              pdi->amount, pdi->count,
               di->price / 100.0, (float)(pdi->amount * di->price) / 100.00);
       printTextLineXY(win->x + 10, win->y + 360 + i * 20, info, _h);
       i++;
@@ -230,11 +234,11 @@ void drawPostInfo_pay(hbasewinAttr *win, int psid)
   //style = win->style;
   _h = getFont(SIMSUN, 16, 0x0000);
 
-  fillRegionEx(win->x + 580, win->y + 325, 420, 160, 0xFFFF);
+  fillRegionEx(win->x + 620, win->y + 325, 420, 160, 0xFFFF);
 
-  printTextLineXY(win->x + 585, win->y + 335, "运单号:                发货人:", _h);
-  printTextLineXY(win->x + 585, win->y + 32 + 335, "收货人:                发货人电话:", _h);
-  printTextLineXY(win->x + 585, win->y + 64 + 335, "收货地址:", _h);
+  printTextLineXY(win->x + 625, win->y + 335, "运单号:                发货人:", _h);
+  printTextLineXY(win->x + 625, win->y + 32 + 335, "收货人:                发货人电话:", _h);
+  printTextLineXY(win->x + 625, win->y + 64 + 335, "收货地址:", _h);
 
   ps = fFindPrescription(PRESCRITIONFILE, psid);
   if (ps)
@@ -243,15 +247,15 @@ void drawPostInfo_pay(hbasewinAttr *win, int psid)
     if (po)
     {
       sprintf(info, "%d", po->postid);
-      printTextLineXY(win->x + 650, win->y + 334, info, _h);
+      printTextLineXY(win->x + 670, win->y + 334, info, _h);
       sprintf(info, "%s", po->shipper);
-      printTextLineXY(win->x + 850, win->y + 334, info, _h);
+      printTextLineXY(win->x + 870, win->y + 334, info, _h);
       sprintf(info, "%s", po->receiver);
-      printTextLineXY(win->x + 650, win->y + 32 + 334, info, _h);
+      printTextLineXY(win->x + 670, win->y + 32 + 334, info, _h);
       sprintf(info, "%s", po->tel);
-      printTextLineXY(win->x + 890, win->y + 32 + 334, info, _h);
+      printTextLineXY(win->x + 910, win->y + 32 + 334, info, _h);
       sprintf(info, "%s", po->receiveraddr);
-      printTextLineXY(win->x + 690, win->y + 64 + 334, info, _h);
+      printTextLineXY(win->x + 910, win->y + 64 + 334, info, _h);
       free(po);
     }
     free(ps);
@@ -377,14 +381,14 @@ void OnPaint_PayDrugpage(hbasewinAttr *win, void *val)
   freeFont(_h);
 
   _h = getFont(style->fonttype, style->fontsize, 0x0000);
-  printTextLineXY(x + style->fontsize * 6, y + 12, "- 物流信息", _h);
+  printTextLineXY(x + style->fontsize * 6, y + 12, "- 取药缴费", _h);
   //处方头
   printTextLineXY(x + 10, y + 70, " 处方单号         日  期         患  者    性别   年龄      医生      科室          金额      状态", _h);
   //画处方线框
   drawPrescription_pay(x, y);
 
   //药品头
-  printTextLineXY(x + 10, y + 330, "    药品名称       单位   规格       数量    单价     小计", _h);
+  printTextLineXY(x + 10, y + 330, "    药品名称         单位    规格    数量   用法   单价(元) 小计(元)", _h);
   //画药品清单框
   drawDruglist_pay(x, y);
 
@@ -502,7 +506,7 @@ void Eventhandler_paydrugpage(hbasewinAttr *win, int type, void *val)
         fillDruglist_pay(win, hitwin->data);
 
         //运单信息
-        drawPostInfo_pay(win, hitwin->data);
+        //drawPostInfo_pay(win, hitwin->data);
         //fillPostInfo(win, hitwin->data);
       }
     }

@@ -37,13 +37,13 @@ hbasewinAttr *CreateDrugpage(hbasewinAttr *parent, int winID, int userid)
   if (userid == -1)
   {
     strcpy(page->title, "药房发药");
-    CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_DRUG_STOCK, "查看仓库");
+    //CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_DRUG_STOCK, "查看仓库");
     CreateButton(page, page->x + 825, page->y + 365, 100, 32, ID_DRUG_SHIP, "生成发货单");
   }
   else
   {
-    // strcpy(page->title, "药房取药");
-    //CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_DRUG_CONFIRM, "确认订单");
+    strcpy(page->title, "查看订单");
+    CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_DRUG_CONFIRM, "确认订单");
   }
 
   Createhyperlink(page, 20, 10, 65, 25, ID_DRUG_RETURN, "[首 页]");
@@ -122,7 +122,6 @@ void fillPrescription(hbasewinAttr *win, int page)
         lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, PAGE_W, 25, ID_DRUG_PSLINK + j, NULL);
         lnk->wintype = HYPERLINK_BK;
         CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_DRUG_PSCHK + j, NULL);
-        j++;
       }
 
       if (lnk->title)
@@ -142,7 +141,8 @@ void fillPrescription(hbasewinAttr *win, int page)
         lnk->data = p->id; //处方id
         //TRACE(("%s\n", lnk->title));
       }
-        }
+      j++;
+    }
 
   if (ps)
     list_destroy(ps);
@@ -383,7 +383,7 @@ void OnPaint_Drugpage(hbasewinAttr *win, void *val)
   freeFont(_h);
 
   _h = getFont(style->fonttype, style->fontsize, 0x0000);
-  printTextLineXY(x + style->fontsize * 6, y + 12, "- 物流信息", _h);
+  printTextLineXY(x + style->fontsize * 6, y + 12, "- 药房信息", _h);
   //处方头
   printTextLineXY(x + 10, y + 70, " 处方单号         日  期         患  者    性别   年龄      医生      科室          金额      状态", _h);
   //画处方线框

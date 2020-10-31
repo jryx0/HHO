@@ -26,7 +26,7 @@ hbasewinAttr *Createregisterpage(hbasewinAttr *parent, int winID, int userid)
   style->type = userid;
 
   Createhyperlink(page, 20, 10, 65, 25, ID_REGISTER_RETURN, "[Ê× Ò³]");
-  CreateTextBox(page, 388, 250, 348, 250, ID_REGISTER_DISEASE, NULL, 0);
+  CreateTextBox(page, 388, 250, 348, 250, ID_REGISTER_DISEASE, "", 0);
   CreateButton(page, 638, 510, 100, 32, ID_REGISTER_OK, "È·ÈÏ¹ÒºÅ");
 
   //TRACE(("%s(%d):userid = %d\n", __FILE__, __LINE__, userid));
