@@ -31,6 +31,11 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow) //在homepage窗口部分显示标准鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow;
     }
+    if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+    { //无激活窗口，原有textbox inactive
+      if (_g->foucsedTextBox && _g->foucsedTextBox->onActivate)
+        _g->foucsedTextBox->onActivate(NULL, _g);
+    }
     break;
   case ID_HOMEPAGE_BUTTON1:
   case ID_HOMEPAGE_BUTTON2:
