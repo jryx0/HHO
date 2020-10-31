@@ -74,7 +74,7 @@ void drawPrescription_pay(int x, int y)
 //page 页号从0开始
 void fillPrescription_pay(hbasewinAttr *win, int page)
 {
-  hbasewinAttr *lnk;
+  hbasewinAttr *ctrl;
   list_t *ps, *patient, *doc;
   PatientInfo *pi;
   Prescription *p;
@@ -97,25 +97,41 @@ void fillPrescription_pay(hbasewinAttr *win, int page)
   patient = ReadPatientInfo(PATIENTINFOFILE);
   doc = ReadDoctorInfo(DOCTORINFOFILE);
 
+  //清空link数据
+  for (i = ID_PAYPS_PSLINK; i < ID_PAYPS_PSLINK + 8; i++)
+  {
+    ctrl = findWinByID(win, i);
+    if (ctrl && ctrl->title)
+    {
+      free(ctrl->title);
+      ctrl->title = NULL;
+      ctrl->nWidth = 0;
+      ctrl->onPaint(ctrl, NULL);
+    }
+  }
+  //clear link
   if (patient && doc)
     for (i = 0, j = 0; i < ps->len && i < 8; i++)
     { //一次最多8行, page控制显示那个8个
-      hbasewinAttr *lnk = findWinByID(win, ID_PAYPS_PSLINK + j);
+      hbasewinAttr *lnk = findWinByID(win, ID_PAYPS_PSLINK + i);
+      //hbasewinAttr *chk = findWinByID(win, ID_PAYPS_PSCHK + i);
       node = list_at(ps, i);
       p = (Prescription *)node->val;
 
       if (style->type != -1)
       { //只显示本人单据
-        if (p->userid != style->type || strcmp(p->status, "未缴费") != 0 )
+        if (p->userid != style->type || strcmp(p->status, "未缴费") != 0)
           continue;
       }
 
       if (lnk == NULL)
       { //创建lnk
-        lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, PAGE_W, 25, ID_PAYPS_PSLINK + i, NULL);
+        lnk = Createhyperlink(win, 10 + 15, 95 + 25 * j, PAGE_W, 25, ID_PAYPS_PSLINK + j, NULL);
         lnk->wintype = HYPERLINK_BK;
-        CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_PAYPS_PSCHK + i, NULL);
+       // chk = CreateCheckBox(win, 10, 95 + 8 + 25 * j, 10, 10, ID_PAYPS_PSCHK + j, NULL);
       }
+      //lnk->nWidth = PAGE_W;
+      //chk->winID = 10;
 
       if (lnk->title)
         free(lnk->title);
@@ -404,7 +420,7 @@ void Eventhandler_paydrugpage(hbasewinAttr *win, int type, void *val)
   hitwin = checkmousewin(win, &_g->mouse);
 
   switch (hitwin->winID)
-  {                 //鼠标在那个子窗口或本身
+  {                  //鼠标在那个子窗口或本身
   case ID_PAYPSPAGE: //本身
     if (type == EVENT_MOUSE)
     {                                                                              //homepage 处理鼠标移动理鼠标移动
@@ -454,13 +470,13 @@ void Eventhandler_paydrugpage(hbasewinAttr *win, int type, void *val)
 
       //获取处方
       //查询checkbox已选的link
-      pslink = getcheckedlink_pay(win);
-      if (pslink)
+      // pslink = getcheckedlink_pay(win);
+      // if (pslink)
       {
         tmplist = ReadPrescription(PRESCRITIONFILE);
         if (tmplist)
         { //找到
-          ps = FindPrescription(tmplist, pslink->data);
+          ps = FindPrescription(tmplist, win ->data);//pslink->data);
           if (ps)
           {
             if (strcmp(ps->status, "未缴费") == 0)
@@ -468,6 +484,7 @@ void Eventhandler_paydrugpage(hbasewinAttr *win, int type, void *val)
               strcpy(ps->status, "已缴费");
               SavePrescription(PRESCRITIONFILE, tmplist);
 
+              fillRegionEx(getAbsoluteX(win) , getAbsoluteY(win) + 85, PAGE_W, PAGE_H / 2 - 50, 0xFFFF);
               fillPrescription_pay(win, 0);
               repaintChildren(win, NULL);
               drawPrescription_pay(win->x, win->y);
@@ -504,13 +521,13 @@ void Eventhandler_paydrugpage(hbasewinAttr *win, int type, void *val)
         //填充药品 hitwin->data  处方单号
         drawDruglist_pay(win->x, win->y);
         fillDruglist_pay(win, hitwin->data);
-
+        win->data = hitwin ->data;
         //运单信息
         //drawPostInfo_pay(win, hitwin->data);
         //fillPostInfo(win, hitwin->data);
       }
     }
-    else if (hitwin->winID >= ID_PAYPS_PSCHK && hitwin->winID < ID_PAYPS_PSCHK + 8)
+    else                                                                          //if (hitwin->winID >= ID_PAYPS_PSCHK && hitwin->winID < ID_PAYPS_PSCHK + 8)
     {                                                                             //checkbox
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
         _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;

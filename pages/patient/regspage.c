@@ -250,7 +250,7 @@ void EventHandler_registerpage(hbasewinAttr *win, int type, void *value)
         if (hitwin->onLeave)
           hitwin->onLeave(hitwin, NULL);
         disease = findWinByID(win, ID_REGISTER_DISEASE);
-        if (disease && disease->title && strlen(disease->title) > 10 && strlen(disease->title) < 255)
+        if (disease && disease->title && strlen(disease->title) > 1 && strlen(disease->title) < 255)
         { //保存挂号单
           TRACE(("保存挂号单\n"));
           SaveRegiserBill(win, disease->title);
@@ -265,8 +265,8 @@ void EventHandler_registerpage(hbasewinAttr *win, int type, void *value)
         else
         { //提示输入病情描述
           hfont *_h = getFont(SIMSUN, 16, 0xF801);
-          printTextLineXY(390, 650, "请输入病情描述。", _h);
-          printTextLineXY(390, 675, "(大于10个字符小于255个字符)", _h);
+          printTextLineXY(390, 645, "请输入病情描述。", _h);
+          printTextLineXY(390, 665, "(大于1小于255个字符)", _h);
           freeFont(_h);
         }
       }

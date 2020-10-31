@@ -276,7 +276,7 @@ void fillDrugQuery(hbasewinAttr *win, char *drugname)
       }
     }
 
-	for (i = 0; i < druglist->len && i < 6; i++)
+    for (i = 0; i < druglist->len && i < 6; i++)
     {
       node = list_at(druglist, i);
       if (node->val)
@@ -622,7 +622,7 @@ int SavePS(hbasewinAttr *win)
 {
   list_t *pslist;
   list_node_t *node;
-  Prescription *ps;
+  Prescription *ps, *ps1;
   RegisterInfo *regi;
   int i, maxid = 2000;
   char datebuf[9], timebuf[9];
@@ -637,9 +637,9 @@ int SavePS(hbasewinAttr *win)
     node = list_at(pslist, i);
     if (node && node->val)
     {
-      ps = (Prescription *)node->val;
-      if (maxid < ps->id)
-        maxid = ps->id;
+      ps1 = (Prescription *)node->val;
+      if (maxid < ps1->id)
+        maxid = ps1->id;
     }
   }
   regi = fFindRegisterInfo(REGISTRATIONFILE, win->data);
@@ -666,7 +666,7 @@ int SavePS(hbasewinAttr *win)
   }
 
   list_destroy(pslist);
-  return ps->id;
+  return maxid + 1;
 }
 void saveDruglist(hbasewinAttr *win, int psid)
 {
@@ -944,8 +944,11 @@ void Eventhandler_docpage(hbasewinAttr *win, int type, void *val)
       ctrl = findWinByID(win, ID_DOC_TEXTBOX_RESULT);
       if (ctrl)
       {
-        if (strlen(ctrl->title) >= 1)
-          ctrl->title[0] = 0;
+        if(ctrl ->title)
+          free(ctrl->title);
+        strcpy(ctrl->title, "");
+        // if (strlen(ctrl->title) >= 1)
+        //   ctrl->title[0] = 0;
         ctrl->onPaint(ctrl, NULL);
       }
       ctrl = findWinByID(win, ID_DOC_TEXTBOX_HANDLER);

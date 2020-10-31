@@ -43,7 +43,7 @@ hbasewinAttr *CreateDrugpage(hbasewinAttr *parent, int winID, int userid)
   else
   {
     strcpy(page->title, "查看订单");
-    CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_DRUG_CONFIRM, "确认订单");
+    //CreateButton(page, page->x + 660, page->y + 365, 100, 32, ID_DRUG_CONFIRM, "确认订单");
   }
 
   Createhyperlink(page, 20, 10, 65, 25, ID_DRUG_RETURN, "[首 页]");
