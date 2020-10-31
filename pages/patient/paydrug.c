@@ -41,7 +41,7 @@ hbasewinAttr *CreatePayDrugpage(hbasewinAttr *parent, int winID, int userid)
   }
 
   Createhyperlink(page, 20, 10, 65, 25, ID_PAYPS_RETURN, "[首 页]");
-  ((WinStyle *)page->style)->type = userid; //保存id区分
+  ((WinStyle *)page->style)->type = userid; //保存userid区分
 
   Createhyperlink(page, page->x + 860, page->y + 175, 55, 25, ID_PAYPS_PREV, "上一页");
   Createhyperlink(page, page->x + 925, page->y + 175, 55, 25, ID_PAYPS_NEXT, "下一页");
@@ -106,7 +106,7 @@ void fillPrescription_pay(hbasewinAttr *win, int page)
 
       if (style->type != -1)
       { //只显示本人单据
-        if (p->userid != style->type)
+        if (p->userid != style->type || strcmp(p->status, "未缴费") != 0 )
           continue;
       }
 
@@ -405,7 +405,7 @@ void Eventhandler_paydrugpage(hbasewinAttr *win, int type, void *val)
 
   switch (hitwin->winID)
   {                 //鼠标在那个子窗口或本身
-  case ID_DRUGPAGE: //本身
+  case ID_PAYPSPAGE: //本身
     if (type == EVENT_MOUSE)
     {                                                                              //homepage 处理鼠标移动理鼠标移动
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_arrow) //在homepage窗口部分显示标准鼠标

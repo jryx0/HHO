@@ -93,7 +93,7 @@ void OnPaint_registerpage(hbasewinAttr *win, void *value)
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
 
-  rectangleEx(x + 378, y + 40, 368, 520, 0x0000, 1, 1);
+  rectangleEx(x + 378, y + 40, 368, 510, 0x0000, 1, 1);
   //TRACE(("%s(%d):docid = %d\n", __FILE__, __LINE__, win->data));
   _h = getFont(SIMHEI, 16, 0x0000);
   printTextLineXY(x + 468, y + 60, "华中科技大学校医院挂号单", _h);

@@ -33,6 +33,7 @@ globaldef *initGlobalSetting(void)
   _global->pinyin = initPYHZIndex();
   TESTNULL(_global->pinyin, NULL);
   _global->activePageID = -1;
+  _global->beforeloginPageID = 30;
   _global->InputMode = ENGLISH;
 
   //╪стьйС╠Йпнв╢
