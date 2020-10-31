@@ -19,6 +19,38 @@
 #define COL7 (COL6 + 170)
 #define COL8 120
 
+void drawPostLine(hbasewinAttr *win)
+{
+  //重新画竖线
+  int x = getAbsoluteX(win);
+  int y = getAbsoluteY(win);
+  lineyEx(x + COL1, y + 80, PAGE_H / 2 - 50, 0x6BAF);
+  lineyEx(x + COL2, y + 80, PAGE_H / 2 - 50, 0x6BAF);
+  lineyEx(x + COL3, y + 80, PAGE_H / 2 - 50, 0x6BAF);
+  lineyEx(x + COL4, y + 80, PAGE_H / 2 - 50, 0x6BAF);
+  lineyEx(x + COL5, y + 80, PAGE_H / 2 - 50, 0x6BAF);
+  lineyEx(x + COL6, y + 80, PAGE_H / 2 - 50, 0x6BAF);
+  lineyEx(x + COL7, y + 80, PAGE_H / 2 - 50, 0x6BAF);
+  rectangleEx(x, y + 80, PAGE_W, PAGE_H / 2 - 50, 0x6BAF, 1, 1);
+}
+
+void clearPostInfo(hbasewinAttr *win)
+{
+  int i;
+  int x, y;
+  hbasewinAttr *lnk;
+
+  x = getAbsoluteX(win);
+  y = getAbsoluteY(win);
+
+  fillRegionEx(x + 20, y + 110, PAGE_W - 21, PAGE_H / 2 - 81, 0xFFFF);
+  for (i = 0; i < 7; i++)
+  {
+    lnk = findWinByID(win, ID_POST_LINK + i);
+    if (lnk)
+      lnk->onDestroy(lnk, NULL);
+  }
+}
 void createPostinfo(hbasewinAttr *parent, int userid)
 {
   int i, j;
@@ -45,6 +77,9 @@ void createPostinfo(hbasewinAttr *parent, int userid)
 
       pi = (postInfo *)node->val;
 
+      if(strcmp(pi ->status, "已签收") == 0)
+        continue;
+
       sprintf(info, "%-12d%-10s%-18s%-15s%-8s%-21s%-20s%s",
               pi->postid,
               pi->receiver, pi->receiveraddr, pi->tel,
@@ -56,9 +91,9 @@ void createPostinfo(hbasewinAttr *parent, int userid)
         lnk = Createhyperlink(parent, x, y + 30 * i, PAGE_W, 25, ID_POST_LINK + i, info);
         lnk->data = pi->postid;
         lnk->wintype = HYPERLINK_BK;
-        CreateButton(parent, 790, 510, 150, 40, ID_POST_UPDATEINFO, "更新物流信息");
-        CreateTextBox(parent, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
-        CreateTextBox(parent, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "", 1);
+        // CreateButton(parent, 790, 510, 150, 40, ID_POST_UPDATEINFO, "更新物流信息");
+        // CreateTextBox(parent, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
+        // CreateTextBox(parent, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "在途", 1);
       }
       else if (userid == pi->userid)
       {
@@ -66,9 +101,9 @@ void createPostinfo(hbasewinAttr *parent, int userid)
         lnk->data = pi->postid;
         lnk->wintype = HYPERLINK_BK;
         j++;
-        CreateButton(parent, 790, 510, 150, 40, ID_POST_UPDATEINFO, "签收");
-        CreateTextBox(parent, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
-        CreateTextBox(parent, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "已签收", 1);
+        // CreateButton(parent, 790, 510, 150, 40, ID_POST_UPDATEINFO, "签收");
+        // CreateTextBox(parent, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
+        // CreateTextBox(parent, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "已签收", 1);
       }
       //btn = CreateButton(parent, x, y + 50 * i, 125, 45, ID_DEPT_LINK + i, dept->deptname);
       //btn->data = dept->id;
@@ -139,8 +174,12 @@ void showPostInfo(hbasewinAttr *win, int postid)
           continue;
 
         sscanf(infostr, "%s\t%s\t%s", pi.arrivedaddr, pi.status, pi.arrivedtime);
-        sprintf(infostr, "%s            %s      %s", pi.arrivedaddr, pi.arrivedtime, pi.status);
+        // sprintf(infostr, "%s            %s      %s", pi.arrivedaddr, pi.arrivedtime, pi.status);
+        sprintf(infostr, "%s", pi.arrivedaddr);
         printTextLineXY(win->x + 10, win->y + 380 + i * 20, infostr, _h);
+        sprintf(infostr, "%s      %s", pi.arrivedtime, pi.status);
+        printTextLineXY(win->x + 155, win->y + 380 + i * 20, infostr, _h);
+
         i++;
       }
       fclose(fp);
@@ -165,12 +204,14 @@ void showPostInfo(hbasewinAttr *win, int postid)
 
 hbasewinAttr *CreatePostpage(hbasewinAttr *parent, int winID, int userid)
 {
+  WinStyle *style;
   hbasewinAttr *page = CreateWindowsEx(parent, PAGE_X, PAGE_Y, PAGE_W, PAGE_H, winID, NULL);
   page->onPaint = OnPaint_Post;
   Createhyperlink(page, 20, 10, 65, 25, ID_POST_RETURN, "[首 页]");
   page->EventHandler = EventHandler_postpage;
 
   page->style = malloc(sizeof(WinStyle));
+  style = (WinStyle *)page->style;
   getWinTheme((WinStyle *)page->style, 1);
 
   Createhyperlink(page, page->x, page->y + 190, 55, 25, ID_POST_PREV, "上一页");
@@ -184,7 +225,19 @@ hbasewinAttr *CreatePostpage(hbasewinAttr *parent, int winID, int userid)
   CreateButton(page, 890, 43, 120, 30, ID_POST_QUERY_RECEIVER, "查  询");
 
   createPostinfo(page, userid);
-
+  if (userid == -1)
+  {
+    CreateButton(page, 790, 510, 150, 40, ID_POST_UPDATEINFO, "更新物流信息");
+    CreateTextBox(page, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
+    CreateTextBox(page, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "在途", 1);
+  }
+  else
+  {
+    CreateButton(page, 790, 510, 150, 40, ID_POST_UPDATEINFO, "签收");
+    CreateTextBox(page, 580, 465, 150, 20, ID_POST_UPDATEADDR, "", 1);
+    CreateTextBox(page, 805, 465, 150, 20, ID_POST_UPDATESTATUS, "已签收", 1);
+  }
+  style->type = userid;
   return page;
 }
 
@@ -319,6 +372,13 @@ void EventHandler_postpage(hbasewinAttr *win, int type, void *val)
           char info[64];
           char datebuf[9], timebuf[9];
           FILE *fp;
+          WinStyle *style;
+
+          list_t *postlist;
+          int i;
+          list_node_t *node;
+          postInfo *posti;
+
           //文件名
           sprintf(info, "%sdatabase\\logistic\\%d.txt", DATAPATH, hitwin->data);
           fp = fopen(info, "a");
@@ -332,6 +392,32 @@ void EventHandler_postpage(hbasewinAttr *win, int type, void *val)
             TRACE(("%s\n", info));
             fclose(fp);
             showPostInfo(win, hitwin->data);
+
+            postlist = ReadPostInfo(POSTFILE);
+            if (postlist)
+            {
+              for (i = 0; i < postlist->len; i++)
+              {
+                node = list_at(postlist, i);
+                if (node && node->val)
+                {
+                  posti = (postInfo *)node->val;
+                  if (posti->postid == hitwin->data)
+                  {
+                    strcpy(posti->status, status->title);
+                    SavePostInfo(POSTFILE, postlist);
+                    break;
+                  }
+                }
+              }
+              list_destroy(postlist);
+            }
+
+            style = (WinStyle *)win->style;
+            clearPostInfo(win);
+            createPostinfo(win, style->type);
+            repaintChildren(win, NULL);
+            drawPostLine(win);
           }
         }
       }

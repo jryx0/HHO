@@ -28,12 +28,14 @@ int id_num_judge(char *id_num)
 int telenum_judge(char *telenum)
 {
   int i, len = strlen(telenum);
-  if (len != 11 && len != 8)
-    return 0;
-  for (i = 0; i < len; i++)
-    if (telenum[i] < '0' || telenum[i] > '9')
-      return 0;
-  return 1;
+  if (len == 11 || len == 8)
+  {
+    for (i = 0; i < len; i++)
+      if (telenum[i] < '0' || telenum[i] > '9')
+        return 0;
+    return 1;
+  }
+  return 0;
 }
 
 hbasewinAttr *Createsignpage(hbasewinAttr *parent, int winID)
@@ -47,14 +49,14 @@ hbasewinAttr *Createsignpage(hbasewinAttr *parent, int winID)
 
   Createhyperlink(page, 20, 10, 65, 25, ID_SIGNIN_RETURN, "[Ê× Ò³]");
   CreateTextBox(page, 240, 95, 100, 26, ID_SIGNIN_NAME, "", 1);
-  CreateTextBox(page, 610, 95, 80, 26, ID_SIGNIN_SEX, "", 1);
-  CreateTextBox(page, 240, 166, 80, 26, ID_SIGNIN_MARRIAGESTATUS, "", 1);
+  CreateTextBox(page, 610, 95, 80, 26, ID_SIGNIN_SEX, "ÄÐ", 1);
+  CreateTextBox(page, 240, 166, 80, 26, ID_SIGNIN_MARRIAGESTATUS, "Î´»é", 1);
   CreateTextBox(page, 610, 166, 230, 26, ID_SIGNIN_IDNUMBER, "", 1);
   CreateTextBox(page, 240, 237, 80, 26, ID_SIGNIN_BIRTH_YEAR, "", 1);
   CreateTextBox(page, 360, 237, 50, 26, ID_SIGNIN_BIRTH_MONTH, "", 1);
   CreateTextBox(page, 610, 237, 200, 26, ID_SIGNIN_TELENUM, "", 1);
   CreateTextBox(page, 240, 297, 250, 26, ID_SIGNIN_ADDRESS, "", 1);
-  CreateTextBox(page, 610, 297, 150, 26, ID_SIGNIN_ALLERGY, "", 1);
+  CreateTextBox(page, 610, 297, 150, 26, ID_SIGNIN_ALLERGY, "ÎÞ", 1);
   CreateTextBox(page, 240, 354, 120, 26, ID_SIGNIN_USERNAME, "", 1);
   pwd = CreateTextBox(page, 240, 411, 150, 26, ID_SIGNIN_PASSWORD1, "", 1);
   pwd->wintype = TEXTBOX_PASSWORD;
