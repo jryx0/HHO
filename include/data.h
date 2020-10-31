@@ -170,7 +170,7 @@ list_t *ReadUserInfo(const char *filename);
 void SaveUserInfo(char *filename, list_t *userinfo);
 /*通过用户唯一编码id找到用户信息userinfo链表中对应的用户，并返回指向该信息的指针*/
 userInfo *FindUserInfo(list_t *userinfo, int id);
-
+int fFindUsername(const char *filename, char *username);
 userInfo *fFindUserInfo(const char *filename, char *username, char *password);
 
 /*从filename代表的文件中读出病人信息并将信息以链表形式存入内存，返回表头*/

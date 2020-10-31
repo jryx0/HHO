@@ -97,6 +97,22 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
         if (hitwin->onActivate)
           hitwin->onActivate(hitwin, _g);
       break;
+    case ID_LOGIN_REGISTER:
+      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在窗口部分显示手型鼠标
+        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
+
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      {
+         if (hitwin->onLeave)
+          hitwin->onLeave(hitwin, NULL);
+      }
+
+      break;
 
     case ID_LOGIN_RETURN:
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标

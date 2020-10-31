@@ -159,6 +159,37 @@ userInfo *FindUserInfo(list_t *userinfo, int id)
 	return Infotemp;
 }
 
+int fFindUsername(const char *filename, char *username)
+{
+	FILE *fp;
+	char line[32]; //line的长度一定要够长，大于userinfo能存的最大字符长�?
+	userInfo *Infotemp;
+
+	if (username == NULL)
+		return NULL;
+
+	if ((fp = fopen(filename, "r")) == NULL)
+	{
+		TRACE(("unable to open %s\r\n", filename));
+		return NULL;
+	}
+	Infotemp = malloc(sizeof(userInfo));
+	while (fgets(line, 32, fp))
+	{ //用sscanf将line中的各数据读入对应的变量�?
+		if (line[0] == '#')
+			continue;
+		sscanf(line, "%d\t%s\t%s\t%d", &(Infotemp->userID), Infotemp->username, Infotemp->password, &(Infotemp->userType));
+		if (strcmpi(username, Infotemp->username) == 0)
+		{ //忽略大小�?
+			free(Infotemp);
+			fclose(fp);
+			return 1;
+		}
+	}
+	free(Infotemp);
+	fclose(fp);
+	return 0;
+}
 userInfo *fFindUserInfo(const char *filename, char *username, char *password)
 {
 	FILE *fp;
@@ -1126,7 +1157,6 @@ MedicalRecord *fFindMedicalRecordbyId(const char *filename, int mrid)
 		free(Infotemp);
 	return NULL;
 }
-
 
 MedicalRecord *fFindMedicalRecordbyregId(const char *filename, int regid)
 {

@@ -11,6 +11,7 @@
 #include "signpage.h"
 #include <time.h>
 #include <string.h>
+#include <dos.h>
 
 int id_num_judge(char *id_num)
 {
