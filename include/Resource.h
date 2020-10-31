@@ -210,5 +210,20 @@
 #define ID_RESULT_PSDRUGLINK 6200
 ///////////////Î´ÊÚÈ¨Ò³Ãæ/////////////////////////////
 // #define ID_DENYPAGE 60000
-
+////////////////////////////registerpage//////////////////////////////////////////////
+#define ID_SIGNINPAGE 7000
+#define ID_SIGNIN_NAME 7001
+#define ID_SIGNIN_SEX 7002
+#define ID_SIGNIN_MARRIAGESTATUS 7003
+#define ID_SIGNIN_IDNUMBER 7004
+#define ID_SIGNIN_BIRTH_YEAR 7005
+#define ID_SIGNIN_BIRTH_MONTH 7006
+#define ID_SIGNIN_TELENUM 7007
+#define ID_SIGNIN_ADDRESS 7008
+#define ID_SIGNIN_ALLERGY 7009
+#define ID_SIGNIN_RETURN 7010
+#define ID_SIGNIN_USERNAME 7011
+#define ID_SIGNIN_PASSWORD1 7012
+#define ID_SIGNIN_PASSWORD2 7013
+#define ID_SIGNIN_SIGNIN 7014
 #endif

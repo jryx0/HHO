@@ -1,4 +1,4 @@
-#include "signpage.h"
+
 #include "HBaseWin.h"
 #include "macrodef.h"
 #include "hhosvga.h"
@@ -8,8 +8,32 @@
 #include "hyperlnk.h"
 #include "hbutton.h"
 #include "data.h"
+#include "signpage.h"
 #include <time.h>
 #include <string.h>
+
+int id_num_judge(char *id_num)
+{
+  int i, len = strlen(id_num);
+  if (len != 18)
+    return 0;
+  for (i = 0; i < len - 1; i++)
+    if (id_num[i] < '0' || id_num[i] > '9')
+      return 0;
+  if ((id_num[i] < '0' || id_num[i] > '9') && id_num[i] != 'X' && id_num[i] != 'x')
+    return 0;
+  return 1;
+}
+int telenum_judge(char *telenum)
+{
+  int i, len = strlen(telenum);
+  if (len != 11 && len != 8)
+    return 0;
+  for (i = 0; i < len; i++)
+    if (telenum[i] < '0' || telenum[i] > '9')
+      return 0;
+  return 1;
+}
 
 hbasewinAttr *Createsignpage(hbasewinAttr *parent, int winID)
 {
@@ -277,7 +301,7 @@ void EventHandler_signpage(hbasewinAttr *win, int type, void *value)
           free(patient);
           break;
         }
-        else if (patient->year = atoi(temp->title) == 0 || patient->year < 1900 || patient->year > 2020)
+        else if ((patient->year = atoi(temp->title)) == 0 || patient->year < 1900 || patient->year > 2020)
         {
           printTextLineXY(PAGE_W / 2 - 72, win->y + 460, "请正确输入出生年份", _h);
           freeFont(_h);
@@ -426,12 +450,12 @@ void EventHandler_signpage(hbasewinAttr *win, int type, void *value)
 
         //存储新建病人信息
         list_rpush(palist, list_node_new(patient));
-        SavePatientInfo(palist, PATIENTINFOFILE);
+        SavePatientInfo(PATIENTINFOFILE, palist);
         free(patient);
         list_destroy(palist);
 
         list_rpush(userlist, list_node_new(user));
-        SaveUserInfo(userlist, USERINFOFILE);
+        SaveUserInfo(USERINFOFILE, userlist);
         free(user);
         list_destroy(userlist);
 
@@ -455,27 +479,4 @@ void EventHandler_signpage(hbasewinAttr *win, int type, void *value)
     break;
   }
   (void)type;
-}
-
-int id_num_judge(char *id_num)
-{
-  int i, len = strlen(id_num);
-  if (len != 18)
-    return 0;
-  for (i = 0; i < len - 1; i++)
-    if (id_num[i] < '0' || id_num[i] > '9')
-      return 0;
-  if ((id_num[i] < '0' || id_num[i] > '9') && id_num[i] != 'X' && id_num[i] != 'x')
-    return 0;
-  return 1;
-}
-int telenum_judge(char *telenum)
-{
-  int i, len = strlen(telenum);
-  if (len != 11 && len != 8)
-    return 0;
-  for (i = 0; i < len; i++)
-    if (telenum[i] < '0' || telenum[i] > '9')
-      return 0;
-  return 1;
 }
