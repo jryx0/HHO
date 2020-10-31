@@ -149,7 +149,7 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
             switch (_g->usertype)
             {
             case PATIENT:
-              _g->activePageID = ID_HOMEPAGE;
+              _g->activePageID = _g->beforeloginPageID;
               break;
             case DOCTOR:
               _g->activePageID = ID_DOCPAGE;
@@ -158,7 +158,7 @@ void EventHandler_loginpage(hbasewinAttr *win, int type, void *value)
               _g->activePageID = ID_DRUGPAGE;
               break;
             case LOGISTIC:
-              _g->activePageID = ID_HOMEPAGE;
+              _g->activePageID = ID_POSTPAGE;
               break;
             default:
               _g->activePageID = ID_HOMEPAGE;

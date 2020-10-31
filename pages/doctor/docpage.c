@@ -242,7 +242,7 @@ void drawDrugQuery(hbasewinAttr *win)
 
 void fillDrugQuery(hbasewinAttr *win, char *drugname)
 {
-  int i, j, x, y;
+  int i, x, y;
   hbasewinAttr *ctrl;
   list_node_t *node;
   DrugItem *drug;
@@ -276,7 +276,7 @@ void fillDrugQuery(hbasewinAttr *win, char *drugname)
       }
     }
 
-    for (i = 0, j = 0; i < druglist->len && i < 6; i++)
+	for (i = 0; i < druglist->len && i < 6; i++)
     {
       node = list_at(druglist, i);
       if (node->val)
@@ -406,7 +406,7 @@ void delDrugfromPSwin(hbasewinAttr *win, hbasewinAttr *druglink)
 void delallPSDrug(hbasewinAttr *win)
 {
   int i;
-  int x, y;
+  //int x, y;
   hbasewinAttr *ctrl;
   for (i = 0; i < 8; i++)
   {
@@ -428,8 +428,8 @@ void delallPSDrug(hbasewinAttr *win)
         ctrl->onDestroy(ctrl, NULL);
     }
   }
-  x = getAbsoluteX(win);
-  y = getAbsoluteY(win);
+  // x = getAbsoluteX(win);
+  // y = getAbsoluteY(win);
 }
 
 void addDrugtoPSwin(hbasewinAttr *win, hbasewinAttr *druglink)

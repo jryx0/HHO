@@ -1,6 +1,6 @@
 #ifndef __MACRODEF_H__
 #define __MACRODEF_H__
-
+ 
 #define TRUE 1
 #define FALSE 0
 //////////////////////////////¥ÌŒÛ¥¶¿Ì∫Í////////////////////////////////////////////
@@ -9,14 +9,14 @@
 //   {                                                       \
 //     fprintf(stderr, "%s(%d):%s", __FILE__, __LINE__, #X); \
 //     return Y;                                             \
-//   }
+//   } 
 
 #define TESTNULL(X, Y) \
   if (X == NULL)       \
   {                    \
     return Y;          \
   }
-
+  
 #define TESTNULLVOID(X) \
   if (X == NULL)        \
     return;

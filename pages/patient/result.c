@@ -12,6 +12,8 @@
 #include "list.h"
 #include "result.h"
 
+#include <memory.h>
+
 hbasewinAttr *CreateResultPage(hbasewinAttr *parent, int winID, int userid)
 {
   WinStyle *style;
@@ -123,12 +125,12 @@ void fillResultRegisterList(hbasewinAttr *win, int userid)
   RegisterInfo *regs;
   PatientInfo *pa;
   DoctorInfo *doc;
-  WinStyle *style;
+  //WinStyle *style;
 
   char *status[] = {"未缴费", "已缴费", "已完成"};
 
   TESTNULLVOID(win);
-  style = (WinStyle *)win->style;
+  //style = (WinStyle *)win->style;
   // x = getAbsoluteX(win);
   // y = getAbsoluteY(win);
 
@@ -287,7 +289,9 @@ void OnPaint_ResultPage(hbasewinAttr *win, void *val)
   drawResultRegisterInfo(win);
   drawPrescriptionInfo_Re(win);
   freeFont(_h);
+  (void)val;
 }
+
 void EventHandler_resultpage(hbasewinAttr *win, int type, void *val)
 {
   globaldef *_g;

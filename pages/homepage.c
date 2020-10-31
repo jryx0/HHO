@@ -96,89 +96,73 @@ void Homepage_MouseHandler(hbasewinAttr *win, int type, void *value)
       { //鼠标释放
         if (hitwin->onLeave)
           hitwin->onLeave(hitwin, NULL);
-
-        if (_g->isLogin == 1)
+        /*转跳页面*/
+        //homepage中顺序 50 - 55
+        if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
         {
-          /*转跳页面*/
-          //homepage中顺序 50 - 55
-          if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
-          {
-            _g->activePageID = ID_HOMEPAGE;
-            if (hitwin->winID == ID_HOMEPAGE_LOGISTICS)
-              _g->activePageID = ID_POSTPAGE; //物流页面 只允许 物流和病人查看
-            else if (hitwin->winID == ID_HOMEPAGE_DRUG)
-              _g->activePageID = ID_DRUGPAGE; //药房页面 只允许 病人和药房查看
-            else if (hitwin->winID == ID_HOMEPAGE_CHARGE2)
-              _g->activePageID = ID_PAYPSPAGE; //处方缴费页面 只允许病人查看
-            else if (hitwin->winID == ID_HOMEPAGE_DIAGNOSE)
-              _g->activePageID = ID_DOCPAGE; //只允许医生查看
-            else if (hitwin->winID == ID_HOMEPAGE_REGS)
-              _g->activePageID = ID_FINDDOCPAGE;
-            else if (hitwin->winID == ID_HOMEPAGE_CHARGE1) //挂号支付
-              _g->activePageID = ID_PAYREGSPAGE;
-            else if (hitwin->winID == ID_HOMEPAGE_RESULT) //查看
-              _g->activePageID = ID_RESULTPAGE;
+          _g->beforeloginPageID = ID_HOMEPAGE;
+          _g->activePageID = ID_HOMEPAGE;
+          if (hitwin->winID == ID_HOMEPAGE_LOGISTICS)
+            _g->activePageID = ID_POSTPAGE; //物流页面 只允许 物流和病人查看
+          else if (hitwin->winID == ID_HOMEPAGE_DRUG)
+            _g->activePageID = ID_DRUGPAGE; //药房页面 只允许 病人和药房查看
+          else if (hitwin->winID == ID_HOMEPAGE_CHARGE2)
+            _g->activePageID = ID_PAYPSPAGE; //处方缴费页面 只允许病人查看
+          else if (hitwin->winID == ID_HOMEPAGE_DIAGNOSE)
+            _g->activePageID = ID_DOCPAGE; //只允许医生查看
+          else if (hitwin->winID == ID_HOMEPAGE_REGS)
+            _g->activePageID = ID_FINDDOCPAGE;
+          else if (hitwin->winID == ID_HOMEPAGE_CHARGE1) //挂号支付
+            _g->activePageID = ID_PAYREGSPAGE;
+          else if (hitwin->winID == ID_HOMEPAGE_RESULT) //查看
+            _g->activePageID = ID_RESULTPAGE;
 
-            win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
-          }
-        }
-        else
-        {
-          /*转跳登录页面*/
-          if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+          if (_g->isLogin == 0)
           {
+            _g->beforeloginPageID = _g->activePageID;
             _g->activePageID = ID_LOGINPAGE;
-            win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
           }
+
+          win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
         }
+
+        //   if (_g->isLogin == 1)
+        //   {
+        //     /*转跳页面*/
+        //     //homepage中顺序 50 - 55
+        //     if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+        //     {
+        //       _g->activePageID = ID_HOMEPAGE;
+        //       if (hitwin->winID == ID_HOMEPAGE_LOGISTICS)
+        //         _g->activePageID = ID_POSTPAGE; //物流页面 只允许 物流和病人查看
+        //       else if (hitwin->winID == ID_HOMEPAGE_DRUG)
+        //         _g->activePageID = ID_DRUGPAGE; //药房页面 只允许 病人和药房查看
+        //       else if (hitwin->winID == ID_HOMEPAGE_CHARGE2)
+        //         _g->activePageID = ID_PAYPSPAGE; //处方缴费页面 只允许病人查看
+        //       else if (hitwin->winID == ID_HOMEPAGE_DIAGNOSE)
+        //         _g->activePageID = ID_DOCPAGE; //只允许医生查看
+        //       else if (hitwin->winID == ID_HOMEPAGE_REGS)
+        //         _g->activePageID = ID_FINDDOCPAGE;
+        //       else if (hitwin->winID == ID_HOMEPAGE_CHARGE1) //挂号支付
+        //         _g->activePageID = ID_PAYREGSPAGE;
+        //       else if (hitwin->winID == ID_HOMEPAGE_RESULT) //查看
+        //         _g->activePageID = ID_RESULTPAGE;
+
+        //       win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+        //     }
+        //   }
+        //   else
+        //   {
+        //     /*转跳登录页面*/
+        //     if (win->parent && win->parent->winID == ID_DESKTOP) //找到desktop
+        //     {
+        //       _g->activePageID = ID_LOGINPAGE;
+        //       win->parent->EventHandler(win->parent, EVENT_PAGE_CHANGE, _g);
+        //     }
+        //   }
       }
     }
     break;
-
-    /*
-  case ID_LABEL_1: //label1
-    if (type == EVENT_MOUSE)
-    {                                                                             //label1 处理鼠标移动理鼠标移动
-      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
-        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
-
-      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-      { //改变显示 鼠标左键释放
-        if (hitwin && hitwin->onPaint)
-          hitwin->onPaint(hitwin, "c:\\hho\\data\\news\\1.txt");
-      }
-    }
-    break;
-
-  case ID_LABEL_2: //label2
-    if (type == EVENT_MOUSE)
-    {                                                                             //label1 处理鼠标移动理鼠标移动
-      if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
-        _g->mouse.currentCur = (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand;
-
-      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-      { //改变显示
-        if (hitwin && hitwin->onPaint)
-          hitwin->onPaint(hitwin, "main.c");
-      }
-    }
-    break;
-  case ID_LABEL_3: //label3
-    if (type == EVENT_MOUSE)
-    { //不改变鼠标形状
-      if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
-      {
-        list_node_t *n;
-        //删除label
-        int x = getAbsoluteX(hitwin);
-        int y = getAbsoluteY(hitwin);
-        fillRegionEx(x, y, hitwin->nWidth + 1, hitwin->nHeight + 1, 0xFFFF); //清除子窗口区域
-
-        TRACE(("%s(%d): 删除label%u\n", __FILE__, __LINE__, hitwin->winID));
-        hitwin->onDestroy(hitwin, NULL);
-      }
-    }
-    break;*/
   default:
     break;
   }

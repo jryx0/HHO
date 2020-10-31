@@ -220,8 +220,8 @@ hbasewinAttr *CreateDesktop(void)
   Createhyperlink(desktop, 900, (HEADER_HEIGHT - 44) / 2 - 10, 100, 25, ID_MENU_LOGIN, "[登  录]");
   //创建菜单,切换页面,临时使用
   CreateButton(desktop, 400, HEADER_HEIGHT - 44, 120, 44, ID_MENU_HOMEPAGE, "首页");
-  CreateButton(desktop, 520, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "挂号");
-  CreateButton(desktop, 670, HEADER_HEIGHT - 44, 150, 44, ID_MENU_DEPTPAGE, "科室简介");
+  //CreateButton(desktop, 520, HEADER_HEIGHT - 44, 150, 44, ID_MENU_TESTPAGE, "挂号");
+  CreateButton(desktop, 520, HEADER_HEIGHT - 44, 150, 44, ID_MENU_DEPTPAGE, "科室简介");
   CreateButton(desktop, 900, HEADER_HEIGHT - 44, 120, 44, ID_MENU_EXIT, "退出");
 
   //创建首页

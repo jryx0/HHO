@@ -28,6 +28,7 @@ typedef struct _globaldef
 
   hbasewinAttr *activePage;
   int activePageID;
+  int beforeloginPageID;
   unsigned int userid;     //用户ID
   unsigned char usertype;  //用户类型
   unsigned char isExit;    //是否退出程序
