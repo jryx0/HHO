@@ -371,6 +371,7 @@ void EventHandler_payregspage(hbasewinAttr *win, int type, void *value)
         int x = getAbsoluteX(win);
         int y = getAbsoluteY(win);
         WinStyle *style = (WinStyle *)win->style;
+        hbasewinAttr *chk;
         if (hitwin->onLeave)
           hitwin->onLeave(hitwin, NULL);
 
@@ -378,6 +379,11 @@ void EventHandler_payregspage(hbasewinAttr *win, int type, void *value)
         UpdateRegiserBill(win);
 
         //更新挂号清单信息
+        style->height = 1;
+        chk = findWinByID(win, ID_PAYREGS_CHK);
+        if(chk) 
+          chk ->onClick(chk, NULL);
+          
         fillPayRegisterList(win, style->type);
         repaintChildren(win, NULL);
         drawPayRegister(getAbsoluteX(win), getAbsoluteY(win));

@@ -252,29 +252,40 @@ void fillDrugQuery(hbasewinAttr *win, char *drugname)
   x = getAbsoluteX(win);
   y = getAbsoluteY(win);
 
+  for (i = 0; i < 6; i++)
+  {
+    ctrl = findWinByID(win, ID_DOC_DRUGLINK + i);
+    if (ctrl)
+      ctrl->onDestroy(ctrl, NULL);
+
+    ctrl = findWinByID(win, ID_DOC_DRUGCHK + i);
+    if (ctrl)
+      ctrl->onDestroy(ctrl, NULL);
+  }
+
   if (drugname && strlen(drugname) > 1)
   {
     list_t *druglist = ReadDrugItembyName(DRUGFILE, drugname);
     //TRACE(("%s(%d):find drugs =  %d\n", __FILE__, __LINE__, druglist->len));
     fillRegionEx(x + 3, y + 346, 460, 200, 0xFFFF);
-    //Çå³ýlink
-    for (i = 0; i < 6; i++)
-    {
-      ctrl = findWinByID(win, ID_DOC_DRUGLINK + i);
-      if (ctrl && ctrl->title)
-      {
-        free(ctrl->title);
-        ctrl->title = NULL;
-        ctrl->nWidth = 0;
-      }
+    // //Çå³ýlink
+    // for (i = 0; i < 6; i++)
+    // {
+    //   ctrl = findWinByID(win, ID_DOC_DRUGLINK + i);
+    //   if (ctrl && ctrl->title)
+    //   {
+    //     free(ctrl->title);
+    //     ctrl->title = NULL;
+    //     ctrl->nWidth = 0;
+    //   }
 
-      ctrl = findWinByID(win, ID_DOC_DRUGCHK + i);
-      if (ctrl)
-      {
-        ctrl->nWidth = 0;
-        ctrl->data = 0;
-      }
-    }
+    //   ctrl = findWinByID(win, ID_DOC_DRUGCHK + i);
+    //   if (ctrl)
+    //   {
+    //     ctrl->nWidth = 0;
+    //     ctrl->data = 0;
+    //   }
+    // }
 
     for (i = 0; i < druglist->len && i < 6; i++)
     {
@@ -944,7 +955,7 @@ void Eventhandler_docpage(hbasewinAttr *win, int type, void *val)
       ctrl = findWinByID(win, ID_DOC_TEXTBOX_RESULT);
       if (ctrl)
       {
-        if(ctrl ->title)
+        if (ctrl->title)
           free(ctrl->title);
         strcpy(ctrl->title, "");
         // if (strlen(ctrl->title) >= 1)

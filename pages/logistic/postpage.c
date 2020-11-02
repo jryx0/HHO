@@ -77,7 +77,7 @@ void createPostinfo(hbasewinAttr *parent, int userid)
 
       pi = (postInfo *)node->val;
 
-      if(strcmp(pi ->status, "已签收") == 0)
+      if (strcmp(pi->status, "已签收") == 0)
         continue;
 
       sprintf(info, "%-12d%-10s%-18s%-15s%-8s%-21s%-20s%s",
@@ -347,6 +347,15 @@ void EventHandler_postpage(hbasewinAttr *win, int type, void *val)
       if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
         if (hitwin->onActivate)
           hitwin->onActivate(hitwin, _g);
+      if (_g->mouse.leftClickState == MOUSE_BUTTON_DOWN)
+      { //鼠标按下
+        if (hitwin->onClick)
+          hitwin->onClick(hitwin, NULL);
+      }
+      else if (_g->mouse.leftClickState == MOUSE_BUTTON_UP)
+      { //鼠标释放
+      
+      }
       break;
     case ID_POST_UPDATEINFO:
       if (_g->mouse.currentCur != (unsigned char(*)[MOUSE_WIDTH])_g->cursor_hand) //在label1窗口部分显示手型鼠标
